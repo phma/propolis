@@ -1,0 +1,3 @@
+To compile, make a directory ~/build/hexcode, cd to it, and type
+cmake ~/hexcode
+where ~/hexcode is the directory where you have untarred it. Then type "make".
