@@ -198,10 +198,10 @@ compute_genpoly (int genpoly[][32])
   zero_poly(genpoly[0]);
   genpoly[0][0] = 1;
   zero_poly(tp);
-  tp[0] = gexp[1];		/* set up x+a^n */
   tp[1] = 1;
 
   for (i = 1; i <= 31; i++) {
+    tp[0]=gexp[i];		/* set up x+a^n */
     mult_polys(genpoly[i], tp, genpoly[i-1]);
   }
 }
