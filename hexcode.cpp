@@ -9,6 +9,7 @@
 #include "contour.h"
 #include "ps.h"
 #include "rs.h"
+#include "arrange.h"
 
 hvec a,b,q,r;
 harray<char> hletters,hbits;
@@ -199,7 +200,7 @@ void testletter()
 
 void testoutline()
 {int i,j,c;
- int size=40;
+ int size=52;
  bool letterbdy;
  hvec k;
  vector<hvec> contour;
@@ -324,7 +325,10 @@ void initialize()
  }
 
 int main(int argc,char **argv)
-{initialize();
- testgalois();
- return 0;
- }
+{
+  initialize();
+  //testgalois();
+  //testoutline();
+  testfindsize();
+  return 0;
+}

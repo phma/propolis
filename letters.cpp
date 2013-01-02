@@ -6,7 +6,7 @@
  * Each letter is a 12-bit code for a 5-bit plaintext. They are read
  * with bit 11 at the top and bit 0 at the bottom right. Rotating a
  * codeword 120° and flipping all bits do consistent things to plaintext,
- * but neither rotating nor changing two bits (the Hamimng distance is 2)
+ * but neither rotating nor changing two bits (the Hamming distance is 2)
  * does anything related to a Reed-Solomon code.
  * 
  * Codes for single 1 bits are:
@@ -86,6 +86,7 @@ BIT16 invletters[4096];
  *                  dddddddd is in the size-8 hexagon, 0 through 216
  * 0000000000000000 an undecodable bit pattern that counts as erasure in RS
  */ 
+int debugletters;
 
 int bitcount(int n)
 {n=((n&0xaaaaaaaa)>>1)+(n&0x55555555);
@@ -123,7 +124,7 @@ void degauss()
 	         }
          }
     } while (cont);
- for (j=0;j<32;j++)
+ for (j=0;j<32 && debugletters;j++)
      printf("%2d %03x\n",j,basis[j]);
  }
 
@@ -150,7 +151,7 @@ void fillinvletters()
         invletters[i]=(inv[i]&0x1f)|0x2000;
       else if (inv[i]&0x20)
         invletters[i]=(inv[i]&0x1f)|0x1000;
-      if (invletters[i])
+      if (invletters[i] && debugletters)
          printf("%03x: %d%c%c%c\n",i,(invletters[i]>>15)&1,((invletters[i]>>10)&31)+64,((invletters[i]>>5)&31)+64,((invletters[i]>>0)&31)+64);
       }
  for (i=0;i<32;i++)
@@ -168,4 +169,3 @@ void fillinvletters()
 	   }
       }
  }
-       
