@@ -1,4 +1,3 @@
-#include <vector>
 #include <cstdio>
 #include <cmath>
 #include "arrange.h"
@@ -72,27 +71,28 @@ int findsize(int n,double redundancy)
  * Returns 0 if invalid.
  */
 {
-  int i,nrows,nletters,target;
+  int i,nrows,nletters,best;
+  double target,diff,closest;
   bool cont;
   if (redundancy<0.03)
     redundancy=0.03;
   if (redundancy>0.97)
     redundancy=0.97;
-  target=lrint(n/(1-redundancy));
+  target=n/(1-redundancy);
   if (target<=0)
     return 0;
-  for (i=2;i<=n+2;i++)
+  for (i=2,best=nrows=0,closest=1e30+target;nrows<=n+2;i++)
   {
     nletters=ndataletters(i);
     nrows=(nletters+30)/31;
     //printf("n=%d %d>=%d %d>=%d %d>=%d\n",i,nletters,target,n,nrows,nletters-n,nrows);
-    if (nletters>=target && n>=nrows && nletters-n>=nrows)
-      break;
+    if (n>=nrows && nletters-n>=nrows && fabs(nletters-target)<closest)
+    {
+      closest=fabs(nletters-target);
+      best=i;
+    }
   }
-  if (i>n+2)
-    return 0;
-  else
-    return i;
+  return best;
 }
 
 int decinc(int i)
@@ -105,13 +105,15 @@ int decinc(int i)
 
 void testfindsize()
 {
-  int i,size;
-  double redundancy;
-  redundancy=0.25;
-  printf("redundancy 0.25\n");
+  int i,size03,size25,size50,size75,size97;
   for (i=1;i<40000;i+=decinc(i))
   {
-    size=findsize(i,redundancy);
-    printf("%5d %3d\n",i,size);
+    size03=findsize(i,0.03);
+    size25=findsize(i,0.25);
+    size50=findsize(i,0.50);
+    size75=findsize(i,0.75);
+    size97=findsize(i,0.97);
+    printf("%5d %3d %3d %3d %3d %3d\n",i,size03,size25,size50,size75,size97);
   }
 }
+

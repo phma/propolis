@@ -3,6 +3,11 @@
 /* ps.cpp - PostScript output                         */
 /*                                                    */
 /******************************************************/
+
+/* The PostScript file is 35.7 times the information contained in it;
+ * when gzipped, it is 5.85 times as big as the information.
+ * Converted to PDF, it gets bigger, 147 times as big as the information.
+ */
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
