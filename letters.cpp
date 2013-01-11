@@ -82,6 +82,7 @@ BIT16 invletters[4096];
  * 010000xxxxxyyyyy a bit pattern that could be any of two letters
  * 00100000000xxxxx a bit pattern that differs by 1 bit from one valid letter
  * 00010000000xxxxx a bit pattern of a valid letter
+ * 0011000000000000 an unwritten zero (not in the table)
  * 01100000dddddddd an undecodable bit pattern indicating a framing error
  *                  dddddddd is in the size-8 hexagon, 0 through 216
  * 0000000000000000 an undecodable bit pattern that counts as erasure in RS

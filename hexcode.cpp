@@ -329,6 +329,11 @@ int main(int argc,char **argv)
   initialize();
   //testgalois();
   //testoutline();
+  listsizes();
   testfindsize();
+  thematrix.setsize(7);
+  thematrix.setndata(100);
+  thematrix.dump();
+  testshuffle();
   return 0;
 }
