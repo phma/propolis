@@ -1,3 +1,4 @@
+#include <string>
 #include <vector>
 
 using namespace std;
@@ -34,6 +35,7 @@ private:
 public:
   void setsize(int sz);
   void setndata(int nd);
+  void setdata(string str,int encoding); // str should consist of letters @ through _; encoding should be 1-31
   void dump();
 };
 

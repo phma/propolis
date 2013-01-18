@@ -200,7 +200,7 @@ void testletter()
 
 void testoutline()
 {int i,j,c;
- int size=52;
+ int size=2;
  bool letterbdy;
  hvec k;
  vector<hvec> contour;
@@ -328,12 +328,13 @@ int main(int argc,char **argv)
 {
   initialize();
   //testgalois();
-  //testoutline();
+  testoutline();
   listsizes();
   testfindsize();
   thematrix.setsize(7);
   thematrix.setndata(100);
+  thematrix.setdata("LATE@ONE@MORNING@IN@THE@MIDDLE@OF@THE@NIGHT@TWO@DEAD@BOYS@GOT@UP@TO@FIGHT@BACK@TO@BACK@THEY@FACED@EACH@OTHER",5);
   thematrix.dump();
-  testshuffle();
+  //testshuffle();
   return 0;
 }

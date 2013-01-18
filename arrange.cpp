@@ -209,6 +209,17 @@ void codematrix::setndata(int nd)
     rows[i].setndata((ndata+leftover)/nrows+(i<=(ndata+leftover)%nrows)-leftover/nrows-(i<=leftover%nrows));
 }
 
+void codematrix::setdata(string str,int encoding)
+{
+  int i,j;
+  for (i=0;i<str.length() && i<ndata;i++)
+  {
+    j=i+leftover;
+    rows[j%nrows+1].data[j/nrows]=str[i];
+  }
+  rows[0].data[28]=encoding|'@';
+}
+
 void codematrix::dump()
 {
   int i,j;
