@@ -232,10 +232,10 @@ void psdraw(vector<vector<hvec> > contours,int size,double width,double height,
      scale/=sqrt(12);
      break;
      case PS_DIAMETER:
-     scale=scale/(8*(size+1));
+     scale=scale/(8*(size+2));
      break;
      case PS_DIAPOTHEM:
-     scale=scale/(sqrt(48)*(size+1));
+     scale=scale/(sqrt(48)*(size+2));
      break;
      case PS_XDIM:
      break;
@@ -250,8 +250,8 @@ void psdraw(vector<vector<hvec> > contours,int size,double width,double height,
     inkspread=0.433*scale;
  if (inkspread<-0.433*scale)
     inkspread=-0.433*scale;
- symwidth=scale*(sqrt(48)*(size+1));
- symheight=scale*(8*(size+1));
+ symwidth=scale*(sqrt(48)*(size+2));
+ symheight=scale*(8*(size+2));
  if (width<0 || height<0)
     throw(range_error("psdraw: paper size must be nonnegative"));
  if (!height)

@@ -336,5 +336,6 @@ int main(int argc,char **argv)
   thematrix.setdata("LATE@ONE@MORNING@IN@THE@MIDDLE@OF@THE@NIGHT@TWO@DEAD@BOYS@GOT@UP@TO@FIGHT@BACK@TO@BACK@THEY@FACED@EACH@OTHER",5);
   thematrix.dump();
   //testshuffle();
+  testwhiten();
   return 0;
 }

@@ -10,6 +10,7 @@ extern BIT16 letters[38];
  *     0a24240c
  */
 extern int debugletters;
+extern BIT16 invletters[4096];
 
 void degauss();
 void fillinvletters();

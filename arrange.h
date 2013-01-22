@@ -42,3 +42,4 @@ public:
 extern codematrix thematrix;
 void testbitctrot();
 void testshuffle();
+void testwhiten();

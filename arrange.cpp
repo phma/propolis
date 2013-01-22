@@ -3,6 +3,7 @@
 #include <cstring>
 #include "arrange.h"
 #include "galois.h"
+#include "letters.h"
 
 /* Metadata letters are put at the six corners and, for size>17, in the center.
  *    + - - +       + - - +
@@ -45,7 +46,130 @@
 
 codematrix thematrix;
 char bitctrot[]="@BDLHTXYPEIZQKSWAFJ\\RMU[CNV]G^O_",
-bitctunrot[]=   "@PAXBIQ\\DJRMCUY^HLTNEVZOFGKWS[]_";
+bitctunrot[]=   "@PAXBIQ\\DJRMCUY^HLTNEVZOFGKWS[]_",
+invoddmul[]=    "@UF[\\QBWXM^STIZOPEVKLARGH]NCDYJ_";
+int debugwhiten;
+
+int oddmul(int a,int b)
+{
+  return ((2*a+1)*(2*b+1)/2)&31;
+}
+
+int odddiv(int a,int b)
+{
+  return oddmul(a,invoddmul[b&31]);
+}
+
+int whiten(int letter,int row,int column)
+{
+  int highbits; // save the high 3 bits of the letter byte, which indicate whether it's data or check
+  highbits=letter&-32;
+  letter&=31;
+  letter='_'-bitctrot[gmult(letter,column+1)];
+  letter=oddmul(letter,row);
+  return (letter&31)|highbits;
+}
+
+int unwhiten(int letter,int row,int column)
+{
+  int highbits; // save the high 3 bits of the letter byte, which indicate whether it's data or check
+  highbits=letter&-32;
+  if (debugwhiten)
+    printf("r%d c%d %c->",row,column,(letter&31)+'@');
+  letter='_'-bitctrot[oddmul(letter,invoddmul[row&31])];
+  letter&=31;
+  if (debugwhiten)
+    printf("%c->",(letter&31)+'@');
+  letter=gmult(letter,ginv(column+1));
+  if (debugwhiten)
+    printf("%c\n",(letter&31)+'@');
+  return (letter&31)|highbits;
+}
+
+int tripleindex(int x,int y,int z)
+// x!=y, y!=z, z!=x
+{
+  if (x>y)
+  {
+    x^=y;
+    y^=x;
+    x^=y;
+  }
+  if (y>z)
+  {
+    z^=y;
+    y^=z;
+    z^=y;
+  }
+  if (x>y)
+  {
+    x^=y;
+    y^=x;
+    x^=y;
+  }
+  z=(z-2)*(z-1)*z/6;
+  y=(y-1)*y/2;
+  return x+y+z;
+}
+
+void testwhiten()
+{
+  int letter,row,column,white[31],unwhite[31],i,x,y,z,inx;
+  char histo[4960],triples[12][3];
+  char teststr[]="PACK@MY@BOX@WITH@FIVE@DOZEN@LIQUOR@JUGS@";
+  memset(histo,0,sizeof(histo));
+  for (row=i=0;row<32;row++)
+  {
+    for (column=0;column<31;column++)
+    {
+      letter=teststr[i];
+      if (!letter)
+        letter=teststr[i=0];
+      i++;
+      white[column]=whiten(letter,row,column);
+      unwhite[column]=unwhiten(white[column],row,column);
+    }
+    for (column=0;column<31;column++)
+      putchar(white[column]);
+    putchar(' ');
+    for (column=0;column<31;column++)
+      putchar(unwhite[column]);
+    putchar('\n');
+  }      
+  for (i=row=0;i<4096;i++)
+    if (invletters[i]&0x8000)
+    {
+      putchar(((invletters[i])    &31)+'@');
+      putchar(((invletters[i]>>5) &31)+'@');
+      putchar(((invletters[i]>>10)&31)+'@');
+      triples[row][0]=((invletters[i])    &31);
+      triples[row][1]=((invletters[i]>>5) &31);
+      triples[row][2]=((invletters[i]>>10)&31);
+      row++;
+      putchar('\n');
+    }
+  for (row=i=0;row<32;row++)
+    for (column=0;column<31;column++)
+      for (i=0;i<12;i++)
+      {
+	x=unwhiten(triples[i][0],row,column);
+	y=unwhiten(triples[i][1],row,column);
+	z=unwhiten(triples[i][2],row,column);
+	inx=tripleindex(x,y,z);
+	histo[inx]++;
+	if (inx<10)
+	  printf("inx=%d i=%d row=%d column=%d\n",inx,i,row,column);
+      }
+  for (x=2;x<31;x++)
+    for (y=1;y<x;y++)
+      for (z=0;z<y;z++)
+	if (histo[tripleindex(x,y,z)]-1)
+	  printf("%c%c%c%3d  ",x+'@',y+'@',z+'@',histo[tripleindex(x,y,z)]);
+  debugwhiten=1;
+  unwhiten('F',2,19);
+  unwhiten('Y',29,19);
+  debugwhiten=0;
+}
 
 int ndataletters(int n)
 /* Returns the number of data letters (including check letters) in a symbol of size n.
