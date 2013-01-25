@@ -327,7 +327,7 @@ void initialize()
 int main(int argc,char **argv)
 {
   initialize();
-  //testgalois();
+  testgalois();
   testoutline();
   listsizes();
   testfindsize();
@@ -335,7 +335,11 @@ int main(int argc,char **argv)
   thematrix.setndata(100);
   thematrix.setdata("LATE@ONE@MORNING@IN@THE@MIDDLE@OF@THE@NIGHT@TWO@DEAD@BOYS@GOT@UP@TO@FIGHT@BACK@TO@BACK@THEY@FACED@EACH@OTHER",5);
   thematrix.dump();
+  thematrix.scramble();
+  thematrix.dump();
+  thematrix.unscramble();
+  thematrix.dump();
   //testshuffle();
-  testwhiten();
+  //testwhiten();
   return 0;
 }

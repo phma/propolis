@@ -45,6 +45,7 @@
  */
 
 codematrix thematrix;
+//               @ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_
 char bitctrot[]="@BDLHTXYPEIZQKSWAFJ\\RMU[CNV]G^O_",
 bitctunrot[]=   "@PAXBIQ\\DJRMCUY^HLTNEVZOFGKWS[]_",
 invoddmul[]=    "@UF[\\QBWXM^STIZOPEVKLARGH]NCDYJ_";
@@ -66,7 +67,7 @@ int whiten(int letter,int row,int column)
   highbits=letter&-32;
   letter&=31;
   letter='_'-bitctrot[gmult(letter,column+1)];
-  letter=oddmul(letter,row);
+  letter=bitctrot[oddmul(letter,row)&31];
   return (letter&31)|highbits;
 }
 
@@ -76,6 +77,9 @@ int unwhiten(int letter,int row,int column)
   highbits=letter&-32;
   if (debugwhiten)
     printf("r%d c%d %c->",row,column,(letter&31)+'@');
+  letter=bitctunrot[letter&31]-'@';
+  if (debugwhiten)
+    printf("%c->",(letter&31)+'@');
   letter='_'-bitctrot[oddmul(letter,invoddmul[row&31])];
   letter&=31;
   if (debugwhiten)
@@ -114,9 +118,10 @@ int tripleindex(int x,int y,int z)
 
 void testwhiten()
 {
-  int letter,row,column,white[31],unwhite[31],i,x,y,z,inx;
-  char histo[4960],triples[12][3];
+  int letter,row,column,white[31],unwhite[31],histo[256],i,x,y,z,inx;
+  char boxes[4960],triples[12][3];
   char teststr[]="PACK@MY@BOX@WITH@FIVE@DOZEN@LIQUOR@JUGS@";
+  memset(boxes,0,sizeof(boxes));
   memset(histo,0,sizeof(histo));
   for (row=i=0;row<32;row++)
   {
@@ -156,19 +161,24 @@ void testwhiten()
 	y=unwhiten(triples[i][1],row,column);
 	z=unwhiten(triples[i][2],row,column);
 	inx=tripleindex(x,y,z);
-	histo[inx]++;
+	boxes[inx]++;
 	if (inx<10)
 	  printf("inx=%d i=%d row=%d column=%d\n",inx,i,row,column);
       }
   for (x=2;x<31;x++)
     for (y=1;y<x;y++)
       for (z=0;z<y;z++)
-	if (histo[tripleindex(x,y,z)]-1)
-	  printf("%c%c%c%3d  ",x+'@',y+'@',z+'@',histo[tripleindex(x,y,z)]);
+	if (boxes[tripleindex(x,y,z)]+1)
+	  printf("%c%c%c%3d  ",x+'@',y+'@',z+'@',boxes[tripleindex(x,y,z)]);
+  putchar('\n');
   debugwhiten=1;
-  unwhiten('F',2,19);
-  unwhiten('Y',29,19);
+  unwhiten('F',5,16);
+  unwhiten('Y',26,16);
   debugwhiten=0;
+  for (i=0;i<4960;i++)
+    histo[boxes[i]]++;
+  for (i=0;i<10;i++)
+    printf("%2d %2d\n",i,histo[i]);
 }
 
 int ndataletters(int n)
@@ -308,6 +318,22 @@ void row::restoredelete()
       data[i]=127;
 }
 
+void row::whiten(int rownum)
+{
+  int i;
+  for (i=0;i<31;i++)
+    if (data[i]>63)
+      data[i]=::whiten(data[i],rownum,i);
+}
+
+void row::unwhiten(int rownum)
+{
+  int i;
+  for (i=0;i<31;i++)
+    if (data[i]>63)
+      data[i]=::unwhiten(data[i],rownum,i);
+}
+
 void codematrix::setsize(int sz)
 {
   int i;
@@ -342,6 +368,22 @@ void codematrix::setdata(string str,int encoding)
     rows[j%nrows+1].data[j/nrows]=str[i];
   }
   rows[0].data[28]=encoding|'@';
+}
+
+void codematrix::scramble()
+{
+  int i;
+  for (i=1;i<rows.size();i++)
+    rows[i].whiten(i);
+}
+
+void codematrix::unscramble()
+{
+  int i;
+  debugwhiten=1;
+  for (i=1;i<rows.size();i++)
+    rows[i].unwhiten(i);
+  debugwhiten=0;
 }
 
 void codematrix::dump()

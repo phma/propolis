@@ -25,6 +25,12 @@ public:
   int getndata();
   void printdelete();
   void restoredelete();
+  void whiten(int rownum);
+  //void shuffle(int rownum);
+  //void scramble(int rownum);
+  void unwhiten(int rownum);
+  //void unshuffle(int rownum);
+  //void unscramble(int rownum);
 };
 
 class codematrix
@@ -36,6 +42,8 @@ public:
   void setsize(int sz);
   void setndata(int nd);
   void setdata(string str,int encoding); // str should consist of letters @ through _; encoding should be 1-31
+  void scramble();
+  void unscramble();
   void dump();
 };
 
