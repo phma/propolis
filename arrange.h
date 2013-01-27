@@ -1,5 +1,6 @@
 #include <string>
 #include <vector>
+#include "hvec.h"
 
 using namespace std;
 
@@ -26,11 +27,12 @@ public:
   void printdelete();
   void restoredelete();
   void whiten(int rownum);
-  //void shuffle(int rownum);
-  //void scramble(int rownum);
+  void shuffle(int rownum);
+  void scramble(int rownum);
   void unwhiten(int rownum);
-  //void unshuffle(int rownum);
-  //void unscramble(int rownum);
+  void unshuffle(int rownum);
+  void unscramble(int rownum);
+  void encode();
 };
 
 class codematrix
@@ -44,7 +46,9 @@ public:
   void setdata(string str,int encoding); // str should consist of letters @ through _; encoding should be 1-31
   void scramble();
   void unscramble();
+  void encode();
   void dump();
+  //void arrange(harray<char> &hletters);
 };
 
 extern codematrix thematrix;

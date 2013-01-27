@@ -125,7 +125,7 @@ print_syndrome (void)
 
 /* Append the parity bytes onto the end of the message */
 void
-build_codeword (unsigned char msg[], int nbytes, unsigned char dst[])
+build_codeword (char msg[], int nbytes, char dst[])
 {
   int i;
   int npar=31-nbytes;
@@ -133,7 +133,7 @@ build_codeword (unsigned char msg[], int nbytes, unsigned char dst[])
   for (i = 0; i < nbytes; i++) dst[i] = msg[i];
 	
   for (i = 0; i < npar; i++) {
-    dst[i+nbytes] = pBytes[npar-1-i];
+    dst[i+nbytes] = pBytes[npar-1-i]|'`';
   }
 }
 	
@@ -214,24 +214,25 @@ compute_genpoly (int genpoly[][32])
  * 
  */
 
-/*void
-encode_data (unsigned char msg[], int nbytes, unsigned char dst[])
+void
+encode_data (char msg[], int nbytes, char dst[])
 {
-  int i, LFSR[NPAR+1],dbyte, j;
+  int i, LFSR[31],dbyte, j,NPAR;
+  NPAR=31-nbytes;
 	
-  for(i=0; i < NPAR+1; i++) LFSR[i]=0;
+  for(i=0; i < 31; i++) LFSR[i]=0;
 
   for (i = 0; i < nbytes; i++) {
-    dbyte = msg[i] ^ LFSR[NPAR-1];
+    dbyte = (msg[i]&31) ^ LFSR[NPAR-1];
     for (j = NPAR-1; j > 0; j--) {
-      LFSR[j] = LFSR[j-1] ^ gmult(genPoly[j], dbyte);
+      LFSR[j] = LFSR[j-1] ^ gmult(genPoly[NPAR-1][j], dbyte);
     }
-    LFSR[0] = gmult(genPoly[0], dbyte);
+    LFSR[0] = gmult(genPoly[NPAR-1][0], dbyte);
   }
 
   for (i = 0; i < NPAR; i++) 
     pBytes[i] = LFSR[i];
 	
   build_codeword(msg, nbytes, dst);
-}*/
+}
 

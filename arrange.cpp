@@ -3,6 +3,7 @@
 #include <cstring>
 #include "arrange.h"
 #include "galois.h"
+#include "rs.h"
 #include "letters.h"
 
 /* Metadata letters are put at the six corners and, for size>17, in the center.
@@ -65,7 +66,7 @@ int whiten(int letter,int row,int column)
 {
   int highbits; // save the high 3 bits of the letter byte, which indicate whether it's data or check
   highbits=letter&-32;
-  letter&=31;
+  letter=(letter+column+1)&31;
   letter='_'-bitctrot[gmult(letter,column+1)];
   letter=bitctrot[oddmul(letter,row)&31];
   return (letter&31)|highbits;
@@ -84,7 +85,7 @@ int unwhiten(int letter,int row,int column)
   letter&=31;
   if (debugwhiten)
     printf("%c->",(letter&31)+'@');
-  letter=gmult(letter,ginv(column+1));
+  letter=gmult(letter,ginv(column+1))-column-1;
   if (debugwhiten)
     printf("%c\n",(letter&31)+'@');
   return (letter&31)|highbits;
@@ -334,6 +335,57 @@ void row::unwhiten(int rownum)
       data[i]=::unwhiten(data[i],rownum,i);
 }
 
+void row::shuffle(int rownum)
+{
+  int i,j;
+  char copy[32];
+  rownum=rownum%31;
+  memcpy(copy,data,32);
+  for (i=0;i<31;i++)
+    if (copy[i]>63)
+    {
+      j=i;
+      do
+	j=gmult(ginv(j+1),rownum+1)-1;
+      while (copy[j]<64);
+      data[j]=copy[i];
+    }
+}
+
+void row::unshuffle(int rownum)
+{
+  int i,j;
+  char copy[32];
+  rownum=rownum%31;
+  memcpy(copy,data,32);
+  for (i=0;i<31;i++)
+    if (copy[i]>63)
+    {
+      j=i;
+      do
+	j=gmult(ginv(j+1),rownum+1)-1;
+      while (copy[j]<64);
+      data[i]=copy[j];
+    }
+}
+
+void row::scramble(int rownum)
+{
+  whiten(rownum);
+  shuffle(rownum);
+}
+
+void row::unscramble(int rownum)
+{
+  unshuffle(rownum);
+  unwhiten(rownum);
+}
+
+void row::encode()
+{
+  encode_data(data,getunwritten()+getndata(),data);
+}
+
 void codematrix::setsize(int sz)
 {
   int i;
@@ -374,16 +426,21 @@ void codematrix::scramble()
 {
   int i;
   for (i=1;i<rows.size();i++)
-    rows[i].whiten(i);
+    rows[i].scramble(i);
+}
+
+void codematrix::encode()
+{
+  int i;
+  for (i=0;i<rows.size();i++)
+    rows[i].encode();
 }
 
 void codematrix::unscramble()
 {
   int i;
-  debugwhiten=1;
   for (i=1;i<rows.size();i++)
-    rows[i].unwhiten(i);
-  debugwhiten=0;
+    rows[i].unscramble(i);
 }
 
 void codematrix::dump()
