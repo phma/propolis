@@ -324,13 +324,8 @@ void initialize()
  fillinvletters();
  }
 
-int main(int argc,char **argv)
+void testsetdata()
 {
-  initialize();
-  testgalois();
-  testoutline();
-  listsizes();
-  testfindsize();
   thematrix.setsize(7);
   thematrix.setndata(100);
   thematrix.setdata("LATE@ONE@MORNING@IN@THE@MIDDLE@OF@THE@NIGHT@TWO@DEAD@BOYS@GOT@UP@TO@FIGHT@BACK@TO@BACK@THEY@FACED@EACH@OTHER",5);
@@ -341,6 +336,30 @@ int main(int argc,char **argv)
   thematrix.dump();
   thematrix.unscramble();
   thematrix.dump();
+}
+
+void testencode()
+{
+  thematrix.setsize(3);
+  thematrix.setndata(29);
+  thematrix.setdata("@@@@@@@@@@@@@@@@@@@@@@@@@@@@A",5);
+  thematrix.dump();
+  thematrix.encode();
+  thematrix.dump();
+  thematrix.scramble();
+  thematrix.dump();
+  thematrix.unscramble();
+  thematrix.dump();
+}
+
+int main(int argc,char **argv)
+{
+  initialize();
+  testgalois();
+  //testoutline();
+  //listsizes();
+  //testfindsize();
+  testencode();
   //testshuffle();
   //testwhiten();
   return 0;

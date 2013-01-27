@@ -212,6 +212,9 @@ compute_genpoly (int genpoly[][32])
  * The parity bytes are deposited into pBytes[], and the whole message
  * and parity are copied to dest to make a codeword.
  * 
+ * The parity is the least significant part of the codeword; e.g. if
+ * the polynomial for 2 check letters is Ax²+Fx+H and the data are
+ * @@@@@@@@@@@@@@@@@@@@@@@@@@@@A, the check letters are FH.
  */
 
 void
@@ -225,9 +228,9 @@ encode_data (char msg[], int nbytes, char dst[])
   for (i = 0; i < nbytes; i++) {
     dbyte = (msg[i]&31) ^ LFSR[NPAR-1];
     for (j = NPAR-1; j > 0; j--) {
-      LFSR[j] = LFSR[j-1] ^ gmult(genPoly[NPAR-1][j], dbyte);
+      LFSR[j] = LFSR[j-1] ^ gmult(genPoly[NPAR][j], dbyte);
     }
-    LFSR[0] = gmult(genPoly[NPAR-1][0], dbyte);
+    LFSR[0] = gmult(genPoly[NPAR][0], dbyte);
   }
 
   for (i = 0; i < NPAR; i++) 
