@@ -12,7 +12,7 @@
 #define M_SQRT_3_4 0.86602540378443864676372317
 using namespace std;
 
-#define PAGERAD 7
+#define PAGERAD 6
 #define PAGESIZE (PAGERAD*(PAGERAD+1)*3+1)
 #define sqr(a) ((a)*(a))
 

@@ -362,7 +362,6 @@ void testencode()
 
 void testmain()
 {
-  initialize();
   testgalois();
   //testoutline();
   //listsizes();
@@ -435,6 +434,7 @@ int main(int argc,char **argv)
     {"redundancy",required_argument,0,0},
     {"text",      required_argument,0,0}
   };
+  initialize();
   while (1)
   {
     option_index=-1;
