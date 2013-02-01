@@ -42,13 +42,14 @@ private:
   int size,nletters,nrows,ndata,leftover;
 public:
   void setsize(int sz);
+  int getsize();
   void setndata(int nd);
   void setdata(string str,int encoding); // str should consist of letters @ through _; encoding should be 1-31
   void scramble();
   void unscramble();
   void encode();
   void dump();
-  //void arrange(harray<char> &hletters);
+  void arrange(harray<char> &hletters);
 };
 
 extern codematrix thematrix;

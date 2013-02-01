@@ -2,7 +2,9 @@
  */
 
 #include <cstdio>
+#include <iostream>
 #include <stdexcept>
+#include <getopt.h>
 #include "hvec.h"
 #include "letters.h"
 #include "galois.h"
@@ -251,7 +253,7 @@ void testoutline()
  for (i=0;i<contour.size();i++)
      printf("%d,%d ",contour[i].getx(),contour[i].gety());
  putchar('\n');
- psdraw(traceall(size),size,210,297,200,PS_DIAPOTHEM,0);
+ psdraw(traceall(size),size,210,297,200,PS_DIAPOTHEM,0,"outline.ps");
  // 0.07 is about my printer's inkspread
  }
 
@@ -326,6 +328,7 @@ void initialize()
 
 void testsetdata()
 {
+  hvec k;
   thematrix.setsize(7);
   thematrix.setndata(100);
   thematrix.setdata("LATE@ONE@MORNING@IN@THE@MIDDLE@OF@THE@NIGHT@TWO@DEAD@BOYS@GOT@UP@TO@FIGHT@BACK@TO@BACK@THEY@FACED@EACH@OTHER",5);
@@ -334,8 +337,13 @@ void testsetdata()
   thematrix.dump();
   thematrix.scramble();
   thematrix.dump();
+  thematrix.arrange(hletters);
   thematrix.unscramble();
   thematrix.dump();
+  for (k=start(thematrix.getsize());k.cont(thematrix.getsize());k.inc(thematrix.getsize()))
+    drawletter(hletters[k]&31,k);
+  border(thematrix.getsize());
+  psdraw(traceall(thematrix.getsize()),thematrix.getsize(),210,297,200,PS_DIAPOTHEM,0,"lateonemorning.ps");
 }
 
 void testencode()
@@ -352,15 +360,128 @@ void testencode()
   thematrix.dump();
 }
 
-int main(int argc,char **argv)
+void testmain()
 {
   initialize();
   testgalois();
   //testoutline();
   //listsizes();
   //testfindsize();
-  testencode();
+  testsetdata();
   //testshuffle();
   //testwhiten();
+}
+
+double stringtod(string str)
+{
+  char *endptr;
+  double d;
+  d=strtod(str.c_str(),&endptr);
+  if (*endptr)
+    return nan("");
+  else
+    return d;
+}
+
+double parse_redundancy(string red)
+/* Parses a string representing a real number in one of three forms:
+ * 0.45: leading zero is optional
+ * 45%: decimal point is optional
+ * 9/20: decimal points are optional
+ * Returns NaN on error. Any non-numeric character other than '/' or '%' is an error,
+ * as is having more than one '/' or '%'.
+ */
+{
+  size_t firstslash,lastslash,firstpercent,lastpercent,separator;
+  string left,right;
+  double dleft,dright,result;
+  firstslash=red.find_first_of('/');
+  lastslash=red.find_last_of('/');
+  firstpercent=red.find_first_of('%');
+  lastpercent=red.find_last_of('%');
+  if (firstslash!=lastslash || firstpercent!=lastpercent || (firstpercent!=string::npos && firstslash!=string::npos))
+    result=nan("");
+  else
+  {
+    separator=firstpercent+firstslash-string::npos;
+    left=red.substr(0,separator);
+    right=red.substr(separator+1,string::npos);
+    dleft=stringtod(left);
+    dright=stringtod(right);
+    if (firstpercent!=string::npos)
+      if (right.size())
+        result=nan("");
+      else
+	result=dleft/100;
+    else if (firstslash!=string::npos)
+      result=dleft/dright;
+    else
+      result=dleft;
+  }
+  return result;
+}
+
+int main(int argc,char **argv)
+{
+  int testflag=0,option_index=0;;
+  int c;
+  double redundancy=0;
+  int size=0;
+  string text;
+  static option long_options[]=
+  {
+    {"test",      no_argument,      0,0},
+    {"size",      required_argument,0,0},
+    {"redundancy",required_argument,0,0},
+    {"text",      required_argument,0,0}
+  };
+  while (1)
+  {
+    option_index=-1;
+    c=getopt_long(argc,argv,"s:r:t:",long_options,&option_index);
+    if (c<0)
+      break;
+    switch (c)
+    {
+      case 0:
+	printf("option %d\n",option_index);
+	break;
+      case 's':
+	option_index=1;
+	break;
+      case 'r':
+	option_index=2;
+	break;
+      case 't':
+	option_index=3;
+	break;
+      default:
+	printf("c=%d\n",c);
+    }
+    switch (option_index)
+    {
+      case 0:
+	testflag=1;
+	break;
+      case 1:
+	size=atoi(optarg);
+	redundancy=nan("");
+	break;
+      case 2:
+	redundancy=parse_redundancy(optarg);
+	if (redundancy>0)
+	  size=0;
+	else
+	  cerr<<"Could not parse redundancy: "<<optarg<<endl;
+	break;
+      case 3:
+	text=optarg;
+	break;
+    }
+  }
+  if (testflag)
+    testmain();
+  else
+    cout<<"size "<<size<<" redundancy "<<redundancy<<" text "<<text<<endl; 
   return 0;
 }

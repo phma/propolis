@@ -4,6 +4,7 @@
 /*                                                    */
 /******************************************************/
 
+#include <string>
 #include "hvec.h"
 /* PS_XDIM: distance between bits
  * PS_LTR: distance between letters, sqrt(12)*PS_XDIM
@@ -27,6 +28,6 @@ void setcolor(double r,double g,double b);
 void setscale(double minx,double miny,double maxx,double maxy);
 void testpage();
 void psdraw(vector<vector<hvec> > contours,int size,double width,double height,
-	    double scale,int dim,double inkspread);
+	    double scale,int dim,double inkspread,string filename);
 // All dimensions are in millimeters. If height and width
 // are 0, they will be set to the symbol size.

@@ -8,51 +8,58 @@
 #include <cmath>
 #include <cstdlib>
 #include <map>
+#include <complex>
+#define M_SQRT_3_4 0.86602540378443864676372317
 using namespace std;
 
-#define PAGERAD 5
+#define PAGERAD 7
 #define PAGESIZE (PAGERAD*(PAGERAD+1)*3+1)
 #define sqr(a) ((a)*(a))
 
 class hvec
-{private:
- int x,y; // x is the real part, y is at 120°
- static int numx,numy,denx,deny,quox,quoy,remx,remy;
- void divmod(hvec b);
- public:
- hvec()
- {x=y=0;}
- hvec(int xa)
- {x=xa;
-  y=0;
+{
+private:
+  int x,y; // x is the real part, y is at 120°
+  static int numx,numy,denx,deny,quox,quoy,remx,remy;
+  void divmod(hvec b);
+public:
+  hvec()
+  {x=y=0;}
+  hvec(int xa)
+  {x=xa;
+   y=0;
+   }
+  hvec(int xa,int ya)
+  {x=xa;
+   y=ya;
+   }
+  hvec operator+(hvec b);
+  hvec operator-();
+  hvec operator-(hvec b);
+  hvec operator*(hvec b);
+  hvec& operator*=(hvec b);
+  hvec& operator+=(hvec b);
+  hvec operator/(hvec b);
+  hvec operator%(hvec b);
+  bool operator==(hvec b);
+  bool operator!=(hvec b);
+  friend bool operator<(const hvec a,const hvec b); // only for the map
+  unsigned long norm();
+  int pageinx();
+  int letterinx();
+  int getx()
+  {return x;
+   }
+  int gety()
+  {return y;
+   }
+  operator complex<double>()
+  {
+    return complex<double>(x-y/2,y*M_SQRT_3_4);
   }
- hvec(int xa,int ya)
- {x=xa;
-  y=ya;
-  }
- hvec operator+(hvec b);
- hvec operator-();
- hvec operator-(hvec b);
- hvec operator*(hvec b);
- hvec& operator*=(hvec b);
- hvec& operator+=(hvec b);
- hvec operator/(hvec b);
- hvec operator%(hvec b);
- bool operator==(hvec b);
- bool operator!=(hvec b);
- friend bool operator<(const hvec a,const hvec b); // only for the map
- unsigned long norm();
- int pageinx();
- int letterinx();
- int getx()
- {return x;
-  }
- int gety()
- {return y;
-  }
- void inc(int n);
- bool cont(int n);
- };
+  void inc(int n);
+  bool cont(int n);
+};
 
 hvec start(int n);
 extern const hvec LETTERMOD,PAGEMOD;

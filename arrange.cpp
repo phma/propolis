@@ -399,6 +399,11 @@ void codematrix::setsize(int sz)
     rows[i].setunwritten(leftover/nrows+(i<=leftover%nrows));
 }
 
+int codematrix::getsize()
+{
+  return size;
+}
+
 void codematrix::setndata(int nd)
 {
   int i;
@@ -441,6 +446,32 @@ void codematrix::unscramble()
   int i;
   for (i=1;i<rows.size();i++)
     rows[i].unscramble(i);
+}
+
+void codematrix::arrange(harray<char> &hletters)
+{
+  int i;
+  hvec k;
+  if (size>17)
+  {
+    hletters[hvec(-size,0)]    =rows[0].data[24];
+    hletters[hvec(0,0)]        =rows[0].data[25];
+  }
+  else
+  {
+    hletters[hvec(-size,0)]    =rows[0].data[25];
+  }
+  hletters[hvec(0,size)]     =rows[0].data[26];
+  hletters[hvec(size,size)]  =rows[0].data[27];
+  hletters[hvec(size,0)]     =rows[0].data[28];
+  hletters[hvec(0,-size)]    =rows[0].data[29];
+  hletters[hvec(-size,-size)]=rows[0].data[30];
+  for (i=leftover,k=start(size);i<=nrows*31;i++,k.inc(size))
+  {
+    if (k.norm()==sqr(size) || (size>17 && k==0))
+      k.inc(size); // skip the 6 or 7 metadata letters
+    hletters[k]=rows[i%nrows+1].data[i/nrows];
+  }
 }
 
 void codematrix::dump()

@@ -42,7 +42,7 @@ void setcolor(double r,double g,double b)
 {fprintf(psfile,"%f %f %f setrgbcolor\n",r,g,b);
  }
 
-void psopen(char * psfname)
+void psopen(const char * psfname)
 {psfile=fopen(psfname,"w");
  }
 
@@ -213,7 +213,7 @@ void testpage()
  }
 
 void psdraw(vector<vector<hvec> > contours,int size,double width,double height,
-	    double scale,int dim,double inkspread)
+	    double scale,int dim,double inkspread,string filename)
 /* inkspread is the amount by which ink spreads when printing.
  * It is subtracted from the black areas. It is in millimeters.
  * The max is 0.433 X units.
@@ -224,7 +224,7 @@ void psdraw(vector<vector<hvec> > contours,int size,double width,double height,
  vector<arc> arclist;
  arc marc;
  double symwidth,symheight;
- psopen("hexcode.ps");
+ psopen(filename.c_str());
  psprolog();
  startpage();
  switch (dim)
