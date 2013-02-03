@@ -6,6 +6,7 @@ using namespace std;
 
 int ndataletters(int n);
 void listsizes();
+int findsize(int n,double redundancy);
 void testfindsize();
 
 class row

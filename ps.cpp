@@ -43,14 +43,22 @@ void setcolor(double r,double g,double b)
  }
 
 void psopen(const char * psfname)
-{psfile=fopen(psfname,"w");
- }
+{
+  if (strlen(psfname))
+    psfile=fopen(psfname,"w");
+  else
+    psfile=stdout;
+}
 
 void psclose()
-{fclose(psfile);
- printf("scale=%f\n",scale);
- sleep(3);
- }
+{
+  if (psfile!=stdout)
+  {
+    fclose(psfile);
+    printf("scale=%f\n",scale);
+    sleep(3);
+  }
+}
 
 /* PostScript prolog.
  * hmove takes an hvec on the stack (as two numbers) and moves relatively.

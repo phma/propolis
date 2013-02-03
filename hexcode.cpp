@@ -346,6 +346,24 @@ void testsetdata()
   psdraw(traceall(thematrix.getsize()),thematrix.getsize(),210,297,200,PS_DIAPOTHEM,0,"lateonemorning.ps");
 }
 
+void makesymbol(string text,int size,double redundancy)
+{
+  hvec k;
+  if (size<2)
+    size=findsize(text.size(),redundancy);
+  thematrix.setsize(size);
+  thematrix.setndata(text.size());
+  thematrix.setdata(text,5);
+  thematrix.encode();
+  thematrix.scramble();
+  thematrix.arrange(hletters);
+  thematrix.unscramble();
+  for (k=start(thematrix.getsize());k.cont(thematrix.getsize());k.inc(thematrix.getsize()))
+    drawletter(hletters[k]&31,k);
+  border(thematrix.getsize());
+  psdraw(traceall(thematrix.getsize()),thematrix.getsize(),210,297,200,PS_DIAPOTHEM,0,"");
+}
+
 void testencode()
 {
   thematrix.setsize(3);
@@ -420,6 +438,11 @@ double parse_redundancy(string red)
   return result;
 }
 
+void copyleft()
+{
+  cout<<"Hexcode © Pierre Abbat 2011-2013\nReed-Solomon code by Henry Minsky\nGPL v3 licensed\n";
+}
+
 int main(int argc,char **argv)
 {
   int testflag=0,option_index=0;;
@@ -482,6 +505,14 @@ int main(int argc,char **argv)
   if (testflag)
     testmain();
   else
-    cout<<"size "<<size<<" redundancy "<<redundancy<<" text "<<text<<endl; 
+  {
+    if (text.size())
+      makesymbol(text,size,redundancy);
+    else
+    {
+      copyleft();
+      cout<<"size "<<size<<" redundancy "<<redundancy<<" text "<<text<<endl;
+    }
+  }
   return 0;
 }
