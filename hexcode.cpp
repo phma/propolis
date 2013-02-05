@@ -323,12 +323,13 @@ void fac8191()
 void initialize()
 {initialize_ecc();
  fillpn();
- fillinvletters();
+ readinvletters();
  }
 
 void testsetdata()
 {
   hvec k;
+  checkinvletters();
   thematrix.setsize(7);
   thematrix.setndata(100);
   thematrix.setdata("LATE@ONE@MORNING@IN@THE@MIDDLE@OF@THE@NIGHT@TWO@DEAD@BOYS@GOT@UP@TO@FIGHT@BACK@TO@BACK@THEY@FACED@EACH@OTHER",5);
@@ -349,6 +350,7 @@ void testsetdata()
 void makesymbol(string text,int size,double redundancy)
 {
   hvec k;
+  checkinvletters();
   if (size<2)
     size=findsize(text.size(),redundancy);
   thematrix.setsize(size);
@@ -452,10 +454,12 @@ int main(int argc,char **argv)
   string text;
   static option long_options[]=
   {
-    {"test",      no_argument,      0,0},
-    {"size",      required_argument,0,0},
-    {"redundancy",required_argument,0,0},
-    {"text",      required_argument,0,0}
+    {"test",       no_argument,      0,0},
+    {"size",       required_argument,0,0},
+    {"redundancy", required_argument,0,0},
+    {"text",       required_argument,0,0},
+    {"writetables",no_argument,      0,0},
+    {0,            0,                0,0}
   };
   initialize();
   while (1)
@@ -499,6 +503,10 @@ int main(int argc,char **argv)
 	break;
       case 3:
 	text=optarg;
+	break;
+      case 4:
+	fillinvletters();
+	writeinvletters();
 	break;
     }
   }

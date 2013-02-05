@@ -24,8 +24,9 @@
  */
 #include <cstdio>
 #include <cstring>
+#include <fstream>
+#include <stdexcept>
 #include "letters.h"
-#include "hvec.h"
 
 BIT16 letters[38]={
 0x000, // 00000  00 000 0000 000
@@ -88,6 +89,7 @@ BIT16 invletters[4096];
  * 0000000000000000 an undecodable bit pattern that counts as erasure in RS
  */ 
 int debugletters;
+const hvec FRAMEMOD(FRAMERAD+1,2*FRAMERAD+1);
 
 int bitcount(int n)
 {n=((n&0xaaaaaaaa)>>1)+(n&0x55555555);
@@ -170,3 +172,37 @@ void fillinvletters()
 	   }
       }
  }
+
+void readinvletters()
+//TODO: search in /usr/share, or $PREFIX/share
+{
+  fstream infile;
+  infile.open("invletters.dat",ios_base::in|ios_base::binary);
+  if (infile.is_open())
+  {
+    infile.read((char *)invletters,sizeof(invletters));
+    infile.close();
+  }
+}
+
+void writeinvletters()
+{
+  fstream outfile;
+  outfile.open("invletters.dat",ios_base::out|ios_base::binary);
+  if (outfile.is_open())
+  {
+    outfile.write((char *)invletters,sizeof(invletters));
+    outfile.close();
+  }
+}
+
+void checkinvletters()
+{
+  int i;
+  bool valid=true;
+  for (i=0;i<32;i++)
+    if (invletters[letters[i]]!=(i|0x1000))
+      valid=false;
+  if (!valid)
+    throw(runtime_error("invletters.dat is missing or corrupt. Run \"hexcode --writetables\" to create it."));
+}
