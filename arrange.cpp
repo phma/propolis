@@ -404,16 +404,22 @@ int codematrix::getsize()
   return size;
 }
 
-void codematrix::setndata(int nd)
+bool codematrix::setndata(int nd,bool marrel)
 {
   int i;
+  bool canfit=true;
   ndata=nd;
+  if (ndata>((size>17)?30752:961))
+    canfit=false;
+  if (!marrel && (ndata<nrows || ndata>nrows*30-leftover))
+    canfit=false;
   rows[0].data[29]=rows[0].data[30]='`';
   rows[0].data[27]=ndata%31+'A';
   rows[0].data[26]=(ndata/31)%31+'A';
   rows[0].data[25]=(ndata/961)%32+'@';
   for (i=1;i<=nrows;i++)
     rows[i].setndata((ndata+leftover)/nrows+(i<=(ndata+leftover)%nrows)-leftover/nrows-(i<=leftover%nrows));
+  return canfit;
 }
 
 void codematrix::setdata(string str,int encoding)

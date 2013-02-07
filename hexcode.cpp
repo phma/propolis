@@ -12,6 +12,7 @@
 #include "ps.h"
 #include "rs.h"
 #include "arrange.h"
+#include "encoding.h"
 
 hvec a,b,q,r;
 harray<char> hletters,hbits;
@@ -347,15 +348,28 @@ void testsetdata()
   psdraw(traceall(thematrix.getsize()),thematrix.getsize(),210,297,200,PS_DIAPOTHEM,0,"lateonemorning.ps");
 }
 
-void makesymbol(string text,int size,double redundancy)
+void makesymbol(string text,int asize,double redundancy)
 {
   hvec k;
+  int i,size;
+  bool canfit;
+  vector<encoded> encodings;
   checkinvletters();
-  if (size<2)
-    size=findsize(text.size(),redundancy);
-  thematrix.setsize(size);
-  thematrix.setndata(text.size());
-  thematrix.setdata(text,5);
+  encodings=encodedlist(text);
+  for (i=0;i<encodings.size();i++)
+  {
+    if (asize<2)
+      size=findsize(encodings[i].codestring.size(),redundancy);
+    else
+      size=asize;
+    thematrix.setsize(size);
+    canfit=thematrix.setndata(encodings[i].codestring.size());
+    if (canfit)
+      break;
+  }
+  if (!canfit)
+    throw(runtime_error("makesymbol: No encoding fits the specified size"));
+  thematrix.setdata(encodings[i].codestring,encodings[i].encoding);
   thematrix.encode();
   thematrix.scramble();
   thematrix.arrange(hletters);
@@ -380,6 +394,12 @@ void testencode()
   thematrix.dump();
 }
 
+void testencodings()
+{
+  dumpenc(encodedlist("2147483648"));
+  dumpenc(encodedlist("AOEUIDHTNS"));
+}
+
 void testmain()
 {
   testgalois();
@@ -389,6 +409,7 @@ void testmain()
   testsetdata();
   //testshuffle();
   //testwhiten();
+  testencodings();
 }
 
 double stringtod(string str)
@@ -447,7 +468,7 @@ void copyleft()
 
 int main(int argc,char **argv)
 {
-  int testflag=0,option_index=0;;
+  int testflag=0,option_index=0,makedata=0;
   int c;
   double redundancy=0;
   int size=0;
@@ -505,10 +526,14 @@ int main(int argc,char **argv)
 	text=optarg;
 	break;
       case 4:
-	fillinvletters();
-	writeinvletters();
+	makedata=1;
 	break;
     }
+  }
+  if (makedata)
+  {
+    fillinvletters();
+    writeinvletters();
   }
   if (testflag)
     testmain();

@@ -44,7 +44,7 @@ private:
 public:
   void setsize(int sz);
   int getsize();
-  void setndata(int nd);
+  bool setndata(int nd,bool marrel=false); // returns true if successful
   void setdata(string str,int encoding); // str should consist of letters @ through _; encoding should be 1-31
   void scramble();
   void unscramble();
