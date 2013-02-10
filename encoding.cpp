@@ -114,6 +114,12 @@ encoded encodeascii(string text)
   {
     charcode<<=7;
     charcode+=text[0]&0x7f;
+    if (text[0]&0x80)
+    {
+      text=code.codestring="";
+      nbits=-7;
+      charcode=0;
+    }
     text.erase(0,1);
     nbits+=7;
     while (nbits>=5)
@@ -262,5 +268,6 @@ void testenc()
 {
   testenc1("PROPOLIS");
   testenc1("propolis");
+  testenc1("Πρόπολις");
   testenc1("0588235294117647");
 }
