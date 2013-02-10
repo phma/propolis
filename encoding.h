@@ -9,3 +9,4 @@ struct encoded
 
 std::vector<encoded> encodedlist(std::string text);
 void dumpenc(std::vector<encoded> encodedlist);
+void testenc();

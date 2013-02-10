@@ -82,8 +82,9 @@ mult_polys (int dst[], int p1[], int p2[])
 {
   int i, j;
   int tmp1[64];
-	
-  for (i=0; i < (64); i++) dst[i] = 0;
+  // Fixed array overflow bug; each row of genPoly is only 32 numbers, but this was writing 64.
+  // Remember this in case it causes problems in the decoder.
+  for (i=0; i < (32); i++) dst[i] = 0;
 	
   for (i = 0; i < 32; i++) {
     for(j=32; j<(64); j++) tmp1[j]=0;
@@ -95,7 +96,7 @@ mult_polys (int dst[], int p1[], int p2[])
     for (j = 0; j < i; j++) tmp1[j] = 0;
 		
     /* add into partial product */
-    for(j=0; j < (64); j++) dst[j] ^= tmp1[j];
+    for(j=0; j < (32); j++) dst[j] ^= tmp1[j];
   }
 }
 
@@ -200,7 +201,7 @@ compute_genpoly (int genpoly[][32])
   zero_poly(tp);
   tp[1] = 1;
 
-  for (i = 1; i <= 31; i++) {
+  for (i = 1; i <= 30; i++) {
     tp[0]=gexp[i];		/* set up x+a^n */
     mult_polys(genpoly[i], tp, genpoly[i-1]);
   }

@@ -406,10 +406,10 @@ void testmain()
   //testoutline();
   //listsizes();
   //testfindsize();
-  testsetdata();
+  //testsetdata();
   //testshuffle();
   //testwhiten();
-  testencodings();
+  testenc();
 }
 
 double stringtod(string str)

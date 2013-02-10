@@ -24,6 +24,8 @@
  */
 
 using namespace std;
+const string chr24("0123456789 #()*+,-./<=>@");
+const string digits("0123456789");
 
 encoded encode32(string text)
 {
@@ -42,11 +44,14 @@ encoded encode32(string text)
   return code;
 }
 
+string decode32(string text)
+{
+  return text;
+}
+
 encoded encodedecimal(string text)
 {
   encoded code;
-  string chr24("0123456789 #()*+,-./<=>@");
-  string digits("0123456789");
   string dig3,let2;
   size_t charcode;
   while (text.length())
@@ -74,6 +79,33 @@ encoded encodedecimal(string text)
   return code;
 }
 
+string decodedecimal(string text)
+{
+  string plain;
+  int charcode;
+  while (text.length())
+  {
+    if (text.length()==1)
+      plain="";
+    else
+    {
+      charcode=text[0]*32+text[1]-33*'@';
+      if (charcode<1000)
+      {
+	plain+=charcode/100+'0';
+	charcode%=100;
+	plain+=charcode/10+'0';
+	charcode%=10;
+	plain+=charcode+'0';
+      }
+      else
+	plain+=chr24[charcode-1000];
+    }
+    text.erase(0,2);
+  }
+  return plain;
+}
+
 void sort1(vector<encoded> &list)
 {
   int i;
@@ -95,9 +127,44 @@ vector<encoded> encodedlist(string text)
   return list;
 }
 
+string decode(encoded ciphertext)
+{
+  wstring uniplain;
+  string plain;
+  switch (ciphertext.encoding)
+  {
+    case 5:
+      plain=decode32(ciphertext.codestring);
+      break;
+    case 10:
+      plain=decodedecimal(ciphertext.codestring);
+      break;
+    default:
+      cerr<<"unimplemented code "<<ciphertext.encoding<<endl;
+  }
+  return plain;
+}
+
 void dumpenc(vector<encoded> encodedlist)
 {
   int i;
   for (i=0;i<encodedlist.size();i++)
     cout<<encodedlist[i].encoding<<" "<<encodedlist[i].codestring<<endl;
+}
+
+void testenc1(string text)
+{
+  vector<encoded> list;
+  int i;
+  cout<<"Original: "<<text<<endl;
+  list=encodedlist(text);
+  for (i=0;i<list.size();i++)
+    cout<<list[i].encoding<<" "<<list[i].codestring<<" "<<decode(list[i])<<endl;
+}
+
+void testenc()
+{
+  testenc1("PROPOLIS");
+  testenc1("propolis");
+  testenc1("0588235294117647");
 }
