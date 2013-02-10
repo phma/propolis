@@ -106,6 +106,92 @@ string decodedecimal(string text)
   return plain;
 }
 
+encoded encodeascii(string text)
+{
+  encoded code;
+  int charcode=0,nbits=0;
+  while (text.length())
+  {
+    charcode<<=7;
+    charcode+=text[0]&0x7f;
+    text.erase(0,1);
+    nbits+=7;
+    while (nbits>=5)
+    {
+      code.codestring+=(charcode>>(nbits-5))+'@';
+      nbits-=5;
+      charcode&=(1<<nbits)-1;
+    }
+  }
+  if (nbits)
+    code.codestring+=(charcode<<(5-nbits))+'@';
+  code.encoding=7;
+  return code;
+}
+
+string decodeascii(string text)
+{
+  string plain;
+  int charcode=0,nbits=0;
+  while (text.length())
+  {
+    charcode<<=5;
+    charcode+=text[0]&0x1f;
+    text.erase(0,1);
+    nbits+=5;
+    while (nbits>=7)
+    {
+      plain+=charcode>>(nbits-7);
+      nbits-=7;
+      charcode&=(1<<nbits)-1;
+    }
+  }
+  return plain;
+}
+
+encoded encodebyte(string text)
+{
+  encoded code;
+  int charcode=0,nbits=0;
+  while (text.length())
+  {
+    charcode<<=8;
+    charcode+=text[0]&0xff;
+    text.erase(0,1);
+    nbits+=8;
+    while (nbits>=5)
+    {
+      code.codestring+=(charcode>>(nbits-5))+'@';
+      nbits-=5;
+      charcode&=(1<<nbits)-1;
+    }
+  }
+  if (nbits)
+    code.codestring+=(charcode<<(5-nbits))+'@';
+  code.encoding=8;
+  return code;
+}
+
+string decodebyte(string text)
+{
+  string plain;
+  int charcode=0,nbits=0;
+  while (text.length())
+  {
+    charcode<<=5;
+    charcode+=text[0]&0x1f;
+    text.erase(0,1);
+    nbits+=5;
+    while (nbits>=8)
+    {
+      plain+=charcode>>(nbits-8);
+      nbits-=8;
+      charcode&=(1<<nbits)-1;
+    }
+  }
+  return plain;
+}
+
 void sort1(vector<encoded> &list)
 {
   int i;
@@ -122,6 +208,10 @@ vector<encoded> encodedlist(string text)
   vector<encoded> list;
   list.push_back(encode32(text));
   sort1(list);
+  list.push_back(encodeascii(text));
+  sort1(list);
+  list.push_back(encodebyte(text));
+  sort1(list);
   list.push_back(encodedecimal(text));
   sort1(list);
   return list;
@@ -135,6 +225,12 @@ string decode(encoded ciphertext)
   {
     case 5:
       plain=decode32(ciphertext.codestring);
+      break;
+    case 7:
+      plain=decodeascii(ciphertext.codestring);
+      break;
+    case 8:
+      plain=decodebyte(ciphertext.codestring);
       break;
     case 10:
       plain=decodedecimal(ciphertext.codestring);
