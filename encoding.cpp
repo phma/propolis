@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstdio>
+#include <cstring>
 #include "encoding.h"
 
 /*  0 Test pattern, do not decode. Not all test patterns use metadata.
@@ -113,6 +114,66 @@ string toutf8(wstring wide)
     }
   }
   return utf8;
+}
+
+wstring halffront(wstring text)
+{
+  wstring ftext;
+  short lowtable[1024],midtable[2048],hightable[1024];
+  int i,l,m,h,lp,mp,hp;
+  for (i=0;i<1024;i++)
+  {
+    lowtable[i]=midtable[i]=hightable[i]=i;
+    midtable[i+1024]=i+1024;
+  }
+  while (text.length())
+  {
+    l=text[0]&1023;
+    m=(text[0]>>10)&2047;
+    h=(text[0]>>21)&1023;
+    for (lp=0;lowtable[lp]!=l;lp++);
+    for (mp=0;midtable[mp]!=m;mp++);
+    for (hp=0;hightable[hp]!=h;hp++);
+    memmove(lowtable+(lp/2)+1,lowtable+(lp/2),((lp+1)/2)*sizeof(short));
+    lowtable[lp/2]=l;
+    memmove(midtable+(mp/2)+1,midtable+(mp/2),((mp+1)/2)*sizeof(short));
+    midtable[mp/2]=m;
+    memmove(hightable+(hp/2)+1,hightable+(hp/2),((hp+1)/2)*sizeof(short));
+    hightable[hp/2]=h;
+    text.erase(0,1);
+    ftext+=(wchar_t)((hp<<21)|(mp<<10)|lp);
+  }
+  return ftext;
+}
+
+wstring unhalffront(wstring ftext)
+{
+  wstring text;
+  short lowtable[1024],midtable[2048],hightable[1024];
+  int i,l,m,h,lp,mp,hp;
+  for (i=0;i<1024;i++)
+  {
+    lowtable[i]=midtable[i]=hightable[i]=i;
+    midtable[i+1024]=i+1024;
+  }
+  while (ftext.length())
+  {
+    lp=ftext[0]&1023;
+    mp=(ftext[0]>>10)&2047;
+    hp=(ftext[0]>>21)&1023;
+    l=lowtable[lp];
+    m=midtable[mp];
+    h=hightable[hp];
+    memmove(lowtable+(lp/2)+1,lowtable+(lp/2),((lp+1)/2)*sizeof(short));
+    lowtable[lp/2]=l;
+    memmove(midtable+(mp/2)+1,midtable+(mp/2),((mp+1)/2)*sizeof(short));
+    midtable[mp/2]=m;
+    memmove(hightable+(hp/2)+1,hightable+(hp/2),((hp+1)/2)*sizeof(short));
+    hightable[hp/2]=h;
+    ftext.erase(0,1);
+    text+=(wchar_t)((h<<21)|(m<<10)|l);
+  }
+  return text;
 }
 
 encoded encode32(string text)
@@ -363,6 +424,14 @@ void testenc()
     printf("%x ",wide[i]);
   cout<<endl<<toutf8(wide)<<endl;
   wide=fromutf8("慮畫搠楥樠湵潧瘠污楳吠敨敳愠敲渠瑯䌠楨敮敳眠牯獤"); // "naku dei jungo valsi These are not Chinese words" converted from utf-16le
+  for (i=0;i<wide.length();i++)
+    printf("%x ",wide[i]);
+  cout<<endl<<toutf8(wide)<<endl;
+  wide=halffront(wide);
+  for (i=0;i<wide.length();i++)
+    printf("%x ",wide[i]);
+  cout<<endl;
+  wide=unhalffront(wide);
   for (i=0;i<wide.length();i++)
     printf("%x ",wide[i]);
   cout<<endl<<toutf8(wide)<<endl;
