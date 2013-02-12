@@ -53,11 +53,6 @@ wstring fromutf8(string utf8)
         wide.clear();
 	utf8.clear();
 	break;
-      case 1:
-	wch=utf8[0];
-	wide+=wch;
-	utf8.erase(0,1);
-	break;
       default:
 	seq=utf8.substr(0,clen);
 	utf8.erase(0,clen);
