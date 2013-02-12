@@ -16,6 +16,10 @@
  * 11 decimal in different scripts
  * 12-31 unassigned
  * 
+ * A null string is encoded as a single at sign in decimal code; since all strings
+ * of digits in decimal code are encoded as pairs of letters, the decoder returns
+ * a null string.
+ * 
  * The two Unicode packings differ only in the encoding of half-fronted Unicode
  * points, so run the text (in UTF-8) through the half-fronting algorithm
  * to get a wide string before encoding.
@@ -138,6 +142,8 @@ encoded encodedecimal(string text)
   encoded code;
   string dig3,let2;
   size_t charcode;
+  if (text=="")
+    code.codestring="@";
   while (text.length())
   {
     dig3=text.substr(0,3);
@@ -376,6 +382,7 @@ void testenc()
   for (i=0;i<wide.length();i++)
     printf("%x ",wide[i]);
   cout<<endl<<toutf8(wide)<<endl;
+  testenc1("");
   testenc1("PROPOLIS");
   testenc1("propolis");
   testenc1("Πρόπολις");
