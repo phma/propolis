@@ -171,6 +171,77 @@ wstring unhalffront(wstring ftext)
   return text;
 }
 
+encoded encodeu1(wstring text)
+{
+  encoded code;
+  wstring ch2;
+  int n0,n1,i;
+  while (text.length())
+  {
+    ch2=text.substr(0,2);
+    n0=1+(ch2[0]>31)+(ch2[0]>1024)+(ch2[0]>32767)+(ch2[0]>1048575)+(ch2[0]>33554431);
+    n1=1+(ch2[1]>31)+(ch2[1]>1024)+(ch2[1]>32767)+(ch2[1]>1048575)+(ch2[1]>33554431);
+    if (ch2.length()<2)
+      n1=0;
+    code.codestring+=(n0-1)*6+n1+'@';
+    for (i=n0-1;i>=0;i--)
+      code.codestring+=((ch2[0]>>(5*i))&31)+'@';
+    for (i=n1-1;i>=0;i--)
+      code.codestring+=((ch2[1]>>(5*i))&31)+'@';
+    text.erase(0,2);
+    if (n0>5 || n1>5)
+    {
+      code.codestring.clear();
+      text.clear();
+    }
+  }
+  code.encoding=1;
+  return code;
+}
+
+wstring decodeu1(string text)
+{
+  wstring plain;
+  wchar_t wch;
+  int n0,n1,i;
+  bool err=false;
+  while (text.length())
+  {
+    n0=(text[0]&31)/6+1;
+    n1=(text[0]&31)%6;
+    text.erase(0,1);
+    if (n0>5)
+      err=true;
+    for (i=wch=0;i<n0;i++)
+    {
+      if (i==0 && n0>1 && text[0]<='@') // no leading zeros except when writing zero
+	err=true;
+      if (text[0]<'@')
+	err=true;
+      wch=(wch<<5)|(text[0]&31);
+      text.erase(0,1);
+    }
+    plain+=wch;
+    for (i=wch=0;i<n1;i++)
+    {
+      if (i==0 && n1>1 && text[0]<='@') // no leading zeros except when writing zero
+	err=true;
+      if (text[0]<'@')
+	err=true;
+      wch=(wch<<5)|(text[0]&31);
+      text.erase(0,1);
+    }
+    if (n1)
+      plain+=wch;
+    if (err)
+    {
+      text.clear();
+      plain.clear();
+    }
+  }
+  return plain;
+}
+
 encoded encode32(string text)
 {
   encoded code;
@@ -357,7 +428,11 @@ void sort1(vector<encoded> &list)
 
 vector<encoded> encodedlist(string text)
 {
+  wstring unitext;
   vector<encoded> list;
+  unitext=halffront(fromutf8(text));
+  list.push_back(encodeu1(unitext));
+  sort1(list);
   list.push_back(encode32(text));
   sort1(list);
   list.push_back(encodeascii(text));
@@ -375,6 +450,10 @@ string decode(encoded ciphertext)
   string plain;
   switch (ciphertext.encoding)
   {
+    case 1:
+      uniplain=decodeu1(ciphertext.codestring);
+      plain=toutf8(unhalffront(uniplain));
+      break;
     case 5:
       plain=decode32(ciphertext.codestring);
       break;
@@ -418,18 +497,6 @@ void testenc()
   for (i=0;i<wide.length();i++)
     printf("%x ",wide[i]);
   cout<<endl<<toutf8(wide)<<endl;
-  wide=fromutf8("慮畫搠楥樠湵潧瘠污楳吠敨敳愠敲渠瑯䌠楨敮敳眠牯獤"); // "naku dei jungo valsi These are not Chinese words" converted from utf-16le
-  for (i=0;i<wide.length();i++)
-    printf("%x ",wide[i]);
-  cout<<endl<<toutf8(wide)<<endl;
-  wide=halffront(wide);
-  for (i=0;i<wide.length();i++)
-    printf("%x ",wide[i]);
-  cout<<endl;
-  wide=unhalffront(wide);
-  for (i=0;i<wide.length();i++)
-    printf("%x ",wide[i]);
-  cout<<endl<<toutf8(wide)<<endl;
   wide=fromutf8("\300\201"); // overlong encoding
   for (i=0;i<wide.length();i++)
     printf("%x ",wide[i]);
@@ -447,6 +514,7 @@ void testenc()
     printf("%x ",wide[i]);
   cout<<endl<<toutf8(wide)<<endl;
   testenc1("");
+  testenc1("慮畫搠楥樠湵潧瘠污楳吠敨敳愠敲渠瑯䌠楨敮敳眠牯獤"); // "naku dei jungo valsi These are not Chinese words" converted from utf-16le
   testenc1("PROPOLIS");
   testenc1("propolis");
   testenc1("Πρόπολις");
