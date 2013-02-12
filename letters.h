@@ -1,4 +1,4 @@
-#include "hexcode.h"
+#include "propolis.h"
 #include "hvec.h"
 extern BIT16 letters[38];
 /* The extra six letters are for borders.

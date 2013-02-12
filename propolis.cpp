@@ -463,7 +463,7 @@ double parse_redundancy(string red)
 
 void copyleft()
 {
-  cout<<"Hexcode © Pierre Abbat 2011-2013\nReed-Solomon code by Henry Minsky\nGPL v3 licensed\n";
+  cout<<"Propolis © Pierre Abbat 2011-2013\nReed-Solomon code by Henry Minsky\nGPL v3 licensed\n";
 }
 
 int main(int argc,char **argv)

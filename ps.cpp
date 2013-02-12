@@ -211,7 +211,7 @@ void endpage()
  }
 
 void testpage()
-{psopen("hexcode.ps");
+{psopen("propolis.ps");
  psprolog();
  startpage();
  fprintf(psfile,"100 100 newpath 0 1 B -1 0 C -1 -1 D 0 -1 E 1 0 F 1 1 A closepath stroke pop pop\n");
