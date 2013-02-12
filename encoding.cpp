@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cstdio>
 #include "encoding.h"
 
 /*  0 Test pattern, do not decode. Not all test patterns use metadata.
@@ -26,6 +27,89 @@
 using namespace std;
 const string chr24("0123456789 #()*+,-./<=>@");
 const string digits("0123456789");
+
+wstring fromutf8(string utf8)
+{
+  wstring wide;
+  string seq;
+  wchar_t wch;
+  int ch,clen,wclen,i;
+  bool err=false;
+  while (utf8.length())
+  {
+    ch=utf8[0]&0xff;
+    clen=(ch>0x7f)+(ch>0xbf)+(ch>0xdf)+(ch>0xef)+(ch>0xf7)+(ch>0xfb)+(ch>0xfd);
+    if (clen<2)
+      clen=1-clen;
+    switch (clen)
+    {
+      case 0: // sequence starts with a continuation byte
+      case 7: // sequence starts with 0xfe or 0xff
+        wide.clear();
+	utf8.clear();
+	break;
+      case 1:
+	wch=utf8[0];
+	wide+=wch;
+	utf8.erase(0,1);
+	break;
+      default:
+	seq=utf8.substr(0,clen);
+	utf8.erase(0,clen);
+	seq[0]&=(1<<(8-clen))-1;
+	for (wch=i=0;i<clen;i++)
+	{
+	  wch=(wch<<6)|(seq[i]&0x7f);
+	  if (i>0 && (seq[i]&0xc0)!=0x80)
+	    err=true;
+	}
+	wide+=wch;
+    }
+    wclen=(wch>-1)+(wch>0x7f)+(wch>0x7ff)+(wch>0xffff)+(wch>0x1fffff)+(wch>0x3ffffff);
+    if (err || wclen!=clen)
+    {
+      wide.clear();
+      utf8.clear();
+    }
+  }
+  return wide;
+}
+
+string toutf8(wstring wide)
+{
+  string utf8,seq;
+  wchar_t wch;
+  char ch,clen,wclen,i;
+  while (wide.length())
+  {
+    wch=wide[0];
+    wclen=(wch>-1)+(wch>0x7f)+(wch>0x7ff)+(wch>0xffff)+(wch>0x1fffff)+(wch>0x3ffffff);
+    switch (wclen)
+    {
+      case 0: // character is negative
+        wide.clear();
+	utf8.clear();
+	break;
+      case 1:
+	utf8+=wch;
+	wide.erase(0,1);
+	break;
+      default:
+	seq="";
+	wide.erase(0,1);
+	for (i=0;i<wclen;i++)
+	{
+	  ch=(wch&0x3f)+0x80;
+	  if (i==wclen-1)
+	    ch=wch|-(1<<(8-wclen));
+	  seq=ch+seq;
+	  wch>>=6;
+	}
+	utf8+=seq;
+    }
+  }
+  return utf8;
+}
 
 encoded encode32(string text)
 {
@@ -266,6 +350,32 @@ void testenc1(string text)
 
 void testenc()
 {
+  wstring wide;
+  int i;
+  wide=fromutf8("Πρόπολις");
+  for (i=0;i<wide.length();i++)
+    printf("%x ",wide[i]);
+  cout<<endl<<toutf8(wide)<<endl;
+  wide=fromutf8("慮畫搠楥樠湵潧瘠污楳吠敨敳愠敲渠瑯䌠楨敮敳眠牯獤"); // "naku dei jungo valsi These are not Chinese words" converted from utf-16le
+  for (i=0;i<wide.length();i++)
+    printf("%x ",wide[i]);
+  cout<<endl<<toutf8(wide)<<endl;
+  wide=fromutf8("\300\201"); // overlong encoding
+  for (i=0;i<wide.length();i++)
+    printf("%x ",wide[i]);
+  cout<<endl<<toutf8(wide)<<endl;
+  wide=fromutf8("\302\302"); // invalid sequence
+  for (i=0;i<wide.length();i++)
+    printf("%x ",wide[i]);
+  cout<<endl<<toutf8(wide)<<endl;
+  wide=fromutf8("\345\202"); // truncated sequence
+  for (i=0;i<wide.length();i++)
+    printf("%x ",wide[i]);
+  cout<<endl<<toutf8(wide)<<endl;
+  wide=fromutf8("örült az őrült");
+  for (i=0;i<wide.length();i++)
+    printf("%x ",wide[i]);
+  cout<<endl<<toutf8(wide)<<endl;
   testenc1("PROPOLIS");
   testenc1("propolis");
   testenc1("Πρόπολις");
