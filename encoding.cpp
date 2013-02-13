@@ -242,6 +242,50 @@ wstring decodeu1(string text)
   return plain;
 }
 
+encoded encodeu2(wstring text)
+{
+  encoded code;
+  wchar_t wch;
+  int n,i;
+  while (text.length())
+  {
+    wch=text[0];
+    for (n=1;n<8 && (wch>>(4*n));n++);
+    for (i=n-1;i>=0;i--)
+      code.codestring+=((wch>>(4*i))&15)+16*(i==0)+'@';
+    text.erase(0,1);
+  }
+  code.encoding=2;
+  return code;
+}
+
+wstring decodeu2(string text)
+{
+  wstring plain;
+  wchar_t wch=0;
+  int n=0;
+  bool err=false;
+  while (text.length())
+  {
+    wch=(wch<<4)+(text[0]&15);
+    n++;
+    if (text[0]&16)
+    {
+      plain+=wch;
+      wch=n=0;
+    }
+    text.erase(0,1);
+    if (n>8)
+      err=true;
+    if (err)
+    {
+      text.clear();
+      plain.clear();
+    }
+  }
+  return plain;
+}
+
 encoded encode32(string text)
 {
   encoded code;
@@ -433,6 +477,8 @@ vector<encoded> encodedlist(string text)
   unitext=halffront(fromutf8(text));
   list.push_back(encodeu1(unitext));
   sort1(list);
+  list.push_back(encodeu2(unitext));
+  sort1(list);
   list.push_back(encode32(text));
   sort1(list);
   list.push_back(encodeascii(text));
@@ -452,6 +498,10 @@ string decode(encoded ciphertext)
   {
     case 1:
       uniplain=decodeu1(ciphertext.codestring);
+      plain=toutf8(unhalffront(uniplain));
+      break;
+    case 2:
+      uniplain=decodeu2(ciphertext.codestring);
       plain=toutf8(unhalffront(uniplain));
       break;
     case 5:
