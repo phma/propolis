@@ -13,6 +13,7 @@
 #include "rs.h"
 #include "arrange.h"
 #include "encoding.h"
+#include "raster.h"
 
 hvec a,b,q,r;
 harray<char> hletters,hbits;
@@ -324,6 +325,7 @@ void fac8191()
 void initialize()
 {initialize_ecc();
  fillpn();
+ initsubsample();
  readinvletters();
  }
 
