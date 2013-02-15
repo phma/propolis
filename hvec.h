@@ -10,6 +10,7 @@
 #include <map>
 #include <complex>
 #define M_SQRT_3_4 0.86602540378443864676372317
+#define M_SQRT_3 1.73205080756887729352744634
 using namespace std;
 
 #define PAGERAD 6
@@ -33,6 +34,7 @@ public:
   {x=xa;
    y=ya;
    }
+  hvec(complex<double> z);
   hvec operator+(hvec b);
   hvec operator-();
   hvec operator-(hvec b);
@@ -55,7 +57,7 @@ public:
    }
   operator complex<double>()
   {
-    return complex<double>(x-y/2,y*M_SQRT_3_4);
+    return complex<double>(x-y/2.,y*M_SQRT_3_4);
   }
   void inc(int n);
   bool cont(int n);
@@ -88,6 +90,8 @@ template <typename T> void harray<T>::clear()
       i->second=NULL;
       }
  }
+
+void testcomplex();
 
 extern harray<char> hletters,hbits;
 #endif

@@ -2,8 +2,10 @@
  */
 
 #include <cstdio>
+#include <iostream>
 #include <stdexcept>
 #include "hvec.h"
+#include "ps.h"
 
 //Page size for storing arrays subscripted by hvec
 /* A page looks like this:
@@ -28,6 +30,50 @@ int hvec::numx,hvec::numy,hvec::denx=0,hvec::deny=0,hvec::quox,hvec::quoy,hvec::
 unsigned long _norm(int x,int y)
 {return sqr(x)+sqr(y)-x*y;
  }
+
+hvec::hvec(complex<double> z)
+{
+  double norm0,norm1;
+  y=lrint(z.imag()/M_SQRT_3_4);
+  x=lrint(z.real()+y*0.5);
+  norm0=::norm(z-(complex<double> (*this)));
+  y++;
+  norm1=::norm(z-(complex<double> (*this)));
+  if (norm1>norm0)
+    y--;
+  else
+    norm0=norm1;
+  y--,x--;
+  norm1=::norm(z-(complex<double> (*this)));
+  if (norm1>norm0)
+    y++,x++;
+  else
+    norm0=norm1;
+  /*x++;
+  norm1=::norm(z-(complex<double> (*this)));
+  if (norm1>norm0)
+    x--;
+  else
+    norm0=norm1;*/
+  y--;
+  norm1=::norm(z-(complex<double> (*this)));
+  if (norm1>norm0)
+    y++;
+  else
+    norm0=norm1;
+  y++,x++;
+  norm1=::norm(z-(complex<double> (*this)));
+  if (norm1>norm0)
+    y--,x--;
+  else
+    norm0=norm1;
+  /*x--;
+  norm1=::norm(z-(complex<double> (*this)));
+  if (norm1>norm0)
+    x++;
+  else
+    norm0=norm1;*/
+}
 
 void hvec::divmod(hvec b)
 /* Division and remainder, done together to save time
@@ -273,3 +319,28 @@ int hvec::letterinx()
     return 32768;
     }
  }
+
+void testcomplex()
+{
+  complex<double> z=8191,r(0.8,0.6),z2,diff;
+  int i;
+  hvec h;
+  psopen("testcomplex.ps");
+  psprolog();
+  startpage();
+  for (i=0;i<32768;i++)
+  {
+    z*=r;
+    h=z;
+    z2=h;
+    diff=z-z2;
+    //cout<<diff<<endl;
+    plotpoint(diff.real()*100,diff.imag()*100);
+  }
+  h=hvec(0,1);
+  z=h;
+  cout<<z<<endl;
+  endpage();
+  pstrailer();
+  psclose();
+}

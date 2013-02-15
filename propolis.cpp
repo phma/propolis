@@ -402,14 +402,15 @@ void testencodings()
 
 void testmain()
 {
-  testgalois();
+  //testgalois();
   //testoutline();
   //listsizes();
   //testfindsize();
   //testsetdata();
   //testshuffle();
   //testwhiten();
-  testenc();
+  //testenc();
+  testcomplex();
 }
 
 double stringtod(string str)

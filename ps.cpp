@@ -17,7 +17,6 @@
 #include <cstdlib>
 #include <unistd.h>
 #include <cstring>
-#include <vector>
 #include <stdexcept>
 #include "hvec.h"
 #include "ps.h"
@@ -31,7 +30,7 @@ struct arc
 
 FILE *psfile;
 int pages;
-double scale=1; // paper size is in millimeters, but model space is in meters
+double scale=1;
 int orientation;
 
 void widen(double factor)
@@ -209,6 +208,11 @@ void endpage()
 {fputs("grestore showpage\n",psfile);
  fflush(psfile);
  }
+
+void plotpoint(double x,double y)
+{
+  fprintf(psfile,"%.1f %.1f .\n",(x+105)*360/127,(y+148.5)*360/127);
+}
 
 void testpage()
 {psopen("propolis.ps");
