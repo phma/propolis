@@ -3,6 +3,7 @@
 
 #include <cstdio>
 #include <iostream>
+#include <cstring>
 #include <stdexcept>
 #include "hvec.h"
 #include "ps.h"
@@ -23,6 +24,7 @@
  */
 const hvec PAGEMOD(PAGERAD+1,2*PAGERAD+1);
 const hvec LETTERMOD(-2,-4);
+const complex<double> omega(-0.5,M_SQRT_3_4); // this is hvec(0,1)
 int debughvec;
 
 int hvec::numx,hvec::numy,hvec::denx=0,hvec::deny=0,hvec::quox,hvec::quoy,hvec::remx,hvec::remy;
@@ -320,11 +322,55 @@ int hvec::letterinx()
     }
  }
 
+int region(complex<double> z)
+/* z is in the unit hexagon. Returns which of 13 regions z is in.
+ * Examples of a point in each region, and area relative to the hexagon:
+ *  0  0.000, 0.000 0.6802 (9/16)π/(3/2)sqrt(3)
+ *  1  0.000, 0.500 0.0417 1/24
+ *  2  0.433, 0.250 0.0417
+ *  3  0.433,-0.250 0.0417
+ *  4  0.000,-0.500 0.0417
+ *  5 -0.433,-0.250 0.0417
+ *  6 -0.433, 0.250 0.0417
+ *  7  0.466, 0.000 0.0116
+ *  8  0.233,-0.407 0.0116
+ *  9 -0.233,-0.407 0.0116
+ * 10 -0.466, 0.000 0.0116
+ * 11 -0.233, 0.407 0.0116
+ * 12  0.233, 0.407 0.0116
+ * Region 0 is a circle; the rest of the regions are formed by drawing
+ * the common tangents of the circles.
+ */
+{
+  int reg,outside[6],inside[6],i;
+  if (norm(z)<3./16)
+    reg=0;
+  else
+  {
+    for (i=0;i<6;i+=2)
+    {
+      outside[(i+0)%6]=z.imag()>M_SQRT_3_4/2;
+      outside[(i+3)%6]=z.imag()<-M_SQRT_3_4/2;
+      inside[(i+0)%6]=z.real()>0.375;
+      inside[(i+3)%6]=z.real()<-0.375;
+      z*=omega;
+    }
+    for (reg=i=0;i<6 && reg==0;i++)
+      if (outside[i])
+	reg=i+1;
+    for (i=0;i<6 && reg==0;i++)
+      if (inside[i])
+	reg=i+7;
+  }
+  return reg;
+}
+
 void testcomplex()
 {
   complex<double> z=8191,r(0.8,0.6),z2,diff;
-  int i;
+  int i,histo[13],reg;
   hvec h;
+  memset(histo,0,sizeof(histo));
   psopen("testcomplex.ps");
   psprolog();
   startpage();
@@ -335,8 +381,54 @@ void testcomplex()
     z2=h;
     diff=z-z2;
     //cout<<diff<<endl;
+    reg=region(diff);
+    histo[reg]++;
+    switch (reg)
+    {
+      case 0:
+	setcolor(0,0,0);
+	break;
+      case 1:
+	setcolor(0,0,1);
+	break;
+      case 2:
+	setcolor(0,.5,.5);
+	break;
+      case 3:
+	setcolor(0,1,0);
+	break;
+      case 4:
+	setcolor(.5,.5,0);
+	break;
+      case 5:
+	setcolor(1,0,0);
+	break;
+      case 6:
+	setcolor(.5,0,.5);
+	break;
+      case 7:
+	setcolor(1,1,0);
+	break;
+      case 8:
+	setcolor(1,.5,.5);
+	break;
+      case 9:
+	setcolor(1,0,1);
+	break;
+      case 10:
+	setcolor(.5,.5,1);
+	break;
+      case 11:
+	setcolor(0,1,1);
+	break;
+      case 12:
+	setcolor(.5,1,.5);
+	break;
+    }
     plotpoint(diff.real()*100,diff.imag()*100);
   }
+  for (i=0;i<13;i++)
+    printf("%2d %5d\n",i,histo[i]);
   h=hvec(0,1);
   z=h;
   cout<<z<<endl;
