@@ -63,10 +63,10 @@ void rasterdraw(int size,double width,double height,
       scale/=sqrt(12);
       break;
     case DIM_DIAMETER:
-      scale=scale/(8*(size+2));
+      scale=scale/(8*(size+1.5));
       break;
     case DIM_DIAPOTHEM:
-      scale=scale/(sqrt(48)*(size+2));
+      scale=scale/(sqrt(48)*(size+1.5));
       break;
     case DIM_XDIM:
       break;
@@ -75,8 +75,8 @@ void rasterdraw(int size,double width,double height,
     }
   if (scale<=0)
     throw(range_error("rasterdraw: scale must be positive"));
-  symwidth=scale*(sqrt(48)*(size+2));
-  symheight=scale*(8*(size+2));
+  symwidth=scale*(sqrt(48)*(size+1.5));
+  symheight=scale*(8*(size+1.5));
   if (width<0 || height<0)
     throw(range_error("psdraw: paper size must be nonnegative"));
   if (!height)
@@ -89,9 +89,12 @@ void rasterdraw(int size,double width,double height,
   for (i=0;i<pheight;i++)
     for (j=0;j<pwidth;j++)
     {
-      z=complex<double>(j-pwidth/2.,i-pheight/2.)/scale+offset;
-      pixel=255-255*(hbits[z]&1);
-      rfile<<pixel;
+      for (k=pixel=0;k<85;k++)
+      {
+        z=(complex<double>(j-pwidth/2.,pheight/2.-i)+subsample85[k])/scale+offset;
+        pixel+=hbits[z]&1;
+      }
+      rfile<<(char)(255-3*pixel);
     }
   rclose();
 }

@@ -404,7 +404,7 @@ void testencodings()
 
 void testraster()
 {
-  int size=16;
+  int size=3;
   pnbitpattern(size);
   border(size);
   rasterdraw(size,0,0,15,DIM_XDIM,FMT_PNM,"8191.pgm");
