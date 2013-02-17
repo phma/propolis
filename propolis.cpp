@@ -255,7 +255,7 @@ void testoutline()
  for (i=0;i<contour.size();i++)
      printf("%d,%d ",contour[i].getx(),contour[i].gety());
  putchar('\n');
- psdraw(traceall(size),size,210,297,200,PS_DIAPOTHEM,0,"outline.ps");
+ psdraw(traceall(size),size,210,297,200,DIM_DIAPOTHEM,0,"outline.ps");
  // 0.07 is about my printer's inkspread
  }
 
@@ -347,7 +347,7 @@ void testsetdata()
   for (k=start(thematrix.getsize());k.cont(thematrix.getsize());k.inc(thematrix.getsize()))
     drawletter(hletters[k]&31,k);
   border(thematrix.getsize());
-  psdraw(traceall(thematrix.getsize()),thematrix.getsize(),210,297,200,PS_DIAPOTHEM,0,"lateonemorning.ps");
+  psdraw(traceall(thematrix.getsize()),thematrix.getsize(),210,297,200,DIM_DIAPOTHEM,0,"lateonemorning.ps");
 }
 
 void makesymbol(string text,int asize,double redundancy)
@@ -379,7 +379,7 @@ void makesymbol(string text,int asize,double redundancy)
   for (k=start(thematrix.getsize());k.cont(thematrix.getsize());k.inc(thematrix.getsize()))
     drawletter(hletters[k]&31,k);
   border(thematrix.getsize());
-  psdraw(traceall(thematrix.getsize()),thematrix.getsize(),210,297,200,PS_DIAPOTHEM,0,"");
+  psdraw(traceall(thematrix.getsize()),thematrix.getsize(),210,297,200,DIM_DIAPOTHEM,0,"");
 }
 
 void testencode()
@@ -402,6 +402,14 @@ void testencodings()
   dumpenc(encodedlist("AOEUIDHTNS"));
 }
 
+void testraster()
+{
+  int size=16;
+  pnbitpattern(size);
+  border(size);
+  rasterdraw(size,0,0,15,DIM_XDIM,FMT_PNM,"8191.pgm");
+}
+
 void testmain()
 {
   //testgalois();
@@ -413,6 +421,7 @@ void testmain()
   //testwhiten();
   //testenc();
   testcomplex();
+  testraster();
 }
 
 double stringtod(string str)

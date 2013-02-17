@@ -240,16 +240,16 @@ void psdraw(vector<vector<hvec> > contours,int size,double width,double height,
  psprolog();
  startpage();
  switch (dim)
-    {case PS_LTR:
+    {case DIM_LTR:
      scale/=sqrt(12);
      break;
-     case PS_DIAMETER:
+     case DIM_DIAMETER:
      scale=scale/(8*(size+2));
      break;
-     case PS_DIAPOTHEM:
+     case DIM_DIAPOTHEM:
      scale=scale/(sqrt(48)*(size+2));
      break;
-     case PS_XDIM:
+     case DIM_XDIM:
      break;
      default:
      throw(invalid_argument("psdraw: unknown dimension"));

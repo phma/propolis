@@ -7,15 +7,7 @@
 #include <string>
 #include <vector>
 #include "hvec.h"
-/* PS_XDIM: distance between bits
- * PS_LTR: distance between letters, sqrt(12)*PS_XDIM
- * PS_DIAMETER: diameter of the hexagon that encloses the symbol
- * PS_DIAPOTHEM: twice the apothem, sqrt(3/4)*PS_DIAMETER
- */
-#define PS_XDIM 0
-#define PS_LTR 1
-#define PS_DIAPOTHEM 2
-#define PS_DIAMETER 3
+#include "outformat.h"
 extern FILE *psfile;
 extern int orientation;
 void psprolog();
