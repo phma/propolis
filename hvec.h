@@ -91,6 +91,7 @@ template <typename T> void harray<T>::clear()
       }
  }
 
+int region(complex<double> z);
 void testcomplex();
 
 extern harray<char> hletters,hbits;
