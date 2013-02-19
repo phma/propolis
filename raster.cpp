@@ -72,6 +72,8 @@ locreg locregion(complex<double> z)
 
 void ropen(string fname)
 {
+  if (fname=="")
+    fname="/dev/stdout";
   rfile.open(fname.c_str(),ios_base::out|ios_base::binary);
 }
 

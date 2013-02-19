@@ -16,4 +16,9 @@
 #define DIM_DIAPOTHEM 2
 #define DIM_DIAMETER 3
 
+#define FMT_PS 0
+#define FMT_PNM 1
+#define FMT_PNG 2
+#define FMT_JPEG 3
+
 #endif

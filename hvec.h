@@ -10,6 +10,7 @@
 #include <map>
 #include <complex>
 #define M_SQRT_3_4 0.86602540378443864676372317
+// The continued fraction expansion is 0;1,6,2,6,2,6,2,...
 #define M_SQRT_3 1.73205080756887729352744634
 using namespace std;
 

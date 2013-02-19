@@ -350,7 +350,7 @@ void testsetdata()
   psdraw(traceall(thematrix.getsize()),thematrix.getsize(),210,297,200,DIM_DIAPOTHEM,0,"lateonemorning.ps");
 }
 
-void makesymbol(string text,int asize,double redundancy)
+void makesymbol(string text,int asize,double redundancy,int format)
 {
   hvec k;
   int i,size;
@@ -379,7 +379,17 @@ void makesymbol(string text,int asize,double redundancy)
   for (k=start(thematrix.getsize());k.cont(thematrix.getsize());k.inc(thematrix.getsize()))
     drawletter(hletters[k]&31,k);
   border(thematrix.getsize());
-  psdraw(traceall(thematrix.getsize()),thematrix.getsize(),210,297,200,DIM_DIAPOTHEM,0,"");
+  switch (format)
+  {
+    case FMT_PS:
+      psdraw(traceall(thematrix.getsize()),thematrix.getsize(),210,297,200,DIM_DIAPOTHEM,0,"");
+      break;
+    case FMT_PNM:
+      rasterdraw(thematrix.getsize(),0,0,600,DIM_DIAPOTHEM,format,"");
+      break;
+    default:
+      cerr<<"Format should be pgm or ps"<<endl;
+  }
 }
 
 void testencode()
@@ -412,7 +422,7 @@ void testraster()
 
 void testmain()
 {
-  //testgalois();
+  testgalois();
   //testoutline();
   //listsizes();
   //testfindsize();
@@ -420,8 +430,8 @@ void testmain()
   //testshuffle();
   //testwhiten();
   //testenc();
-  testcomplex();
-  testraster();
+  //testcomplex();
+  //testraster();
 }
 
 double stringtod(string str)
@@ -478,6 +488,17 @@ void copyleft()
   cout<<"Propolis © Pierre Abbat 2011-2013\nReed-Solomon code by Henry Minsky\nGPL v3 licensed\n";
 }
 
+int formatnum(const char *optarg)
+{
+  string optstr(optarg);
+  if (optstr=="pnm" || optstr=="pgm")
+    return FMT_PNM;
+  if (optstr=="ps")
+    return FMT_PS;
+  cerr<<"Unrecognized output format"<<endl;
+  return -1;
+}
+
 int main(int argc,char **argv)
 {
   int testflag=0,option_index=0,makedata=0;
@@ -485,6 +506,7 @@ int main(int argc,char **argv)
   double redundancy=0;
   int size=0;
   string text;
+  int format=FMT_PS;
   static option long_options[]=
   {
     {"test",       no_argument,      0,0},
@@ -492,13 +514,14 @@ int main(int argc,char **argv)
     {"redundancy", required_argument,0,0},
     {"text",       required_argument,0,0},
     {"writetables",no_argument,      0,0},
+    {"format",     required_argument,0,0},
     {0,            0,                0,0}
   };
   initialize();
   while (1)
   {
     option_index=-1;
-    c=getopt_long(argc,argv,"s:r:t:",long_options,&option_index);
+    c=getopt_long(argc,argv,"s:r:t:f:",long_options,&option_index);
     if (c<0)
       break;
     switch (c)
@@ -514,6 +537,9 @@ int main(int argc,char **argv)
 	break;
       case 't':
 	option_index=3;
+	break;
+      case 'f':
+	option_index=5;
 	break;
       default:
 	printf("c=%d\n",c);
@@ -540,6 +566,9 @@ int main(int argc,char **argv)
       case 4:
 	makedata=1;
 	break;
+      case 5:
+	format=formatnum(optarg);
+	break;
     }
   }
   if (makedata)
@@ -552,7 +581,7 @@ int main(int argc,char **argv)
   else
   {
     if (text.size())
-      makesymbol(text,size,redundancy);
+      makesymbol(text,size,redundancy,format);
     else
     {
       copyleft();

@@ -165,7 +165,7 @@ void fillinvletters()
                {hletters[hvec(0,1)]=hletters[hvec(0,-1)]=k;
                 for (l=0;l<32;l++)
                     {hletters[hvec(1,1)]=hletters[hvec(-1,-1)]=l;
-                     for (disp=start(8);disp.cont(8);disp.inc(8))
+                     for (disp=start(FRAMERAD);disp.cont(FRAMERAD);disp.inc(FRAMERAD))
                          ;//TODO: read the displaced letter and put it into the table
 		     }
 		}
