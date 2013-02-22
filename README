@@ -1,3 +1,6 @@
-To compile, make a directory ~/build/hexcode, cd to it, and type
-cmake ~/hexcode
-where ~/hexcode is the directory where you have untarred it. Then type "make".
+Propolis is a hexagonal matrix code which may achieve higher density than square
+bit codes such as QR code.
+
+To compile, make a directory ~/build/propolis, cd to it, and type
+cmake ~/propolis
+where ~/propolis is the directory where you have untarred it. Then type "make".

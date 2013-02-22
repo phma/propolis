@@ -204,5 +204,5 @@ void checkinvletters()
     if (invletters[letters[i]]!=(i|0x1000))
       valid=false;
   if (!valid)
-    throw(runtime_error("invletters.dat is missing or corrupt. Run \"hexcode --writetables\" to create it."));
+    throw(runtime_error("invletters.dat is missing or corrupt. Run \"propolis --writetables\" to create it."));
 }

@@ -2,7 +2,9 @@
  */
 
 #include <cstdio>
+#include <fstream>
 #include <iostream>
+#include <sstream>
 #include <stdexcept>
 #include <getopt.h>
 #include "hvec.h"
@@ -350,7 +352,7 @@ void testsetdata()
   psdraw(traceall(thematrix.getsize()),thematrix.getsize(),210,297,200,DIM_DIAPOTHEM,0,"lateonemorning.ps");
 }
 
-void makesymbol(string text,int asize,double redundancy,int format)
+void makesymbol(string text,int asize,double redundancy,int format,string outfilename)
 {
   hvec k;
   int i,size;
@@ -382,13 +384,19 @@ void makesymbol(string text,int asize,double redundancy,int format)
   switch (format)
   {
     case FMT_PS:
-      psdraw(traceall(thematrix.getsize()),thematrix.getsize(),210,297,200,DIM_DIAPOTHEM,0,"");
+      psdraw(traceall(thematrix.getsize()),thematrix.getsize(),210,297,200,DIM_DIAPOTHEM,0,outfilename);
       break;
     case FMT_PNM:
-      rasterdraw(thematrix.getsize(),0,0,600,DIM_DIAPOTHEM,format,"");
+      rasterdraw(thematrix.getsize(),0,0,600,DIM_DIAPOTHEM,format,outfilename);
+      break;
+    case FMT_INFO:
+      cout<<"Redundancy: "<<redundancy<<endl;
+      cout<<"Size: "<<size<<endl;
+      cout<<"Encoding: "<<encodings[i].encoding<<endl;
+      cout<<"Codetext: "<<encodings[i].codestring<<endl;
       break;
     default:
-      cerr<<"Format should be pgm or ps"<<endl;
+      cerr<<"Format should be pgm, ps, or info"<<endl;
   }
 }
 
@@ -495,6 +503,8 @@ int formatnum(const char *optarg)
     return FMT_PNM;
   if (optstr=="ps")
     return FMT_PS;
+  if (optstr=="info")
+    return FMT_INFO;
   cerr<<"Unrecognized output format"<<endl;
   return -1;
 }
@@ -505,7 +515,9 @@ int main(int argc,char **argv)
   int c;
   double redundancy=0;
   int size=0;
-  string text;
+  string text,infilename,outfilename;
+  stringbuf filebuf;
+  fstream infile;
   int format=FMT_PS;
   static option long_options[]=
   {
@@ -515,13 +527,15 @@ int main(int argc,char **argv)
     {"text",       required_argument,0,0},
     {"writetables",no_argument,      0,0},
     {"format",     required_argument,0,0},
+    {"input",      required_argument,0,0},
+    {"output",     required_argument,0,0},
     {0,            0,                0,0}
   };
   initialize();
   while (1)
   {
     option_index=-1;
-    c=getopt_long(argc,argv,"s:r:t:f:",long_options,&option_index);
+    c=getopt_long(argc,argv,"s:r:t:f:i:o:",long_options,&option_index);
     if (c<0)
       break;
     switch (c)
@@ -540,6 +554,12 @@ int main(int argc,char **argv)
 	break;
       case 'f':
 	option_index=5;
+	break;
+      case 'i':
+	option_index=6;
+	break;
+      case 'o':
+	option_index=7;
 	break;
       default:
 	printf("c=%d\n",c);
@@ -569,6 +589,12 @@ int main(int argc,char **argv)
       case 5:
 	format=formatnum(optarg);
 	break;
+      case 6:
+	infilename=optarg;
+	break;
+      case 7:
+	outfilename=optarg;
+	break;
     }
   }
   if (makedata)
@@ -581,7 +607,16 @@ int main(int argc,char **argv)
   else
   {
     if (text.size())
-      makesymbol(text,size,redundancy,format);
+    {
+      makesymbol(text,size,redundancy,format,outfilename);
+    }
+    else if (infilename.size())
+    {
+      infile.open(infilename.c_str(),ios_base::in|ios_base::binary);
+      infile>>&filebuf;
+      makesymbol(filebuf.str(),size,redundancy,format,outfilename);
+      infile.close();
+    }
     else
     {
       copyleft();
