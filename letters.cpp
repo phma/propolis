@@ -26,7 +26,9 @@
 #include <cstring>
 #include <fstream>
 #include <stdexcept>
+#include <vector>
 #include "letters.h"
+#include "raster.h"
 
 BIT16 letters[38]={
 0x000, // 00000  00 000 0000 000
@@ -87,9 +89,22 @@ BIT16 invletters[4096];
  * 01100000dddddddd an undecodable bit pattern indicating a framing error
  *                  dddddddd is in the size-8 hexagon, 0 through 216
  * 0000000000000000 an undecodable bit pattern that counts as erasure in RS
- */ 
+ */
 int debugletters;
 const hvec FRAMEMOD(FRAMERAD+1,2*FRAMERAD+1);
+const hvec twelve[]=
+{hvec( 0,-2),
+ hvec(-1,-2),
+ hvec(-2,-2),
+ hvec( 1,-1),
+ hvec( 0,-1),
+ hvec(-1,-1),
+ hvec(-2,-1),
+ hvec( 1, 0),
+ hvec( 0, 0),
+ hvec(-1, 0),
+ hvec( 1, 1),
+ hvec( 0, 1)};
 
 int bitcount(int n)
 {n=((n&0xaaaaaaaa)>>1)+(n&0x55555555);
@@ -131,47 +146,87 @@ void degauss()
      printf("%2d %03x\n",j,basis[j]);
  }
 
-void fillinvletters()
-{int i,j,k,l,inv[4096],il,in;
- memset(inv,0,sizeof(inv));
- hvec disp;
- for (i=0;i<32;i++)
-     {inv[letters[i]]=i+32;
-      for (j=0;j<12;j++)
-          {il=letters[i]^(1<<j);
-           in=i+64;
-           while (in&inv[il])
-              in<<=8;
-	   inv[il]|=in;
-	   }
-      }
- for (i=0;i<4096;i++)
-     {if (inv[i]&0x400000)
-         invletters[i]=((inv[i]&0x1f0000)>>6)|((inv[i]&0x1f00)>>3)|(inv[i]&0x1f)|0x8000;
-      else if (inv[i]&0x4000)
-        invletters[i]=((inv[i]&0x1f00)>>3)|(inv[i]&0x1f)|0x4000;
-      else if (inv[i]&0x40)
-        invletters[i]=(inv[i]&0x1f)|0x2000;
-      else if (inv[i]&0x20)
-        invletters[i]=(inv[i]&0x1f)|0x1000;
-      if (invletters[i] && debugletters)
-         printf("%03x: %d%c%c%c\n",i,(invletters[i]>>15)&1,((invletters[i]>>10)&31)+64,((invletters[i]>>5)&31)+64,((invletters[i]>>0)&31)+64);
-      }
- for (i=0;i<32;i++)
-     {hletters[0]=i;
-      for (j=0;j<32;j++)
-          {hletters[1]=hletters[-1]=j;
-           for (k=0;k<32;k++)
-               {hletters[hvec(0,1)]=hletters[hvec(0,-1)]=k;
-                for (l=0;l<32;l++)
-                    {hletters[hvec(1,1)]=hletters[hvec(-1,-1)]=l;
-                     for (disp=start(FRAMERAD);disp.cont(FRAMERAD);disp.inc(FRAMERAD))
-                         ;//TODO: read the displaced letter and put it into the table
-		     }
-		}
-	   }
-      }
+void drawletter(int letter,hvec place)
+// letter is from 0x00 to 0x25; place is any hvec
+{letter=letters[letter];
+ place*=LETTERMOD;
+ hbits[place+hvec( 0,-2)]=(letter>> 0)&1;
+ hbits[place+hvec(-1,-2)]=(letter>> 1)&1;
+ hbits[place+hvec(-2,-2)]=(letter>> 2)&1;
+ hbits[place+hvec( 1,-1)]=(letter>> 3)&1;
+ hbits[place+hvec( 0,-1)]=(letter>> 4)&1;
+ hbits[place+hvec(-1,-1)]=(letter>> 5)&1;
+ hbits[place+hvec(-2,-1)]=(letter>> 6)&1;
+ hbits[place+hvec( 1, 0)]=(letter>> 7)&1;
+ hbits[place+hvec( 0, 0)]=(letter>> 8)&1;
+ hbits[place+hvec(-1, 0)]=(letter>> 9)&1;
+ hbits[place+hvec( 1, 1)]=(letter>>10)&1;
+ hbits[place+hvec( 0, 1)]=(letter>>11)&1;
  }
+
+void fillinvletters()
+{
+  int i,j,k,l,m,inv[4096],il,in;
+  vector<hvec> invlist[4096];
+  hvec disp;
+  complex<double> frame;
+  memset(inv,0,sizeof(inv));
+  for (i=0;i<32;i++)
+  {
+    inv[letters[i]]=i+32;
+    for (j=0;j<12;j++)
+    {
+      il=letters[i]^(1<<j);
+      in=i+64;
+      while (in&inv[il])
+        in<<=8;
+      inv[il]|=in;
+    }
+  }
+  for (i=0;i<4096;i++)
+  {
+    if (inv[i]&0x400000)
+      invletters[i]=((inv[i]&0x1f0000)>>6)|((inv[i]&0x1f00)>>3)|(inv[i]&0x1f)|0x8000;
+    else if (inv[i]&0x4000)
+      invletters[i]=((inv[i]&0x1f00)>>3)|(inv[i]&0x1f)|0x4000;
+    else if (inv[i]&0x40)
+      invletters[i]=(inv[i]&0x1f)|0x2000;
+    else if (inv[i]&0x20)
+      invletters[i]=(inv[i]&0x1f)|0x1000;
+    if (invletters[i] && debugletters)
+       printf("%03x: %d%c%c%c\n",i,(invletters[i]>>15)&1,((invletters[i]>>10)&31)+64,((invletters[i]>>5)&31)+64,((invletters[i]>>0)&31)+64);
+  }
+  for (i=0;i<32;i++)
+  {
+    hletters[0]=i;
+    for (j=0;j<32;j++)
+    {
+      hletters[1]=hletters[-1]=j;
+      printf("%c%c",i+'@',j+'@');
+      fflush(stdout);
+      for (k=0;k<32;k++)
+      {
+        hletters[hvec(0,1)]=hletters[hvec(0,-1)]=k;
+        for (l=0;l<32;l++)
+	{
+	  hletters[hvec(1,1)]=hletters[hvec(-1,-1)]=l;
+          for (disp=start(1);disp.cont(1);disp.inc(1))
+            drawletter(hletters[disp],disp);
+          for (disp=start(FRAMERAD);disp.cont(FRAMERAD);disp.inc(FRAMERAD))
+	  {
+	    il=0;
+	    frame=(complex<double>)(disp*LETTERMOD)/(complex<double>)FRAMEMOD;
+	    for (m=0;m<12;m++)
+	      il|=filletbit((complex<double>)twelve[m]+frame)<<m;
+	    //invlist[il].push_back(disp);
+	  }
+	}
+      }
+      printf("\b\b");
+      //printf("0x098 has %d framereads\n",invlist[0x098].size());
+    }
+  }
+}
 
 void readinvletters()
 //TODO: search in /usr/share, or $PREFIX/share

@@ -19,37 +19,6 @@
 
 hvec a,b,q,r;
 harray<char> hletters,hbits;
-hvec twelve[]=
-{hvec( 0,-2),
- hvec(-1,-2),
- hvec(-2,-2),
- hvec( 1,-1),
- hvec( 0,-1),
- hvec(-1,-1),
- hvec(-2,-1),
- hvec( 1, 0),
- hvec( 0, 0),
- hvec(-1, 0),
- hvec( 1, 1),
- hvec( 0, 1)};
-
-void drawletter(int letter,hvec place)
-// letter is from 0x00 to 0x25; place is any hvec
-{letter=letters[letter];
- place*=LETTERMOD;
- hbits[place+hvec( 0,-2)]=(letter>> 0)&1;
- hbits[place+hvec(-1,-2)]=(letter>> 1)&1;
- hbits[place+hvec(-2,-2)]=(letter>> 2)&1;
- hbits[place+hvec( 1,-1)]=(letter>> 3)&1;
- hbits[place+hvec( 0,-1)]=(letter>> 4)&1;
- hbits[place+hvec(-1,-1)]=(letter>> 5)&1;
- hbits[place+hvec(-2,-1)]=(letter>> 6)&1;
- hbits[place+hvec( 1, 0)]=(letter>> 7)&1;
- hbits[place+hvec( 0, 0)]=(letter>> 8)&1;
- hbits[place+hvec(-1, 0)]=(letter>> 9)&1;
- hbits[place+hvec( 1, 1)]=(letter>>10)&1;
- hbits[place+hvec( 0, 1)]=(letter>>11)&1;
- }
 
 void border(int n)
 // Draws a border for a symbol of size n. The border is one bigger.
@@ -430,9 +399,9 @@ void testraster()
 
 void testmain()
 {
-  testgalois();
+  //testgalois();
   //testoutline();
-  listsizes();
+  //listsizes();
   //testfindsize();
   //testsetdata();
   //testshuffle();
@@ -440,6 +409,7 @@ void testmain()
   //testenc();
   //testcomplex();
   //testraster();
+  fillinvletters();
 }
 
 double stringtod(string str)

@@ -56,7 +56,7 @@ public:
   int gety()
   {return y;
    }
-  operator complex<double>()
+  operator complex<double>() const
   {
     return complex<double>(x-y/2.,y*M_SQRT_3_4);
   }
