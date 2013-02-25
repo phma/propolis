@@ -409,7 +409,7 @@ void testmain()
   //testenc();
   //testcomplex();
   //testraster();
-  fillinvletters();
+  testsixvec();
 }
 
 double stringtod(string str)

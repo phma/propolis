@@ -16,6 +16,8 @@ extern const hvec twelve[];
 #define FRAMERAD 8
 #define FRAMESIZE (FRAMERAD*(FRAMERAD+1)*3+1)
 // Possibly FRAMERAD should be 18 (almost 1 frame in each tiniest region) or 25 (1951, a little less than 2048).
+#define SLIVER_CENTROID 0.447545911917060126823164181486
+// See calculation in hvec.cpp
 
 void degauss();
 void drawletter(int letter,hvec place);

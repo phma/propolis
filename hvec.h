@@ -17,6 +17,7 @@ using namespace std;
 #define PAGERAD 6
 #define PAGESIZE (PAGERAD*(PAGERAD+1)*3+1)
 #define sqr(a) ((a)*(a))
+extern const complex<double> omega;
 
 class hvec
 {
@@ -68,6 +69,20 @@ hvec start(int n);
 extern const hvec LETTERMOD,PAGEMOD;
 extern int debughvec;
 
+class sixvec
+{
+private:
+  double v[6];
+public:
+  sixvec();
+  sixvec(complex<double> z);
+  sixvec operator+(const sixvec b);
+  sixvec operator-(const sixvec b);
+  sixvec operator*(const double b);
+  sixvec operator/(const double b);
+  double norm();
+};
+
 template <typename T> class harray
 {map<hvec,T *> index;
  public:
@@ -94,6 +109,7 @@ template <typename T> void harray<T>::clear()
 
 int region(complex<double> z);
 void testcomplex();
+void testsixvec();
 
 extern harray<char> hletters,hbits;
 #endif

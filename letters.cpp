@@ -105,6 +105,19 @@ const hvec twelve[]=
  hvec(-1, 0),
  hvec( 1, 1),
  hvec( 0, 1)};
+const complex<double> ninedisp[]=
+{
+  0,
+  complex<double>(0,M_SQRT_3_4),
+  complex<double>(0,-M_SQRT_3_4),
+  SLIVER_CENTROID,
+  -SLIVER_CENTROID/omega,
+  SLIVER_CENTROID*omega,
+  -SLIVER_CENTROID,
+  SLIVER_CENTROID/omega,
+  -SLIVER_CENTROID*omega
+};
+const short int weights[]={1812,333,333,31,31,31,31,31,31};
 
 int bitcount(int n)
 {n=((n&0xaaaaaaaa)>>1)+(n&0x55555555);
@@ -166,11 +179,14 @@ void drawletter(int letter,hvec place)
 
 void fillinvletters()
 {
-  int i,j,k,l,m,inv[4096],il,in;
+  int i,j,k,l,m,n,t,inv[4096],il,in;
   vector<hvec> invlist[4096];
   hvec disp;
   complex<double> frame;
   memset(inv,0,sizeof(inv));
+  /* Fill the inverse letter table with all patterns that are
+   * either letters or one bit different from letters.
+   */
   for (i=0;i<32;i++)
   {
     inv[letters[i]]=i+32;
@@ -196,6 +212,47 @@ void fillinvletters()
     if (invletters[i] && debugletters)
        printf("%03x: %d%c%c%c\n",i,(invletters[i]>>15)&1,((invletters[i]>>10)&31)+64,((invletters[i]>>5)&31)+64,((invletters[i]>>0)&31)+64);
   }
+  /* Find all possible reads caused by framing errors. Fill a size-1 array
+   * with four letters as follows:
+   *         x x
+   *        x x x
+   *   s s x x x x # #
+   *  s s s x x x # # #
+   * s s s s * * # # # #
+   *  s s s * + * # # #
+   *   # # * * * * s s
+   *  # # # * * * s s s
+   * # # # # x x s s s s
+   *  # # # x x x s s s
+   *       x x x x
+   *        x x x
+   * where + is the origin. Then copy bits of the central letter to the retuse corners:
+   *         x x
+   *      * x x x *
+   *   s s x x x x # #
+   *  s s s x x x # # #
+   * s s s s * * # # # #
+   *  s s s * + * # # #
+   * * # # * * * * s s *
+   *  # # # * * * s s s
+   * # # # # x x s s s s
+   *  # # # x x x s s s
+   *     * x x x x *
+   *        x x x
+   * Then read it with an offset in each of 108 regions. The area covered by the reads is this:
+   *         x x
+   *      * x x x *
+   *   s s o o o o # #
+   *  s s o o o o o # #
+   * s s o o o o o o # #
+   *  s o o o + o o o #
+   * * # o o o o o o s *
+   *  # # o o o o o s s
+   * # # # o o o o s s s
+   *  # # # x x x s s s
+   *     * x x x x *
+   *        x x x
+   */
   for (i=0;i<32;i++)
   {
     hletters[0]=i;
@@ -212,14 +269,21 @@ void fillinvletters()
 	  hletters[hvec(1,1)]=hletters[hvec(-1,-1)]=l;
           for (disp=start(1);disp.cont(1);disp.inc(1))
             drawletter(hletters[disp],disp);
-          for (disp=start(FRAMERAD);disp.cont(FRAMERAD);disp.inc(FRAMERAD))
-	  {
-	    il=0;
-	    frame=(complex<double>)(disp*LETTERMOD)/(complex<double>)FRAMEMOD;
-	    for (m=0;m<12;m++)
-	      il|=filletbit((complex<double>)twelve[m]+frame)<<m;
-	    //invlist[il].push_back(disp);
-	  }
+	  hbits[hvec(4,-1)] =hbits[hvec(-2,1)];
+          hbits[hvec(4,4)]  =hbits[hvec(-2,-2)];
+          hbits[hvec(0,4)]  =hbits[hvec(0,-2)];
+          hbits[hvec(-5,-1)]=hbits[hvec(1,-1)];
+          hbits[hvec(-5,-5)]=hbits[hvec(1,1)];
+          hbits[hvec(0,-5)] =hbits[hvec(0,1)];
+          for (n=0;n<9;n++)
+	    for (t=0;t<12;t++)
+	    {
+	      il=0;
+	      frame=ninedisp[n]-(complex<double>)twelve[t];
+	      for (m=0;m<12;m++)
+	        il|=filletbit((complex<double>)twelve[m]+frame)<<m;
+	      //invlist[il].push_back(disp);
+	    }
 	}
       }
       printf("\b\b");

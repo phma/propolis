@@ -325,21 +325,27 @@ int hvec::letterinx()
 int region(complex<double> z)
 /* z is in the unit hexagon. Returns which of 13 regions z is in.
  * Examples of a point in each region, and area relative to the hexagon:
- *  0  0.000, 0.000 0.6802 (9/16)π/(3/2)sqrt(3)
- *  1  0.000, 0.500 0.0417 1/24
- *  2  0.433, 0.250 0.0417
- *  3  0.433,-0.250 0.0417
- *  4  0.000,-0.500 0.0417
- *  5 -0.433,-0.250 0.0417
- *  6 -0.433, 0.250 0.0417
- *  7  0.466, 0.000 0.0116
- *  8  0.233,-0.407 0.0116
- *  9 -0.233,-0.407 0.0116
- * 10 -0.466, 0.000 0.0116
- * 11 -0.233, 0.407 0.0116
- * 12  0.233, 0.407 0.0116
+ *  0  0.000, 0.000 0.6802 1812 (9/16)π/(3/2)sqrt(3)
+ *  1  0.000, 0.500 0.0417  111 1/24
+ *  2  0.433, 0.250 0.0417  111
+ *  3  0.433,-0.250 0.0417  111
+ *  4  0.000,-0.500 0.0417  111
+ *  5 -0.433,-0.250 0.0417  111
+ *  6 -0.433, 0.250 0.0417  111
+ *  7  0.466, 0.000 0.0116   31
+ *  8  0.233,-0.407 0.0116   31
+ *  9 -0.233,-0.407 0.0116   31
+ * 10 -0.466, 0.000 0.0116   31
+ * 11 -0.233, 0.407 0.0116   31
+ * 12  0.233, 0.407 0.0116   31
+ * ----------------------------
+ *     0.000, 0.000 1.000  2664
  * Region 0 is a circle; the rest of the regions are formed by drawing
  * the common tangents of the circles.
+ * Centroid of region 7 (needed for inverse letter table):
+ * Centroid of the kite is ((2/8)*3+(10/24)*1)/4=7/24, with weight 3/4.
+ * Centroid of the sector is (3/π)*(2/3)*sqrt(3/16) (0.2757), with weight -0.6802.
+ * Centroid of the sliver is thus 0.4475459119.
  */
 {
   int reg,outside[6],inside[6],i;
@@ -432,6 +438,98 @@ void testcomplex()
   h=hvec(0,1);
   z=h;
   cout<<z<<endl;
+  endpage();
+  pstrailer();
+  psclose();
+}
+
+/* Six-dimensional vectors. A two-dimensional torus lies in a four-dimensional plane
+ * in six-dimensional space. Each point in the unit hexagon is mapped to a point
+ * on the torus so that edges are identified. They are used to compute an average
+ * of the frames that produce a framing error reading.
+ */
+sixvec::sixvec()
+{
+  memset(v,0,sizeof(v));
+}
+
+sixvec::sixvec(complex<double> z)
+{
+  v[0]=cos(z.imag()*2*M_PI/M_SQRT_3_4);
+  v[1]=sin(z.imag()*2*M_PI/M_SQRT_3_4);
+  z*=omega;
+  v[2]=cos(z.imag()*2*M_PI/M_SQRT_3_4);
+  v[3]=sin(z.imag()*2*M_PI/M_SQRT_3_4);
+  z*=omega;
+  v[4]=cos(z.imag()*2*M_PI/M_SQRT_3_4);
+  v[5]=sin(z.imag()*2*M_PI/M_SQRT_3_4);
+}
+
+sixvec sixvec::operator+(const sixvec b)
+{
+  int i;
+  sixvec a;
+  for (i=0;i<6;i++)
+    a.v[i]=this->v[i]+b.v[i];
+  return a;
+}
+
+sixvec sixvec::operator-(const sixvec b)
+{
+  int i;
+  sixvec a;
+  for (i=0;i<6;i++)
+    a.v[i]=this->v[i]-b.v[i];
+  return a;
+}
+
+sixvec sixvec::operator*(const double b)
+{
+  int i;
+  sixvec a;
+  for (i=0;i<6;i++)
+    a.v[i]=this->v[i]*b;
+  return a;
+}
+
+sixvec sixvec::operator/(const double b)
+{
+  int i;
+  sixvec a;
+  for (i=0;i<6;i++)
+    a.v[i]=this->v[i]/b;
+  return a;
+}
+
+double sixvec::norm()
+{
+  int i;
+  double sum;
+  for (sum=i=0;i<6;i++)
+    sum+=this->v[i]*this->v[i];
+  return sqrt(sum);
+}
+
+void testsixvec()
+{
+  complex<double> z=8191,r(0.8,0.6),z2,diff;
+  int i,reg;
+  hvec h;
+  sixvec s,a(complex<double>(0,0)),b(complex<double>(0,M_SQRT_3_4/2)),c(complex<double>(0,-M_SQRT_3_4/2));
+  psopen("testsixvec.ps");
+  psprolog();
+  startpage();
+  for (i=0;i<32768;i++)
+  {
+    z*=r;
+    h=z;
+    z2=h;
+    diff=z-z2;
+    s=sixvec(z);
+    setcolor((s-a).norm()/2/M_SQRT_3,(s-b).norm()/2/M_SQRT_3,(s-c).norm()/2/M_SQRT_3);
+    //cout<<diff<<endl;
+    plotpoint(diff.real()*100,diff.imag()*100);
+  }
   endpage();
   pstrailer();
   psclose();
