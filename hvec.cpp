@@ -510,6 +510,14 @@ double sixvec::norm()
   return sqrt(sum);
 }
 
+sixvec sixvec::operator+=(const sixvec b)
+{
+  int i;
+  for (i=0;i<6;i++)
+    this->v[i]+=b.v[i];
+  return *this;
+}
+
 void testsixvec()
 {
   complex<double> z=8191,r(0.8,0.6),z2,diff;

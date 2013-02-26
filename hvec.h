@@ -80,6 +80,7 @@ public:
   sixvec operator-(const sixvec b);
   sixvec operator*(const double b);
   sixvec operator/(const double b);
+  sixvec operator+=(const sixvec b);
   double norm();
 };
 

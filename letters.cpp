@@ -180,7 +180,7 @@ void drawletter(int letter,hvec place)
 void fillinvletters()
 {
   int i,j,k,l,m,n,t,inv[4096],il,in;
-  vector<hvec> invlist[4096];
+  sixvec torussum[4096];
   hvec disp;
   complex<double> frame;
   memset(inv,0,sizeof(inv));
@@ -252,6 +252,11 @@ void fillinvletters()
    *  # # # x x x s s s
    *     * x x x x *
    *        x x x
+   * Some results:
+   *   * *
+   *  * * o
+   * * o * * is not found anywhere
+   *  * o o
    */
   for (i=0;i<32;i++)
   {
@@ -282,13 +287,22 @@ void fillinvletters()
 	      frame=ninedisp[n]-(complex<double>)twelve[t];
 	      for (m=0;m<12;m++)
 	        il|=filletbit((complex<double>)twelve[m]+frame)<<m;
-	      //invlist[il].push_back(disp);
+	      torussum[il]+=sixvec(frame)*weights[n];
 	    }
 	}
       }
       printf("\b\b");
-      //printf("0x098 has %d framereads\n",invlist[0x098].size());
     }
+  }
+  for (i=0;i<4096;i++)
+  {
+    for (j=11;j>=0;j--)
+    {
+      putchar(((i>>j)&1)+'0');
+      if (j==10 || j==7 || j==3 || j==0)
+	putchar(' ');
+    }
+    printf("%03x: %d%c%c%c %f\n",i,(invletters[i]>>15)&1,((invletters[i]>>10)&31)+64,((invletters[i]>>5)&31)+64,((invletters[i]>>0)&31)+64,torussum[i].norm());
   }
 }
 
