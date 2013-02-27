@@ -410,6 +410,7 @@ void testmain()
   //testcomplex();
   //testraster();
   testsixvec();
+  testpageinx();
 }
 
 double stringtod(string str)
@@ -463,7 +464,7 @@ double parse_redundancy(string red)
 
 void copyleft()
 {
-  cout<<"Propolis © Pierre Abbat 2011-2013\nReed-Solomon code by Henry Minsky\nGPL v3 licensed\n";
+  cout<<"Propolis version "<<VERSION<<" © Pierre Abbat 2011-2013\nReed-Solomon code by Henry Minsky\nGPL v3 licensed\n";
 }
 
 int formatnum(const char *optarg)

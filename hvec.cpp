@@ -269,14 +269,28 @@ unsigned long hvec::norm()
 {return sqr(this->x)+sqr(this->y)-this->x*this->y;
  }
 
+hvec nthhvec(int n,int size)
+{
+  hvec a;
+  return a; // stub
+}
+
+int hvec::pageinx(int size,int nelts)
+// Index to a byte within a page of specified size. Used in the inverse
+// letter table as well as the paging of harray.
+{
+  if (y<0)
+    return (-y-size)*(-y-3*size-3)/2+x-y;
+  else
+    return x-y+nelts-(size-y)*(3*size+3-y)/2-1;
+}
+
 int hvec::pageinx()
 // Index to a byte within a page. Meaningful only if the number
 // is a remainder of division by PAGEMOD.
-{if (y>0)
-    return (y-PAGERAD)*(y-3*PAGERAD-3)/2+x;
- else
-    return x+PAGESIZE-(y+PAGERAD)*(y+3*PAGERAD+3)/2-1;
- }
+{
+  return pageinx(PAGERAD,PAGESIZE);
+}
 
 // Iteration: start, inc, cont. Iterates over a hexagon.
 
@@ -321,6 +335,25 @@ int hvec::letterinx()
     return 32768;
     }
  }
+
+void testpageinx()
+{
+  int x,y;
+  hvec h;
+  for (y=PAGERAD;y>=-PAGERAD;y--)
+  {
+    if (y&1)
+      printf("  ");
+    for (x=-PAGERAD+((y-1)&-2)/2;x<-PAGERAD || x-y<-PAGERAD;x++)
+      printf("    ");
+    for (;x<=PAGERAD && x-y<=PAGERAD;x++)
+    {
+      h=hvec(x,y);
+      printf("%4d",h.pageinx());
+    }
+    printf("\n");
+  }
+}
 
 int region(complex<double> z)
 /* z is in the unit hexagon. Returns which of 13 regions z is in.

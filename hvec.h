@@ -49,6 +49,7 @@ public:
   bool operator!=(hvec b);
   friend bool operator<(const hvec a,const hvec b); // only for the map
   unsigned long norm();
+  int pageinx(int size,int nelts);
   int pageinx();
   int letterinx();
   int getx()
@@ -66,6 +67,7 @@ public:
 };
 
 hvec start(int n);
+hvec nthhvec(int n,int size);
 extern const hvec LETTERMOD,PAGEMOD;
 extern int debughvec;
 
@@ -111,6 +113,7 @@ template <typename T> void harray<T>::clear()
 int region(complex<double> z);
 void testcomplex();
 void testsixvec();
+void testpageinx();
 
 extern harray<char> hletters,hbits;
 #endif
