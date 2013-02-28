@@ -5,6 +5,7 @@
 #include <iostream>
 #include <cstring>
 #include <stdexcept>
+#include <cassert>
 #include "hvec.h"
 #include "ps.h"
 
@@ -269,10 +270,29 @@ unsigned long hvec::norm()
 {return sqr(this->x)+sqr(this->y)-this->x*this->y;
  }
 
-hvec nthhvec(int n,int size)
+hvec nthhvec(int n,int size,int nelts)
 {
-  hvec a;
-  return a; // stub
+  int x,y,row;
+  assert (n>=0 && n<nelts);
+  n-=nelts/2;
+  if (n<0)
+  {
+    for (n-=size,row=2*size+1,y=0;n<=0;n+=row--,y--)
+      ;
+    y++;
+    n-=++row;
+    x=n+y+size;
+  }
+  else
+  {
+    for (n+=size,row=2*size+1,y=0;n>=0;n-=row--,y++)
+      ;
+    y--;
+    n+=++row;
+    x=n+y-size;
+  }
+  hvec a(x,y);
+  return a;
 }
 
 int hvec::pageinx(int size,int nelts)
@@ -339,7 +359,7 @@ int hvec::letterinx()
 void testpageinx()
 {
   int x,y;
-  hvec h;
+  hvec h,g;
   for (y=PAGERAD;y>=-PAGERAD;y--)
   {
     if (y&1)
@@ -350,6 +370,21 @@ void testpageinx()
     {
       h=hvec(x,y);
       printf("%4d",h.pageinx());
+    }
+    printf("\n");
+  }
+  for (y=PAGERAD;y>=-PAGERAD;y--)
+  {
+    if (y&1)
+      printf("   ");
+    for (x=-PAGERAD+((y-1)&-2)/2;x<-PAGERAD || x-y<-PAGERAD;x++)
+      printf("      ");
+    for (;x<=PAGERAD && x-y<=PAGERAD;x++)
+    {
+      h=hvec(x,y);
+      g=nthhvec(h.pageinx(),PAGERAD,PAGESIZE);
+      printf("%2d,%-2d ",g.getx(),g.gety());
+      assert(g==h);
     }
     printf("\n");
   }
