@@ -13,7 +13,7 @@ extern BIT16 letters[38];
 extern int debugletters;
 extern BIT16 invletters[4096];
 extern const hvec twelve[];
-#define FRAMERAD 8
+#define FRAMERAD 25
 #define FRAMESIZE (FRAMERAD*(FRAMERAD+1)*3+1)
 // Possibly FRAMERAD should be 18 (almost 1 frame in each tiniest region) or 25 (1951, a little less than 2048).
 #define SLIVER_CENTROID 0.447545911917060126823164181486
@@ -25,3 +25,4 @@ void fillinvletters();
 void readinvletters();
 void writeinvletters();
 void checkinvletters();
+void testroundframe();

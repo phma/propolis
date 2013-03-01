@@ -17,7 +17,7 @@ using namespace std;
 #define PAGERAD 6
 #define PAGESIZE (PAGERAD*(PAGERAD+1)*3+1)
 #define sqr(a) ((a)*(a))
-extern const complex<double> omega;
+extern const complex<double> omega,ZLETTERMOD;
 
 class hvec
 {
@@ -73,9 +73,8 @@ extern int debughvec;
 
 class sixvec
 {
-private:
-  double v[6];
 public:
+  double v[6];
   sixvec();
   sixvec(complex<double> z);
   sixvec operator+(const sixvec b);
@@ -83,6 +82,8 @@ public:
   sixvec operator*(const double b);
   sixvec operator/(const double b);
   sixvec operator+=(const sixvec b);
+  sixvec operator/=(const double b);
+  bool operator!=(const sixvec b);
   double norm();
 };
 

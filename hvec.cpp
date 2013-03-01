@@ -25,6 +25,7 @@
  */
 const hvec PAGEMOD(PAGERAD+1,2*PAGERAD+1);
 const hvec LETTERMOD(-2,-4);
+const complex<double> ZLETTERMOD(0,-2*M_SQRT_3);
 const complex<double> omega(-0.5,M_SQRT_3_4); // this is hvec(0,1)
 int debughvec;
 
@@ -364,7 +365,7 @@ void testpageinx()
   {
     if (y&1)
       printf("  ");
-    for (x=-PAGERAD+((y-1)&-2)/2;x<-PAGERAD || x-y<-PAGERAD;x++)
+    for (x=-PAGERAD+((y+1)&-2)/2;x<-PAGERAD || x-y<-PAGERAD;x++)
       printf("    ");
     for (;x<=PAGERAD && x-y<=PAGERAD;x++)
     {
@@ -377,7 +378,7 @@ void testpageinx()
   {
     if (y&1)
       printf("   ");
-    for (x=-PAGERAD+((y-1)&-2)/2;x<-PAGERAD || x-y<-PAGERAD;x++)
+    for (x=-PAGERAD+((y+1)&-2)/2;x<-PAGERAD || x-y<-PAGERAD;x++)
       printf("      ");
     for (;x<=PAGERAD && x-y<=PAGERAD;x++)
     {
@@ -584,6 +585,23 @@ sixvec sixvec::operator+=(const sixvec b)
   for (i=0;i<6;i++)
     this->v[i]+=b.v[i];
   return *this;
+}
+
+sixvec sixvec::operator/=(const double b)
+{
+  int i;
+  for (i=0;i<6;i++)
+    this->v[i]/=b;
+  return *this;
+}
+
+bool sixvec::operator!=(const sixvec b)
+{
+  int i;
+  bool a;
+  for (i=0,a=false;i<6;i++)
+    a|=this->v[i]!=b.v[i];
+  return a;
 }
 
 void testsixvec()

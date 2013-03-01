@@ -27,6 +27,7 @@
 #include <fstream>
 #include <stdexcept>
 #include <vector>
+#include <cassert>
 #include "letters.h"
 #include "raster.h"
 
@@ -177,10 +178,31 @@ void drawletter(int letter,hvec place)
  hbits[place+hvec( 0, 1)]=(letter>>11)&1;
  }
 
+hvec roundframe(sixvec s)
+{
+  hvec h,closest;
+  double norm,distance,mindist;
+  sixvec sv;
+  norm=s.norm();
+  assert(norm>0);
+  s/=(norm/M_SQRT_3);
+  for (h=start(FRAMERAD),mindist=10;h.cont(FRAMERAD);h.inc(FRAMERAD))
+  {
+    sv=sixvec((complex<double>)h/(complex<double>)FRAMEMOD);
+    distance=(sv-s).norm();
+    if (distance<mindist)
+    {
+      mindist=distance;
+      closest=h;
+    }
+  }
+  return closest;
+}
+
 void fillinvletters()
 {
-  int i,j,k,l,m,n,t,inv[4096],il,in;
-  sixvec torussum[4096];
+  int i,j,k,l,m,n,t,inv[4096],il,in,stats[6],watch=0xd44;
+  sixvec torussum[4096],watchlast;
   hvec disp;
   complex<double> frame;
   memset(inv,0,sizeof(inv));
@@ -209,6 +231,8 @@ void fillinvletters()
       invletters[i]=(inv[i]&0x1f)|0x2000;
     else if (inv[i]&0x20)
       invletters[i]=(inv[i]&0x1f)|0x1000;
+    else
+      invletters[i]=0;
     if (invletters[i] && debugletters)
        printf("%03x: %d%c%c%c\n",i,(invletters[i]>>15)&1,((invletters[i]>>10)&31)+64,((invletters[i]>>5)&31)+64,((invletters[i]>>0)&31)+64);
   }
@@ -287,23 +311,65 @@ void fillinvletters()
 	      frame=ninedisp[n]-(complex<double>)twelve[t];
 	      for (m=0;m<12;m++)
 	        il|=filletbit((complex<double>)twelve[m]+frame)<<m;
-	      torussum[il]+=sixvec(frame)*weights[n];
+	      torussum[il]+=sixvec(frame/ZLETTERMOD)*weights[n];
 	    }
+	  if (watchlast!=torussum[watch])
+	  {
+	    printf("%c%c ",k+'@',l+'@');
+	    for (n=0;n<6;n++)
+	      printf("%.0f ",torussum[watch].v[n]);
+	    printf("\n%c%c",i+'@',j+'@');
+	    watchlast=torussum[watch];
+	  }
 	}
       }
       printf("\b\b");
     }
   }
+  memset(stats,0,sizeof(stats));
   for (i=0;i<4096;i++)
   {
+    if (!invletters[i] && torussum[i].norm())
+      invletters[i]=0x6000+roundframe(torussum[i]).pageinx(FRAMERAD,FRAMESIZE);
     for (j=11;j>=0;j--)
     {
       putchar(((i>>j)&1)+'0');
       if (j==10 || j==7 || j==3 || j==0)
 	putchar(' ');
     }
-    printf("%03x: %d%c%c%c %f\n",i,(invletters[i]>>15)&1,((invletters[i]>>10)&31)+64,((invletters[i]>>5)&31)+64,((invletters[i]>>0)&31)+64,torussum[i].norm());
+    switch(invletters[i]&0xf000)
+    {
+      case 0x1000:
+	printf("%03x: V  %c\n",i,((invletters[i]>>0)&31)+64);
+	stats[0]++;
+	break;
+      case 0x2000:
+	printf("%03x: 1  %c\n",i,((invletters[i]>>0)&31)+64);
+	stats[1]++;
+	break;
+      case 0x4000:
+	printf("%03x: 2 %c%c\n",i,((invletters[i]>>5)&31)+64,((invletters[i]>>0)&31)+64);
+	stats[2]++;
+	break;
+      case 0x6000:
+	printf("%03x: F    %4d %10.0f\n",i,(invletters[i]>>0)&2047,((invletters[i]>>0)&31)+64,torussum[i].norm());
+	stats[4]++;
+	break;
+      case 0x0000:
+	printf("%03x: N\n",i);
+	stats[5]++;
+	break;
+      default:
+        printf("%03x: 3%c%c%c\n",i,((invletters[i]>>10)&31)+64,((invletters[i]>>5)&31)+64,((invletters[i]>>0)&31)+64);
+	stats[3]++;
+    }
   }
+  printf("%4d are exactly a letter\n",stats[0]);
+  printf("%4d differ by one bit from 1 letter\n",stats[1]);
+  printf("%4d differ by one bit from 2 letters\n",stats[2]);
+  printf("%4d differ by one bit from 3 letters\n",stats[3]);
+  printf("%4d are framing errors\n",stats[4]);
+  printf("%4d don't match anything\n",stats[5]);
 }
 
 void readinvletters()
@@ -339,3 +405,20 @@ void checkinvletters()
   if (!valid)
     throw(runtime_error("invletters.dat is missing or corrupt. Run \"propolis --writetables\" to create it."));
 }
+
+void testroundframe()
+{
+  hvec h;
+  sixvec s,t;
+  s=sixvec(complex<double>(0.25,0.2));
+  t=sixvec(complex<double>(0.25,-0.2));
+  h=roundframe(s);
+  printf("0.25, 0.2: %d,%d\n",h.getx(),h.gety());
+  h=roundframe(t);
+  printf("0.25,-0.2: %d,%d\n",h.getx(),h.gety());
+  s+=t;
+  h=roundframe(s);
+  printf("Average  : %d,%d\n",h.getx(),h.gety());
+}
+
+  
