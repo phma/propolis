@@ -412,6 +412,7 @@ void testmain()
   testsixvec();
   testpageinx();
   testroundframe();
+  testrotate();
 }
 
 double stringtod(string str)

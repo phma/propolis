@@ -67,7 +67,7 @@ public:
 };
 
 hvec start(int n);
-hvec nthhvec(int n,int size);
+hvec nthhvec(int n,int size,int nelts);
 extern const hvec LETTERMOD,PAGEMOD;
 extern int debughvec;
 

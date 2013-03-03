@@ -91,6 +91,28 @@ BIT16 invletters[4096];
  *                  dddddddd is in the size-8 hexagon, 0 through 216
  * 0000000000000000 an undecodable bit pattern that counts as erasure in RS
  */
+BIT16 rotlow[]=
+{
+  0x000,0x400,0x080,0x480,0x008,0x408,0x088,0x488,
+  0x800,0xc00,0x880,0xc80,0x808,0xc08,0x888,0xc88,
+  0x100,0x500,0x180,0x580,0x108,0x508,0x188,0x588,
+  0x900,0xd00,0x980,0xd80,0x908,0xd08,0x988,0xd88,
+  0x010,0x410,0x090,0x490,0x018,0x418,0x098,0x498,
+  0x810,0xc10,0x890,0xc90,0x818,0xc18,0x898,0xc98,
+  0x110,0x510,0x190,0x590,0x118,0x518,0x198,0x598,
+  0x910,0xd10,0x990,0xd90,0x918,0xd18,0x998,0xd98
+}, rothigh[]=
+{
+  0x000,0x001,0x200,0x201,0x020,0x021,0x220,0x221,
+  0x002,0x003,0x202,0x203,0x022,0x023,0x222,0x223,
+  0x040,0x041,0x240,0x241,0x060,0x061,0x260,0x261,
+  0x042,0x043,0x242,0x243,0x062,0x063,0x262,0x263,
+  0x004,0x005,0x204,0x205,0x024,0x025,0x224,0x225,
+  0x006,0x007,0x206,0x207,0x026,0x027,0x226,0x227,
+  0x044,0x045,0x244,0x245,0x064,0x065,0x264,0x265,
+  0x046,0x047,0x246,0x247,0x066,0x067,0x266,0x267
+};
+  
 int debugletters;
 const hvec FRAMEMOD(FRAMERAD+1,2*FRAMERAD+1);
 const hvec twelve[]=
@@ -160,6 +182,12 @@ void degauss()
      printf("%2d %03x\n",j,basis[j]);
  }
 
+int rotate(int bitpattern)
+// Rotates 120° left.
+{
+  return rothigh[bitpattern>>6]|rotlow[bitpattern&63];
+}
+
 void drawletter(int letter,hvec place)
 // letter is from 0x00 to 0x25; place is any hvec
 {letter=letters[letter];
@@ -201,7 +229,7 @@ hvec roundframe(sixvec s)
 
 void fillinvletters()
 {
-  int i,j,k,l,m,n,t,inv[4096],il,in,stats[6],watch=0xd44;
+  int i,j,k,l,m,n,t,inv[4096],il,in,stats[6],watch=0xf5c;
   sixvec torussum[4096],watchlast;
   hvec disp;
   complex<double> frame;
@@ -233,8 +261,6 @@ void fillinvletters()
       invletters[i]=(inv[i]&0x1f)|0x1000;
     else
       invletters[i]=0;
-    if (invletters[i] && debugletters)
-       printf("%03x: %d%c%c%c\n",i,(invletters[i]>>15)&1,((invletters[i]>>10)&31)+64,((invletters[i]>>5)&31)+64,((invletters[i]>>0)&31)+64);
   }
   /* Find all possible reads caused by framing errors. Fill a size-1 array
    * with four letters as follows:
@@ -279,8 +305,14 @@ void fillinvletters()
    * Some results:
    *   * *
    *  * * o
-   * * o * * is not found anywhere
+   * * o * * (0xf5c) is not found anywhere
    *  * o o
+   *   * *
+   *  o * o
+   * * o o o (0xd44) is found somewhere
+   *  * o o
+   * 410 (10%) of bit patterns are not found, 3354 (82%) are framing errors, and the rest are decodable as 1, 2, or 3 letters.
+   * 1080 bit patterns are framing errors only because of filleting.
    */
   for (i=0;i<32;i++)
   {
@@ -331,7 +363,7 @@ void fillinvletters()
   {
     if (!invletters[i] && torussum[i].norm())
       invletters[i]=0x6000+roundframe(torussum[i]).pageinx(FRAMERAD,FRAMESIZE);
-    for (j=11;j>=0;j--)
+    for (j=11;j>=0 && debugletters;j--)
     {
       putchar(((i>>j)&1)+'0');
       if (j==10 || j==7 || j==3 || j==0)
@@ -340,27 +372,33 @@ void fillinvletters()
     switch(invletters[i]&0xf000)
     {
       case 0x1000:
-	printf("%03x: V  %c\n",i,((invletters[i]>>0)&31)+64);
+	if (debugletters)
+	  printf("%03x: V  %c\n",i,((invletters[i]>>0)&31)+64);
 	stats[0]++;
 	break;
       case 0x2000:
-	printf("%03x: 1  %c\n",i,((invletters[i]>>0)&31)+64);
+	if (debugletters)
+	  printf("%03x: 1  %c\n",i,((invletters[i]>>0)&31)+64);
 	stats[1]++;
 	break;
       case 0x4000:
-	printf("%03x: 2 %c%c\n",i,((invletters[i]>>5)&31)+64,((invletters[i]>>0)&31)+64);
+	if (debugletters)
+	  printf("%03x: 2 %c%c\n",i,((invletters[i]>>5)&31)+64,((invletters[i]>>0)&31)+64);
 	stats[2]++;
 	break;
       case 0x6000:
-	printf("%03x: F    %4d %10.0f\n",i,(invletters[i]>>0)&2047,((invletters[i]>>0)&31)+64,torussum[i].norm());
+	if (debugletters)
+	  printf("%03x: F    %4d %10.0f\n",i,(invletters[i]>>0)&2047,((invletters[i]>>0)&31)+64,torussum[i].norm());
 	stats[4]++;
 	break;
       case 0x0000:
-	printf("%03x: N\n",i);
+	if (debugletters)
+	  printf("%03x: N\n",i);
 	stats[5]++;
 	break;
       default:
-        printf("%03x: 3%c%c%c\n",i,((invletters[i]>>10)&31)+64,((invletters[i]>>5)&31)+64,((invletters[i]>>0)&31)+64);
+        if (debugletters)
+	  printf("%03x: 3%c%c%c\n",i,((invletters[i]>>10)&31)+64,((invletters[i]>>5)&31)+64,((invletters[i]>>0)&31)+64);
 	stats[3]++;
     }
   }
@@ -397,11 +435,33 @@ void writeinvletters()
 
 void checkinvletters()
 {
-  int i;
+  int i,r;
+  hvec g,h;
   bool valid=true;
   for (i=0;i<32;i++)
     if (invletters[letters[i]]!=(i|0x1000))
       valid=false;
+  for (i=0;i<4096;i++)
+  {
+    r=rotate(i);
+    if ((invletters[i]&0xf000)==0x6000)
+    {
+      if ((invletters[r]&0xf000)==0x6000)
+      {
+        h=nthhvec(invletters[i]-0x6000,FRAMERAD,FRAMESIZE);
+        g=nthhvec(invletters[r]-0x6000,FRAMERAD,FRAMESIZE);
+        if (g!=h*omega)
+          printf("i=%03x, f.e. %4d (%3d,%3d)  r=%03x, f.e. %4d (%3d,%3d)\n",
+	         i,invletters[i]-0x6000,h.getx(),h.gety(),
+	         r,invletters[r]-0x6000,g.getx(),g.gety());
+      }
+      else
+        printf("i=%03x, invletters[i]=%04x  r=%03x, invletters[r]=%04x\n",
+	       i,invletters[i],
+	       r,invletters[r]);
+	
+    }
+  }
   if (!valid)
     throw(runtime_error("invletters.dat is missing or corrupt. Run \"propolis --writetables\" to create it."));
 }
@@ -421,4 +481,10 @@ void testroundframe()
   printf("Average  : %d,%d\n",h.getx(),h.gety());
 }
 
-  
+void testrotate()
+{
+  int i;
+  for (i=0;i<4096;i++)
+    if (rotate(rotate(rotate(i)))!=i)
+      printf("rotate(%03x)=%03x\n",i,rotate(i));
+}

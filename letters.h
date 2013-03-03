@@ -26,3 +26,4 @@ void readinvletters();
 void writeinvletters();
 void checkinvletters();
 void testroundframe();
+void testrotate();
