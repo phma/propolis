@@ -22,4 +22,7 @@
 #define FMT_JPEG 3
 #define FMT_INFO 255
 
+#define PATTERN_8191 1
+#define PATTERN_8191B 2
+
 #endif

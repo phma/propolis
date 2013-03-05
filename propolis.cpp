@@ -369,6 +369,48 @@ void makesymbol(string text,int asize,double redundancy,int format,string outfil
   }
 }
 
+void makepattern(int pattern,int asize,int format,string outfilename)
+{
+  hvec k;
+  int i,size;
+  int letterpattern; // 0: bit pattern; 1: unarranged letter pattern; 2: arranged letter pattern
+  //checkinvletters();
+  size=asize;
+  switch (pattern)
+  {
+    case PATTERN_8191:
+      pnpattern(size);
+      letterpattern=1;
+      break;
+    case PATTERN_8191B:
+      pnbitpattern(size);
+      letterpattern=0;
+      break;
+    default:
+      cerr<<"Pattern should be 8191 or 8191b"<<endl;
+  }
+  if (letterpattern>1)
+    thematrix.arrange(hletters);
+  if (letterpattern)
+    for (k=start(thematrix.getsize());k.cont(thematrix.getsize());k.inc(thematrix.getsize()))
+      drawletter(hletters[k]&31,k);
+  border(size);
+  switch (format)
+  {
+    case FMT_PS:
+      psdraw(traceall(size),size,210,297,200,DIM_DIAPOTHEM,0,outfilename);
+      break;
+    case FMT_PNM:
+      rasterdraw(size,0,0,1800,DIM_DIAPOTHEM,format,outfilename);
+      break;
+    case FMT_INFO:
+      cout<<"Size: "<<size<<endl;
+      break;
+    default:
+      cerr<<"Format should be pgm, ps, or info"<<endl;
+  }
+}
+
 void testencode()
 {
   thematrix.setsize(3);
@@ -409,10 +451,12 @@ void testmain()
   //testenc();
   //testcomplex();
   //testraster();
-  testsixvec();
+  //testsixvec();
   testpageinx();
   testroundframe();
   testrotate();
+  debugframingerror();
+  checkregbits();
 }
 
 double stringtod(string str)
@@ -482,6 +526,17 @@ int formatnum(const char *optarg)
   return -1;
 }
 
+int patternnum(const char *optarg)
+{
+  string optstr(optarg);
+  if (optstr=="8191")
+    return PATTERN_8191;
+  if (optstr=="8191b")
+    return PATTERN_8191B;
+  cerr<<"Unrecognized pattern"<<endl;
+  return -1;
+}
+
 int main(int argc,char **argv)
 {
   int testflag=0,option_index=0,makedata=0;
@@ -491,7 +546,7 @@ int main(int argc,char **argv)
   string text,infilename,outfilename;
   stringbuf filebuf;
   fstream infile;
-  int format=FMT_PS;
+  int format=FMT_PS,pattern=0;
   static option long_options[]=
   {
     {"test",       no_argument,      0,0},
@@ -502,6 +557,7 @@ int main(int argc,char **argv)
     {"format",     required_argument,0,0},
     {"input",      required_argument,0,0},
     {"output",     required_argument,0,0},
+    {"pattern",    required_argument,0,0},
     {0,            0,                0,0}
   };
   initialize();
@@ -514,7 +570,7 @@ int main(int argc,char **argv)
     switch (c)
     {
       case 0:
-	printf("option %d\n",option_index);
+	//printf("option %d\n",option_index);
 	break;
       case 's':
 	option_index=1;
@@ -568,6 +624,9 @@ int main(int argc,char **argv)
       case 7:
 	outfilename=optarg;
 	break;
+      case 8:
+	pattern=patternnum(optarg);
+	break;
     }
   }
   if (makedata)
@@ -577,24 +636,23 @@ int main(int argc,char **argv)
   }
   if (testflag)
     testmain();
+  else if (pattern)
+    makepattern(pattern,size,format,outfilename);
+  else if (text.size())
+  {
+    makesymbol(text,size,redundancy,format,outfilename);
+  }
+  else if (infilename.size())
+  {
+    infile.open(infilename.c_str(),ios_base::in|ios_base::binary);
+    infile>>&filebuf;
+    makesymbol(filebuf.str(),size,redundancy,format,outfilename);
+    infile.close();
+  }
   else
   {
-    if (text.size())
-    {
-      makesymbol(text,size,redundancy,format,outfilename);
-    }
-    else if (infilename.size())
-    {
-      infile.open(infilename.c_str(),ios_base::in|ios_base::binary);
-      infile>>&filebuf;
-      makesymbol(filebuf.str(),size,redundancy,format,outfilename);
-      infile.close();
-    }
-    else
-    {
-      copyleft();
-      cout<<"size "<<size<<" redundancy "<<redundancy<<" text "<<text<<endl;
-    }
+    copyleft();
+    //cout<<"size "<<size<<" redundancy "<<redundancy<<" text "<<text<<endl;
   }
   return 0;
 }

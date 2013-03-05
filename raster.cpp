@@ -42,7 +42,7 @@ int regbits[13][4]=
   {0xff000000,0xff00ff00,0xff00ff00,0xffffff00},
   {0xff00cc00,0xff00cc00,0xffccff00,0xffccff00},
   {0xff88ee00,0xff88ee00,0xff88ee00,0xff88ee00},
-  {0xfe80fe80,0xfe80fe80,0xfe80ff00,0xfe80fe80}
+  {0xfe80fe80,0xfe80fe80,0xfe80fe80,0xfe80fe80}
 };
 
 void initsubsample()
@@ -106,6 +106,23 @@ int filletbit(complex<double> z)
   shift=index&31;
   index>>=5;
   return (regbits[place.region][index]>>shift)&1;
+}
+
+void checkregbits()
+{
+  int i,j,shift,index,bit1,bit2;
+  for (i=0;i<128;i++)
+    for (j=0;j<13;j++)
+    {
+      shift=i&31;
+      index=i>>5;
+      bit1=(regbits[j][index]>>shift)&1;
+      shift=(127-i)&31;
+      index=(127-i)>>5;
+      bit2=(regbits[j][index]>>shift)&1;
+      if (bit1==bit2)
+	printf("%2d %3d\n",j,i);
+    }
 }
 
 void rasterdraw(int size,double width,double height,

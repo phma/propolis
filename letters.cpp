@@ -112,6 +112,13 @@ BIT16 rotlow[]=
   0x044,0x045,0x244,0x245,0x064,0x065,0x264,0x265,
   0x046,0x047,0x246,0x247,0x066,0x067,0x266,0x267
 };
+// @ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_
+// @LXTQBIZCPDWR^UYFJAMH[O\EV]NKGS_
+char rotateletter[]=
+{
+  0x00,0x0c,0x18,0x14,0x11,0x02,0x09,0x1a,0x03,0x10,0x04,0x17,0x12,0x1e,0x15,0x19,
+  0x06,0x0a,0x01,0x0d,0x08,0x1b,0x0f,0x1c,0x05,0x16,0x1d,0x0e,0x0b,0x07,0x13,0x1f
+};
   
 int debugletters;
 const hvec FRAMEMOD(FRAMERAD+1,2*FRAMERAD+1);
@@ -130,17 +137,17 @@ const hvec twelve[]=
  hvec( 0, 1)};
 const complex<double> ninedisp[]=
 {
-  0,
   complex<double>(0,M_SQRT_3_4),
-  complex<double>(0,-M_SQRT_3_4),
   SLIVER_CENTROID,
   -SLIVER_CENTROID/omega,
   SLIVER_CENTROID*omega,
+  0,
   -SLIVER_CENTROID,
   SLIVER_CENTROID/omega,
-  -SLIVER_CENTROID*omega
+  -SLIVER_CENTROID*omega,
+  complex<double>(0,-M_SQRT_3_4)
 };
-const short int weights[]={1812,333,333,31,31,31,31,31,31};
+const short int weights[]={333,31,31,31,1812,31,31,31,333};
 
 int bitcount(int n)
 {n=((n&0xaaaaaaaa)>>1)+(n&0x55555555);
@@ -188,6 +195,18 @@ int rotate(int bitpattern)
   return rothigh[bitpattern>>6]|rotlow[bitpattern&63];
 }
 
+int invar12(int bitpattern)
+// Invariant under 120° rotation and flipping all bits. Not invariant under mirroring.
+{
+  int r1,r2,inv;
+  r1=rotate(bitpattern);
+  r2=rotate(r1);
+  inv=bitpattern^r1^r2;
+  if (inv&0x800)
+    inv^=0xfff;
+  return inv;
+}
+
 void drawletter(int letter,hvec place)
 // letter is from 0x00 to 0x25; place is any hvec
 {letter=letters[letter];
@@ -229,11 +248,13 @@ hvec roundframe(sixvec s)
 
 void fillinvletters()
 {
-  int i,j,k,l,m,n,t,inv[4096],il,in,stats[6],watch=0xf5c;
+  int i,j,k,l,m,n,t,inv[4096],il,in,stats[6],watch=0x2af;
+  int suminvar[32][32][32][32];
   sixvec torussum[4096],watchlast;
   hvec disp;
   complex<double> frame;
   memset(inv,0,sizeof(inv));
+  memset(suminvar,0,sizeof(suminvar));
   /* Fill the inverse letter table with all patterns that are
    * either letters or one bit different from letters.
    */
@@ -264,31 +285,31 @@ void fillinvletters()
   }
   /* Find all possible reads caused by framing errors. Fill a size-1 array
    * with four letters as follows:
-   *         x x
-   *        x x x
-   *   s s x x x x # #
-   *  s s s x x x # # #
-   * s s s s * * # # # #
-   *  s s s * + * # # #
-   *   # # * * * * s s
-   *  # # # * * * s s s
-   * # # # # x x s s s s
-   *  # # # x x x s s s
-   *       x x x x
-   *        x x x
+   *         j j
+   *        j j j
+   *   l l j j j j k k
+   *  l l l j j j k k k
+   * l l l l i i k k k k
+   *  l l l i + i k k k
+   *   k k i i i i l l
+   *  k k k i i i l l l
+   * k k k k j j l l l l
+   *  k k k j j j l l l
+   *       j j j j
+   *        j j j
    * where + is the origin. Then copy bits of the central letter to the retuse corners:
-   *         x x
-   *      * x x x *
-   *   s s x x x x # #
-   *  s s s x x x # # #
-   * s s s s * * # # # #
-   *  s s s * + * # # #
-   * * # # * * * * s s *
-   *  # # # * * * s s s
-   * # # # # x x s s s s
-   *  # # # x x x s s s
-   *     * x x x x *
-   *        x x x
+   *         j j
+   *      k j j j l
+   *   l l j j j j k k
+   *  l l l j j j k k k
+   * l l l l i i k k k k
+   *  l l l i + i k k k
+   * j k k i i i i l l j
+   *  k k k i i i l l l
+   * k k k k j j l l l l
+   *  k k k j j j l l l
+   *     l j j j j k
+   *        j j j
    * Then read it with an offset in each of 108 regions. The area covered by the reads is this:
    *         x x
    *      * x x x *
@@ -313,30 +334,32 @@ void fillinvletters()
    *  * o o
    * 410 (10%) of bit patterns are not found, 3354 (82%) are framing errors, and the rest are decodable as 1, 2, or 3 letters.
    * 1080 bit patterns are framing errors only because of filleting.
+   *   o o
+   *  * o *
+   * o * o * 0x2af comes up interstitially from PAM*, PIM*, M*PA, and M*PI.
+   *  * * *
+   *   * *
+   *  * o *
+   * o o * * 0xe9a does not occur. One of these is a bug. Should come up from F*L^, F*P^, or some permutation thereof.
+   *  o * o
    */
   for (i=0;i<32;i++)
   {
     hletters[0]=i;
     for (j=0;j<32;j++)
     {
-      hletters[1]=hletters[-1]=j;
+      hletters[hvec(1,2)]=hletters[hvec(-1,-2)]=hletters[1]=hletters[-1]=j;
       printf("%c%c",i+'@',j+'@');
       fflush(stdout);
       for (k=0;k<32;k++)
       {
-        hletters[hvec(0,1)]=hletters[hvec(0,-1)]=k;
+        hletters[hvec(2,1)]=hletters[hvec(-2,-1)]=hletters[hvec(0,1)]=hletters[hvec(0,-1)]=k;
         for (l=0;l<32;l++)
 	{
-	  hletters[hvec(1,1)]=hletters[hvec(-1,-1)]=l;
-          for (disp=start(1);disp.cont(1);disp.inc(1))
+	  hletters[hvec(1,-1)]=hletters[hvec(-1,1)]=hletters[hvec(1,1)]=hletters[hvec(-1,-1)]=l;
+          for (disp=start(2);disp.cont(2);disp.inc(2))
             drawletter(hletters[disp],disp);
-	  hbits[hvec(4,-1)] =hbits[hvec(-2,1)];
-          hbits[hvec(4,4)]  =hbits[hvec(-2,-2)];
-          hbits[hvec(0,4)]  =hbits[hvec(0,-2)];
-          hbits[hvec(-5,-1)]=hbits[hvec(1,-1)];
-          hbits[hvec(-5,-5)]=hbits[hvec(1,1)];
-          hbits[hvec(0,-5)] =hbits[hvec(0,1)];
-          for (n=0;n<9;n++)
+	  for (n=0;n<9;n+=8)
 	    for (t=0;t<12;t++)
 	    {
 	      il=0;
@@ -344,6 +367,7 @@ void fillinvletters()
 	      for (m=0;m<12;m++)
 	        il|=filletbit((complex<double>)twelve[m]+frame)<<m;
 	      torussum[il]+=sixvec(frame/ZLETTERMOD)*weights[n];
+	      suminvar[i][j][k][l]+=invar12(il)*weights[n];
 	    }
 	  if (watchlast!=torussum[watch])
 	  {
@@ -402,6 +426,16 @@ void fillinvletters()
 	stats[3]++;
     }
   }
+  for (i=0;i<0;i++)
+    for (j=0;j<32;j++)
+      for (k=0;k<32;k++)
+	for (l=0;l<32;l++)
+	{
+	  if (suminvar[i][j][k][l]!=suminvar[31-i][31-j][31-k][31-l])
+	    printf("%c%c%c%c 2  ",i+'@',j+'@',k+'@',l+'@');
+	  if (suminvar[i][j][k][l]!=suminvar[rotateletter[i]][rotateletter[l]][rotateletter[j]][rotateletter[k]])
+	    printf("%c%c%c%c 3  ",i+'@',j+'@',k+'@',l+'@');
+	}
   printf("%4d are exactly a letter\n",stats[0]);
   printf("%4d differ by one bit from 1 letter\n",stats[1]);
   printf("%4d differ by one bit from 2 letters\n",stats[2]);
@@ -420,6 +454,136 @@ void readinvletters()
     infile.read((char *)invletters,sizeof(invletters));
     infile.close();
   }
+}
+
+void debugframingerror()
+{
+  int i,j,k,l,m,n,t,r,c,ch,il,in,stats[6],readings0[9][12],readings1[9][12];
+  bool flip=false; // either flip all the bits, or rotate 120°
+  bool err;
+  hvec disp,a,rem;
+  complex<double> frame;
+  i=13;
+  j=21;
+  k=16;
+  l=1;
+  printf("%c%c%c%c\n",i+'@',j+'@',k+'@',l+'@');
+  hletters[0]=i;
+  hletters[hvec(1,2)]=hletters[hvec(-1,-2)]=hletters[1]=hletters[-1]=j;
+  hletters[hvec(2,1)]=hletters[hvec(-2,-1)]=hletters[hvec(0,1)]=hletters[hvec(0,-1)]=k;
+  hletters[hvec(1,-1)]=hletters[hvec(-1,1)]=hletters[hvec(1,1)]=hletters[hvec(-1,-1)]=l;
+  for (disp=start(2);disp.cont(2);disp.inc(2))
+    drawletter(hletters[disp],disp);
+  for (n=0;n<9;n++)
+    for (t=0;t<12;t++)
+    {
+      il=0;
+      frame=ninedisp[n]-(complex<double>)twelve[t];
+      for (m=0;m<12;m++)
+        il|=filletbit((complex<double>)twelve[m]+frame)<<m;
+      readings0[n][t]=il;
+    }
+  for (r=-5;r<=6;r++)
+  {
+    for (c=-10;c<=10;c++)
+      if ((c+r)&1)
+      {
+	a=hvec((c-r-1)/2,-r);
+	rem=a%LETTERMOD;
+	ch=i?j?' ':'|':'-';
+	switch (rem.letterinx())
+	{
+	  case 0:
+	  case 3:
+	    ch='/';
+	    break;
+	  case 7:
+	  case 10:
+	    ch='\\';
+	    break;
+	  case 2:
+	  case 1:
+	    ch='_';
+	    break;
+	}
+	putchar(ch);
+      }
+      else
+      {
+	a=hvec((c-r)/2,-r);
+	ch=(hbits[a]&1)*10+32;
+	putchar(ch);
+      }
+    for (c=0;c<9;c++)
+      printf(" %03x",readings0[c][r+5]);
+    putchar('\n');
+  }
+  rasterdraw(1,0,0,600,DIM_DIAPOTHEM,FMT_PNM,"debug0.pgm");
+  if (flip)
+  {
+    hletters[0]=31-i;
+    hletters[hvec(1,2)]=hletters[hvec(-1,-2)]=hletters[1]=hletters[-1]=31-j;
+    hletters[hvec(2,1)]=hletters[hvec(-2,-1)]=hletters[hvec(0,1)]=hletters[hvec(0,-1)]=31-k;
+    hletters[hvec(1,-1)]=hletters[hvec(-1,1)]=hletters[hvec(1,1)]=hletters[hvec(-1,-1)]=31-l;
+  }
+  else
+  {
+    hletters[0]=rotateletter[i];
+    hletters[hvec(1,2)]=hletters[hvec(-1,-2)]=hletters[1]=hletters[-1]=rotateletter[l];
+    hletters[hvec(2,1)]=hletters[hvec(-2,-1)]=hletters[hvec(0,1)]=hletters[hvec(0,-1)]=rotateletter[j];
+    hletters[hvec(1,-1)]=hletters[hvec(-1,1)]=hletters[hvec(1,1)]=hletters[hvec(-1,-1)]=rotateletter[k];
+  }
+  for (disp=start(2);disp.cont(2);disp.inc(2))
+    drawletter(hletters[disp],disp);
+  for (n=0;n<9;n++)
+    for (t=0;t<12;t++)
+    {
+      il=0;
+      frame=ninedisp[n]-(complex<double>)twelve[t];
+      for (m=0;m<12;m++)
+        il|=filletbit((complex<double>)twelve[m]+frame)<<m;
+      readings1[n][t]=il;
+    }
+  for (r=-5;r<=6;r++)
+  {
+    for (c=-10;c<=10;c++)
+      if ((c+r)&1)
+      {
+	a=hvec((c-r-1)/2,-r);
+	rem=a%LETTERMOD;
+	ch=i?j?' ':'|':'-';
+	switch (rem.letterinx())
+	{
+	  case 0:
+	  case 3:
+	    ch='/';
+	    break;
+	  case 7:
+	  case 10:
+	    ch='\\';
+	    break;
+	  case 2:
+	  case 1:
+	    ch='_';
+	    break;
+	}
+	putchar(ch);
+      }
+      else
+      {
+	a=hvec((c-r)/2,-r);
+	ch=(hbits[a]&1)*10+32;
+	putchar(ch);
+      }
+    for (c=0;c<9;c++)
+    {
+      if (flip)
+	err=readings0[c][r+5]+readings1[c][r+5]!=4095;
+      printf("%c%03x",err+' ',readings1[c][r+5]);
+    }
+    putchar('\n');
+  }
+  rasterdraw(1,0,0,600,DIM_DIAPOTHEM,FMT_PNM,"debug1.pgm");
 }
 
 void writeinvletters()
@@ -443,20 +607,34 @@ void checkinvletters()
       valid=false;
   for (i=0;i<4096;i++)
   {
-    r=rotate(i);
     if ((invletters[i]&0xf000)==0x6000)
     {
+      h=nthhvec(invletters[i]-0x6000,FRAMERAD,FRAMESIZE);
+      r=rotate(i);
       if ((invletters[r]&0xf000)==0x6000)
       {
-        h=nthhvec(invletters[i]-0x6000,FRAMERAD,FRAMESIZE);
         g=nthhvec(invletters[r]-0x6000,FRAMERAD,FRAMESIZE);
-        if (g!=h*omega)
+        if (g!=h*omega && false)
           printf("i=%03x, f.e. %4d (%3d,%3d)  r=%03x, f.e. %4d (%3d,%3d)\n",
 	         i,invletters[i]-0x6000,h.getx(),h.gety(),
 	         r,invletters[r]-0x6000,g.getx(),g.gety());
       }
       else
-        printf("i=%03x, invletters[i]=%04x  r=%03x, invletters[r]=%04x\n",
+        printf("i=%03x, invletters[i]=%04x   r=%03x, invletters[r]=%04x\n",
+	       i,invletters[i],
+	       r,invletters[r]);
+	
+      r=4095-i;
+      if ((invletters[r]&0xf000)==0x6000)
+      {
+        g=nthhvec(invletters[r]-0x6000,FRAMERAD,FRAMESIZE);
+        if (g!=h)
+          printf("i=%03x, f.e. %4d (%3d,%3d)  r=%03x, f.e. %4d (%3d,%3d)\n",
+	         i,invletters[i]-0x6000,h.getx(),h.gety(),
+	         r,invletters[r]-0x6000,g.getx(),g.gety());
+      }
+      else
+        printf("i=%03x, invletters[i]=%04x   r=%03x, invletters[r]=%04x\n",
 	       i,invletters[i],
 	       r,invletters[r]);
 	
