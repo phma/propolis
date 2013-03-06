@@ -137,7 +137,7 @@ const hvec twelve[]=
  hvec( 0, 1)};
 const complex<double> ninedisp[]=
 {
-  complex<double>(0,M_SQRT_3_4),
+  complex<double>(0,M_SQRT_1_3),
   SLIVER_CENTROID,
   -SLIVER_CENTROID/omega,
   SLIVER_CENTROID*omega,
@@ -145,7 +145,7 @@ const complex<double> ninedisp[]=
   -SLIVER_CENTROID,
   SLIVER_CENTROID/omega,
   -SLIVER_CENTROID*omega,
-  complex<double>(0,-M_SQRT_3_4)
+  complex<double>(0,-M_SQRT_1_3)
 };
 const short int weights[]={333,31,31,31,1812,31,31,31,333};
 
@@ -248,11 +248,12 @@ hvec roundframe(sixvec s)
 
 void fillinvletters()
 {
-  int i,j,k,l,m,n,t,inv[4096],il,in,stats[6],watch=0x2af;
+  int i,j,k,l,m,n,t,inv[4096],il,in,stats[6],watch=0x0e2;
   int suminvar[32][32][32][32];
   sixvec torussum[4096],watchlast;
   hvec disp;
   complex<double> frame;
+  fstream outfile;
   memset(inv,0,sizeof(inv));
   memset(suminvar,0,sizeof(suminvar));
   /* Fill the inverse letter table with all patterns that are
@@ -323,6 +324,15 @@ void fillinvletters()
    *  # # # x x x s s s
    *     * x x x x *
    *        x x x
+   * 
+   * IJKL corresponds to PDWR and FQ\A in that order. Each set of four letters
+   * has to be scanned four times to get all the frames. The frames of IJKL
+   * do not correspond to any one of the orders of PRDW; the four have to be
+   * taken together to correspond.
+   * IJKL JILK KLIJ LKJI
+   * PRDW RPWD DWPR WDRP
+   * F\AQ \FQA AQF\ QA\F
+   * 
    * Some results:
    *   * *
    *  * * o
@@ -341,7 +351,7 @@ void fillinvletters()
    *   * *
    *  * o *
    * o o * * 0xe9a does not occur. One of these is a bug. Should come up from F*L^, F*P^, or some permutation thereof.
-   *  o * o
+   *  o * o  It comes up 0xf9b instead (from APUM rotated to L^F[).
    */
   for (i=0;i<32;i++)
   {
@@ -359,7 +369,7 @@ void fillinvletters()
 	  hletters[hvec(1,-1)]=hletters[hvec(-1,1)]=hletters[hvec(1,1)]=hletters[hvec(-1,-1)]=l;
           for (disp=start(2);disp.cont(2);disp.inc(2))
             drawletter(hletters[disp],disp);
-	  for (n=0;n<9;n+=8)
+	  for (n=0;n<9;n++)
 	    for (t=0;t<12;t++)
 	    {
 	      il=0;
@@ -385,8 +395,30 @@ void fillinvletters()
   memset(stats,0,sizeof(stats));
   for (i=0;i<4096;i++)
   {
-    if (!invletters[i] && torussum[i].norm())
+    if (!invletters[i] && torussum[i].norm()>0.001)
       invletters[i]=0x6000+roundframe(torussum[i]).pageinx(FRAMERAD,FRAMESIZE);
+    if (i==0x0a0 || i==0x102 || i==0x210 || i==0xf5f || i==0xefd || i==0xdef ||
+        i==0x148 || i==0x414 || i==0x821 || i==0xeb7 || i==0xbeb || i==0x7de ||
+        i==0x17d || i==0xd39 || i==0xd74 || i==0xe82 || i==0x2c6 || i==0x28b ||
+        i==0xc32 || i==0x1d4 || i==0x329 || i==0x3cd || i==0xe2b || i==0xcd6)
+      invletters[i]=0;
+    /*   o o   torussum[0x0a0]=(-544.63,0,-544.63,0,-9860.2,0)
+     *  o * o  which is midway between (1,20) and (-1,-20).
+     * o o o o This pattern cannot give a clear indication
+     *  o * o  of the framing error, so nullify it.
+     *   o o
+     *  o * o
+     * * o o * 0x148
+     *  o o o
+     *   * *
+     *  o o o
+     * o * * o 0xc32
+     *  o * o
+     *   o o
+     *  o * o
+     * * * * * 0x17d
+     *  * o *
+     */
     for (j=11;j>=0 && debugletters;j--)
     {
       putchar(((i>>j)&1)+'0');
@@ -426,6 +458,12 @@ void fillinvletters()
 	stats[3]++;
     }
   }
+  outfile.open("torussum.dat",ios_base::out|ios_base::binary);
+  if (outfile.is_open())
+  {
+    outfile.write((char *)torussum,sizeof(torussum));
+    outfile.close();
+  }
   for (i=0;i<0;i++)
     for (j=0;j<32;j++)
       for (k=0;k<32;k++)
@@ -463,10 +501,10 @@ void debugframingerror()
   bool err;
   hvec disp,a,rem;
   complex<double> frame;
-  i=13;
-  j=21;
-  k=16;
-  l=1;
+  i=16;
+  j=1;
+  k=13;
+  l=21;
   printf("%c%c%c%c\n",i+'@',j+'@',k+'@',l+'@');
   hletters[0]=i;
   hletters[hvec(1,2)]=hletters[hvec(-1,-2)]=hletters[1]=hletters[-1]=j;
@@ -518,7 +556,7 @@ void debugframingerror()
       printf(" %03x",readings0[c][r+5]);
     putchar('\n');
   }
-  rasterdraw(1,0,0,600,DIM_DIAPOTHEM,FMT_PNM,"debug0.pgm");
+  //rasterdraw(1,0,0,600,DIM_DIAPOTHEM,FMT_PNM,"debug0.pgm");
   if (flip)
   {
     hletters[0]=31-i;
@@ -583,7 +621,7 @@ void debugframingerror()
     }
     putchar('\n');
   }
-  rasterdraw(1,0,0,600,DIM_DIAPOTHEM,FMT_PNM,"debug1.pgm");
+  //rasterdraw(1,0,0,600,DIM_DIAPOTHEM,FMT_PNM,"debug1.pgm");
 }
 
 void writeinvletters()
@@ -614,7 +652,7 @@ void checkinvletters()
       if ((invletters[r]&0xf000)==0x6000)
       {
         g=nthhvec(invletters[r]-0x6000,FRAMERAD,FRAMESIZE);
-        if (g!=h*omega && false)
+        if (((g-h*omega)%FRAMEMOD).norm()>1)
           printf("i=%03x, f.e. %4d (%3d,%3d)  r=%03x, f.e. %4d (%3d,%3d)\n",
 	         i,invletters[i]-0x6000,h.getx(),h.gety(),
 	         r,invletters[r]-0x6000,g.getx(),g.gety());
@@ -628,7 +666,7 @@ void checkinvletters()
       if ((invletters[r]&0xf000)==0x6000)
       {
         g=nthhvec(invletters[r]-0x6000,FRAMERAD,FRAMESIZE);
-        if (g!=h)
+        if (((g-h)%FRAMEMOD).norm()>1)
           printf("i=%03x, f.e. %4d (%3d,%3d)  r=%03x, f.e. %4d (%3d,%3d)\n",
 	         i,invletters[i]-0x6000,h.getx(),h.gety(),
 	         r,invletters[r]-0x6000,g.getx(),g.gety());

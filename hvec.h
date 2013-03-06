@@ -12,6 +12,7 @@
 #define M_SQRT_3_4 0.86602540378443864676372317
 // The continued fraction expansion is 0;1,6,2,6,2,6,2,...
 #define M_SQRT_3 1.73205080756887729352744634
+#define M_SQRT_1_3 0.5773502691896257645091487805
 using namespace std;
 
 #define PAGERAD 6
