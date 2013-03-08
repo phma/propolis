@@ -667,47 +667,62 @@ void writeinvletters()
 
 void checkinvletters()
 {
-  int i,r;
+  int i,r,countframingerrors;
   hvec g,h;
   bool valid=true;
   for (i=0;i<32;i++)
     if (invletters[letters[i]]!=(i|0x1000))
       valid=false;
-  for (i=0;i<4096;i++)
+  for (i=countframingerrors=0;i<4096;i++)
   {
-    if ((invletters[i]&0xf000)==0x6000)
+    if ((invletters[i]&0xf000)==0x6000 && (invletters[i]-0x6000)<FRAMESIZE)
     {
+      countframingerrors++;
       h=nthhvec(invletters[i]-0x6000,FRAMERAD,FRAMESIZE);
       r=rotate(i);
-      if ((invletters[r]&0xf000)==0x6000)
+      if ((invletters[r]&0xf000)==0x6000 && (invletters[r]-0x6000)<FRAMESIZE)
       {
         g=nthhvec(invletters[r]-0x6000,FRAMERAD,FRAMESIZE);
         if (((g-h*omega)%FRAMEMOD).norm()>1)
-          printf("i=%03x, f.e. %4d (%3d,%3d)  r=%03x, f.e. %4d (%3d,%3d)\n",
+	{
+	  valid=false;
+          /*printf("i=%03x, f.e. %4d (%3d,%3d)  r=%03x, f.e. %4d (%3d,%3d)\n",
 	         i,invletters[i]-0x6000,h.getx(),h.gety(),
-	         r,invletters[r]-0x6000,g.getx(),g.gety());
+	         r,invletters[r]-0x6000,g.getx(),g.gety());*/
+	}
       }
       else
-        printf("i=%03x, invletters[i]=%04x   r=%03x, invletters[r]=%04x\n",
+      {
+	valid=false;
+        /*printf("i=%03x, invletters[i]=%04x   r=%03x, invletters[r]=%04x\n",
 	       i,invletters[i],
-	       r,invletters[r]);
+	       r,invletters[r]);*/
+      }
 	
       r=4095-i;
-      if ((invletters[r]&0xf000)==0x6000)
+      if ((invletters[r]&0xf000)==0x6000 && (invletters[r]-0x6000)<FRAMESIZE)
       {
         g=nthhvec(invletters[r]-0x6000,FRAMERAD,FRAMESIZE);
         if (((g-h)%FRAMEMOD).norm()>1)
-          printf("i=%03x, f.e. %4d (%3d,%3d)  r=%03x, f.e. %4d (%3d,%3d)\n",
+	{
+	  valid=false;
+          /*printf("i=%03x, f.e. %4d (%3d,%3d)  r=%03x, f.e. %4d (%3d,%3d)\n",
 	         i,invletters[i]-0x6000,h.getx(),h.gety(),
-	         r,invletters[r]-0x6000,g.getx(),g.gety());
+	         r,invletters[r]-0x6000,g.getx(),g.gety());*/
+	}
       }
       else
-        printf("i=%03x, invletters[i]=%04x   r=%03x, invletters[r]=%04x\n",
+      {
+	valid=false;
+        /*printf("i=%03x, invletters[i]=%04x   r=%03x, invletters[r]=%04x\n",
 	       i,invletters[i],
-	       r,invletters[r]);
+	       r,invletters[r]);*/
+      }
 	
     }
   }
+  if (countframingerrors<3000)
+    valid=false;
   if (!valid)
     throw(runtime_error("invletters.dat is missing or corrupt. Run \"propolis --writetables\" to create it."));
 }
