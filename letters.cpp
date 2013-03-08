@@ -284,46 +284,42 @@ void fillinvletters()
     else
       invletters[i]=0;
   }
-  /* Find all possible reads caused by framing errors. Fill a size-1 array
+  /* Find all possible reads caused by framing errors. Fill a size-2 array
    * with four letters as follows:
-   *         j j
-   *        j j j
-   *   l l j j j j k k
-   *  l l l j j j k k k
-   * l l l l i i k k k k
-   *  l l l i + i k k k
-   *   k k i i i i l l
-   *  k k k i i i l l l
-   * k k k k j j l l l l
-   *  k k k j j j l l l
-   *       j j j j
-   *        j j j
-   * where + is the origin. Then copy bits of the central letter to the retuse corners:
-   *         j j
-   *      k j j j l
-   *   l l j j j j k k
-   *  l l l j j j k k k
-   * l l l l i i k k k k
-   *  l l l i + i k k k
-   * j k k i i i i l l j
-   *  k k k i i i l l l
-   * k k k k j j l l l l
-   *  k k k j j j l l l
-   *     l j j j j k
-   *        j j j
-   * Then read it with an offset in each of 108 regions. The area covered by the reads is this:
-   *         x x
-   *      * x x x *
-   *   s s o o o o # #
-   *  s s o o o o o # #
-   * s s o o o o o o # #
-   *  s o o o + o o o #
-   * * # o o o o o o s *
-   *  # # o o o o o s s
-   * # # # o o o o s s s
-   *  # # # x x x s s s
-   *     * x x x x *
-   *        x x x
+   *         k k         l l
+   *        k k k       l l l
+   *       k k k k j j l l l l
+   *        k k k j j j l l l
+   *         l l j j j j k k
+   *        l l l j j j k k k
+   *   j j l l l l i i k k k k j j
+   *  j j j l l l i + i k k k j j j
+   * j j j j k k i i i i l l j j j j
+   *  j j j k k k i i i l l l j j j
+   *       k k k k j j l l l l
+   *        k k k j j j l l l
+   *         l l j j j j k k
+   *        l l l j j j k k k
+   *       l l l l     k k k k
+   *        l l l       k k k
+   * where + is the origin. Then read it with an offset
+   * in each of 108 regions. The area covered by the reads is this:
+   *         k k         l l
+   *        k k k       l l l
+   *       k k k k j j l l l l
+   *        k k k j j j l l l
+   *         l l o o o o k k
+   *        l l o o o o o k k
+   *   j j l l o o o o o o k k j j
+   *  j j j l o o o + o o o k j j j
+   * j j j j k o o o o o o l j j j j
+   *  j j j k k o o o o o l l j j j
+   *       k k k o o o o l l l
+   *        k k k j j j l l l
+   *         l l j j j j k k
+   *        l l l j j j k k k
+   *       l l l l     k k k k
+   *        l l l       k k k
    * 
    * IJKL corresponds to PDWR and FQ\A in that order. Each set of four letters
    * has to be scanned four times to get all the frames. The frames of IJKL
@@ -338,20 +334,54 @@ void fillinvletters()
    *  * * o
    * * o * * (0xf5c) is not found anywhere
    *  * o o
+   *   o o
+   *  o o *
+   * * * o o (0x0e2) is not found anywhere
+   *  o * o
    *   * *
    *  o * o
    * * o o o (0xd44) is found somewhere
    *  * o o
-   * 410 (10%) of bit patterns are not found, 3354 (82%) are framing errors, and the rest are decodable as 1, 2, or 3 letters.
-   * 1080 bit patterns are framing errors only because of filleting.
+   * 488 (12%) of bit patterns are not found, 3276 (80%) are framing errors, and the rest are decodable as 1, 2, or 3 letters.
+   * 1002 bit patterns are framing errors only because of filleting.
+   * 24 bit patterns do occur, but because of symmetry, they give ambiguous framing errors, so I zeroed them,
+   * and they are counted as not found. See the list below.
+   * Some patterns produce (0,25), (25,25), (25,0), or negatives thereof, which are the corners. The actual value
+   * is equidistant from the corners and corresponds to a reading frame that straddles three letters equally.
+   * They don't match their rotated correspondents because of roundoff error; the discrepancy is ignored.
+   * Similarly, some patterns produce (12,-13) or (-13,-25), which is in the middle of a side.
    *   o o
    *  * o *
-   * o * o * 0x2af comes up interstitially from PAM*, PIM*, M*PA, and M*PI.
-   *  * * *
-   *   * *
+   * o o o o (0x282) corner
+   *  o * o
+   *   o o
    *  * o *
-   * o o * * 0xe9a does not occur. One of these is a bug. Should come up from F*L^, F*P^, or some permutation thereof.
-   *  o * o  It comes up 0xf9b instead (from APUM rotated to L^F[).
+   * o * * o (0x2b7, 0x79a, 0xbe2) midside
+   *  * * *
+   *   o o
+   *  * * *
+   * o * * o (0x3b2) corner
+   *  o * o
+   *   o *
+   *  o o o
+   * * o o o (0x441) corner
+   *  o o *
+   *   o *
+   *  o * o
+   * * * * o (0x571) corner
+   *  o o *
+   *   o *
+   *  * o *
+   * * o o o (0x6c3) corner
+   *  o * *
+   *   * o
+   *  o o o
+   * o o o * (0x80c) corner
+   *  * o o
+   *   o o
+   *  o * o
+   * o * * o (0x130) has a torussum of nearly zero and is counted as not found.
+   *  o o o
    */
   for (i=0;i<32;i++)
   {
