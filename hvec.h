@@ -15,6 +15,8 @@
 #define M_SQRT_1_3 0.5773502691896257645091487805
 using namespace std;
 
+//PAGERAD should be 1 or 6 mod 8, which makes PAGESIZE 7 mod 8.
+// The maximum is 147 because of the file format.
 #define PAGERAD 6
 #define PAGESIZE (PAGERAD*(PAGERAD+1)*3+1)
 #define sqr(a) ((a)*(a))
@@ -116,6 +118,23 @@ int region(complex<double> z);
 void testcomplex();
 void testsixvec();
 void testpageinx();
+
+/* Files for storing hexagonal arrays:
+ * Byte 0: number of bits per element
+ * Byte 1: PAGERAD
+ * Bytes 2 and 3: PAGESIZE, native endianness
+ * Bytes 4 and 5 additional information about an element format, currently 0000
+ * This is followed by strips:
+ * Bytes 0 and 1: x-coordinate of start of strip divided by PAGEMOD
+ * Bytes 2 and 3: y-coordinate of start of strip divided by PAGEMOD
+ * Bytes 4 and 5: number of pages in strip
+ * Example (little-endian):
+ * 06 7f 00 00 00 fa ff fa ff 07 00 <7×16 bytes of data>
+ * Numbers of bits are expected to be 1, 2 (for art masks), 8, and 16. If 16, the data
+ * will be stored in two-byte words, with the same endianness as PAGESIZE.
+ * At first the program will read only files with its native endianness and PAGERAD;
+ * later it will be able to convert them.
+ */
 
 extern harray<char> hletters,hbits;
 #endif
