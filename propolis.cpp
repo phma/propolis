@@ -392,7 +392,7 @@ void makepattern(int pattern,int asize,int format,string outfilename)
   if (letterpattern>1)
     thematrix.arrange(hletters);
   if (letterpattern)
-    for (k=start(thematrix.getsize());k.cont(thematrix.getsize());k.inc(thematrix.getsize()))
+    for (k=start(size);k.cont(size);k.inc(size))
       drawletter(hletters[k]&31,k);
   border(size);
   switch (format)
