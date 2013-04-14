@@ -286,9 +286,18 @@ wstring decodeu2(string text)
   return plain;
 }
 
+void atspace(string &text)
+{
+  int i;
+  for (i=0;i<text.length();i++)
+    if (text[i]==' ' || text[i]=='@')
+      text[i]^=(' '^'@');
+}
+
 encoded encode32(string text)
 {
   encoded code;
+  atspace(text);
   while (text.length())
   {
     if (text[0]>='@' && text[0]<='_')
@@ -305,6 +314,7 @@ encoded encode32(string text)
 
 string decode32(string text)
 {
+  atspace(text);
   return text;
 }
 
