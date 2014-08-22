@@ -296,7 +296,7 @@ void fac8191()
 void initialize()
 {initialize_ecc();
  fillpn();
- initsubsample();
+ initsubsample(1);
  readinvletters();
  }
 
@@ -510,7 +510,7 @@ double parse_redundancy(string red)
 
 void copyleft()
 {
-  cout<<"Propolis version "<<VERSION<<" © Pierre Abbat 2011-2013\nReed-Solomon code by Henry Minsky\nGPL v3 licensed\n";
+  cout<<"Propolis version "<<VERSION<<" © Pierre Abbat 2011-2014\nReed-Solomon code by Henry Minsky\nGPL v3 licensed\n";
 }
 
 int formatnum(const char *optarg)
@@ -540,7 +540,7 @@ int patternnum(const char *optarg)
 int main(int argc,char **argv)
 {
   int testflag=0,option_index=0,makedata=0;
-  int c;
+  int c,quality;
   double redundancy=0;
   int size=0;
   string text,infilename,outfilename;
@@ -558,6 +558,7 @@ int main(int argc,char **argv)
     {"input",      required_argument,0,0},
     {"output",     required_argument,0,0},
     {"pattern",    required_argument,0,0},
+    {"quality",    required_argument,0,0},
     {0,            0,                0,0}
   };
   initialize();
@@ -626,6 +627,14 @@ int main(int argc,char **argv)
 	break;
       case 8:
 	pattern=patternnum(optarg);
+	break;
+      case 9:
+	quality=atoi(optarg);
+	if (quality<0)
+	  quality=0;
+	if (quality>10)
+	  quality=10;
+	initsubsample(quality);
 	break;
     }
   }

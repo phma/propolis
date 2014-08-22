@@ -12,7 +12,12 @@ struct locreg
   }
 };
 
-void initsubsample();
+void initsubsample(int q);
+/* q=1: one dot per square
+ * q=2: five dots per square
+ * q=6: 85 dots per square, the usual
+ * q=10: 221 dots per square, the most that makes sense
+ */
 void rasterdraw(int size,double width,double height,
 	    double scale,int dim,int imagetype,string filename);
 int filletbit(complex<double> z);

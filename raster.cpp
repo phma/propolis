@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <cstring>
 #include <stdexcept>
+#include <vector>
 #include "raster.h"
 #include "letters.h"
 
@@ -16,7 +17,15 @@ int drawmode=2;
  * 1: each bit is drawn as 3/4 of a hexagon, and interstices are filled in with straight lines
  * 2: each bit is drawn as a circle (68% of the hexagon) and they're connected by lines
  */
-complex<double> subsample85[85]; // Corners are 42 (ur), 43 (ll), 36 (ul), and 49 (lr).
+vector<complex<double> > subsample;
+/* Corners for 85 are 42 (ur), 43 (ll), 36 (ul), and 49 (lr).
+ * More generally, corners are:
+ * ur: (q²+(q+1)²-1)/2
+ * ll: (q²+(q+1)²+1)/2
+ * ul: q²
+ * lr: (q+1)²
+ */
+int nsubsamples,ur,ll,ul,lr;
 int regbits[13][4]=
 /*  1 0
  * 4 3 2
@@ -45,18 +54,24 @@ int regbits[13][4]=
   {0xfe80fe80,0xfe80fe80,0xfe80fe80,0xfe80fe80}
 };
 
-void initsubsample()
+void initsubsample(int q)
 {
   int i,x,y;
-  for (i=x=y=0;i<85;i++)
+  ul=q*q;
+  lr=(q+1)*(q+1);
+  nsubsamples=ul+lr;
+  ur=nsubsamples/2;
+  ll=ur+1;
+  subsample.resize(nsubsamples);
+  for (i=x=y=0;i<nsubsamples;i++)
   {
-    subsample85[i]=complex<double>(x/85.,y/85.);
-    x+=13;
+    subsample[i]=complex<double>((double)x/nsubsamples,(double)y/nsubsamples);
+    x+=2*q+1;
     y++;
-    if (x>42)
-      x-=85;
-    if (y>42)
-      y-=85;
+    if (2*x>nsubsamples)
+      x-=nsubsamples;
+    if (2*y>nsubsamples)
+      y-=nsubsamples;
   }
 }
 
@@ -131,7 +146,7 @@ void rasterdraw(int size,double width,double height,
  */
 {
   int i,j,k;
-  char pixel;
+  int pixel;
   int pwidth,pheight;
   complex<double> z,middle,offset(0,-1/M_SQRT_3);
   hvec bend,dir,center,lastcenter,jump;
@@ -157,6 +172,8 @@ void rasterdraw(int size,double width,double height,
     }
   if (scale<=0)
     throw(range_error("rasterdraw: scale must be positive"));
+  cor0.location=cor0.region=0;
+  cor1=cor0;
   symwidth=scale*(6*(size+2));
   symheight=scale*(sqrt(48)*(size+2));
   if (width<0 || height<0)
@@ -172,22 +189,25 @@ void rasterdraw(int size,double width,double height,
     for (j=0;j<pwidth;j++)
     {
       middle=complex<double>(j-pwidth/2.,pheight/2.-i);
-      cor0=locregion((middle+subsample85[42])/scale+offset);
-      cor1=locregion((middle+subsample85[43])/scale+offset);
-      if (cor1==cor0 && cor0.region<7) // regions 7-12 are non-convex sets
+      if (ul) // if ul=0 then lr=1 which is out of range, and there's only one subsample, so no need to check the corners
       {
-        cor0=locregion((middle+subsample85[36])/scale+offset);
-        cor1=locregion((middle+subsample85[49])/scale+offset);
+	cor0=locregion((middle+subsample[ur])/scale+offset);
+	cor1=locregion((middle+subsample[ll])/scale+offset);
+	if (cor1==cor0 && cor0.region<7) // regions 7-12 are non-convex sets
+	{
+	  cor0=locregion((middle+subsample[ul])/scale+offset);
+	  cor1=locregion((middle+subsample[lr])/scale+offset);
+	}
       }
       if (cor1==cor0 && cor0.region<7)
-	pixel=85*filletbit(middle/scale+offset);
+	pixel=nsubsamples*filletbit(middle/scale+offset);
       else
-        for (k=pixel=0;k<85;k++)
+        for (k=pixel=0;k<nsubsamples;k++)
         {
-	  z=(middle+subsample85[k])/scale+offset;
+	  z=(middle+subsample[k])/scale+offset;
           pixel+=filletbit(z);
         }
-      rfile<<(char)(255-3*pixel);
+      rfile<<(char)(255-(255*pixel+ur)/nsubsamples);
     }
   rclose();
 }
