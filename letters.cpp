@@ -474,7 +474,7 @@ void fillinvletters()
 	break;
       case 0x6000:
 	if (debugletters)
-	  printf("%03x: F    %4d %10.0f\n",i,(invletters[i]>>0)&2047,((invletters[i]>>0)&31)+64,torussum[i].norm());
+	  printf("%03x: F    %4d %c %10.0f\n",i,(invletters[i]>>0)&2047,((invletters[i]>>0)&31)+64,torussum[i].norm());
 	stats[4]++;
 	break;
       case 0x0000:

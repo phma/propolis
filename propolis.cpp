@@ -257,7 +257,7 @@ void testdiv()
               }
       putchar('\n');
       }
- printf("norm(b)=%d\n",b.norm());
+ printf("norm(b)=%ld\n",b.norm());
  }
 
 void testrem()
@@ -278,7 +278,7 @@ void testrem()
               }
       putchar('\n');
       }
- printf("norm(b)=%d\n",b.norm());
+ printf("norm(b)=%ld\n",b.norm());
  }
 
 void fac8191()
