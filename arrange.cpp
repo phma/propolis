@@ -205,15 +205,37 @@ int ndataletters(int n)
   return nletters;
 }
 
+int crissCrossFactor(int n)
+/* Used for criss-crossing the five layers of Hamming codes.
+ * Returns the number such that its least power which is 1 or -1
+ * is as small as possible at least 5.
+ */
+{
+  int i,j,k,minsofar=n,ret;
+  for (i=1;i*i*i*i*i>n;i++);
+  for (;i<n;i++)
+  {
+    for (j=0,k=1;j<minsofar && (j==0 || (k>1 && k<n-1));j++)
+      k=(k*i)%n;
+    if (j>=5 && j<minsofar && (k==1 || k==n-1))
+    {
+      minsofar=j;
+      ret=i;
+    }
+  }
+  return ret;
+}
+
 void listsizes()
 {
-  int i,nletters,nrows,leftover;
+  int i,nletters,nrows,leftover,criss;
   for (i=nletters=nrows=2;nletters-nrows<30752;i++)
   {
     nletters=ndataletters(i);
     nrows=(nletters+30)/31;
     leftover=31*nrows-nletters;
-    printf("%3d %5d %4d %2d\n",i,nletters,nrows,leftover);
+    criss=crissCrossFactor(nletters);
+    printf("%3d %5d %4d\n",i,nletters,criss);
   }
 }
 

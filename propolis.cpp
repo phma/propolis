@@ -443,7 +443,7 @@ void testmain()
 {
   //testgalois();
   //testoutline();
-  //listsizes();
+  listsizes();
   //testfindsize();
   //testsetdata();
   //testshuffle();
