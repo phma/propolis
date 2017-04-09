@@ -6,6 +6,18 @@
 #include "rs.h"
 #include "letters.h"
 
+/* Change in code (April 2017):
+ * After over four years of wondering how this layer of Reed-Solomon and
+ * letter code can be decoded, taking advantage of the one-bit error letter
+ * being decodable as one of two or three letters, I decided on a better way:
+ * There are five layers of criss-crossed Hamming codes, one for each bit in
+ * a letter. Decoding is by belief propagation, similar to LDPC codes or turbo
+ * codes. All the Hamming codes are updated, then all the letters are updated,
+ * and so alternately, until they are all sure enough or they give up.
+ * 
+ * I am unsure whether to keep the metadata in Reed-Solomon code or use something else.
+ */
+
 /* Metadata letters are put at the six corners and, for size>17, in the center.
  *    + - - +       + - - +
  *   / [   \ \     / [   \ \
