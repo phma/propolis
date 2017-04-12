@@ -26,7 +26,7 @@ vector<complex<double> > subsample;
  * lr: (q+1)²
  */
 int nsubsamples,ur,ll,ul,lr;
-int regbits[13][4]=
+unsigned int regbits[13][4]=
 /*  1 0
  * 4 3 2
  *  6 5

@@ -1,3 +1,4 @@
+#include <array>
 #include <cstdio>
 #include <cmath>
 #include <cstring>
@@ -5,6 +6,7 @@
 #include "galois.h"
 #include "rs.h"
 #include "letters.h"
+using namespace std;
 
 /* Change in code (April 2017):
  * After over four years of wondering how this layer of Reed-Solomon and
@@ -205,13 +207,29 @@ int ndataletters(int n)
   return nletters;
 }
 
-int crissCrossFactor(int n)
+unsigned gcd(unsigned a,unsigned b)
+{
+  while (a&&b)
+  {
+    if (a>b)
+    {
+      b^=a;
+      a^=b;
+      b^=a;
+    }
+    b%=a;
+  }
+  return a+b;
+}
+
+array<int,2> crissCrossFactor(int n)
 /* Used for criss-crossing the five layers of Hamming codes.
  * Returns the number such that its least power which is 1 or -1
  * is as small as possible at least 5.
  */
 {
-  int i,j,k,minsofar=n,ret;
+  int i,j,k,minsofar=n,maxsofar=0;
+  array<int,2> ret;
   for (i=1;i*i*i*i*i>n;i++);
   for (;i<n;i++)
   {
@@ -220,22 +238,38 @@ int crissCrossFactor(int n)
     if (j>=5 && j<minsofar && (k==1 || k==n-1))
     {
       minsofar=j;
-      ret=i;
+      ret[0]=i;
     }
   }
+  for (i=1;i<n;i++)
+    if (gcd(i,n)==1)
+    {
+      minsofar=n;
+      for (j=0,k=i;j<5;j++,k=(k*ret[0])%n)
+      {
+        if (k<minsofar)
+          minsofar=k;
+        if (n-k<minsofar)
+          minsofar=n-k;
+      }
+      if (minsofar>maxsofar)
+        maxsofar=minsofar;
+    }
+  ret[1]=maxsofar;
   return ret;
 }
 
 void listsizes()
 {
-  int i,nletters,nrows,leftover,criss;
+  int i,nletters,nrows,leftover;
+  array<int,2> criss;
   for (i=nletters=nrows=2;nletters-nrows<30752;i++)
   {
     nletters=ndataletters(i);
     nrows=(nletters+30)/31;
     leftover=31*nrows-nletters;
     criss=crissCrossFactor(nletters);
-    printf("%3d %5d %4d\n",i,nletters,criss);
+    printf("%3d %5d %5d %5d\n",i,nletters,criss[0],criss[1]);
   }
 }
 
