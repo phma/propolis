@@ -1,5 +1,6 @@
 #include <array>
 #include <cstdio>
+#include <iostream>
 #include <cmath>
 #include <cstring>
 #include "arrange.h"
@@ -17,7 +18,7 @@ using namespace std;
  * codes. All the Hamming codes are updated, then all the letters are updated,
  * and so alternately, until they are all sure enough or they give up.
  * 
- * I am unsure whether to keep the metadata in Reed-Solomon code or use something else.
+ * The metadata will have check letters in F31 Lagrange polynomials.
  */
 
 /* Metadata letters are put at the six corners and, for size>17, in the center.
@@ -28,29 +29,29 @@ using namespace std;
  *  \         /   \         /
  *   \ _   ^ /     \ _   ^ /
  *    + - - +       + - - +
- * Size<=17:
+ * Size<=30:
  * @-Y: unwritten zeros
  * Z:	zero (@) used as index marker
- * [:	ndataletters/31+1
- * \:	ndataletters%31+1
+ * [:	nhammingblocks/31+1
+ * \:	nhammingblocks%31+1
  * ]:	encoding (ASCII, numeric, Unicode, etc.)
- * ^-_: Reed-Solomon check letters
- * Size>17:
+ * ^-_: Lagrange check letters
+ * Size>30:
  * @-W: unwritten zeros
  * Y:	zero (@) used as index marker
- * Z:	(ndataletters-1)/961
- * [:	((ndataletters-1)%961)/31+1
- * \:	(ndataletters-1)%31+1
+ * Z:	(nhammingblocks)/961
+ * [:	((nhammingblocks)%961)/31+1
+ * \:	(nhammingblocks)%31+1
  * ]:	encoding (ASCII, numeric, Unicode, etc.)
- * ^-_: Reed-Solomon check letters
+ * ^-_: Lagrange check letters
  * Examples: (using encoding 1)
- * ndata YZ[\]
+ * nhamm YZ[\]
  *     1  @AAA
  *    12  @ALA
  *    31  @A_A
  *    32  @BAA
- *   883  @]OA this is the most that can fit in size 17, as each of the 30 rows must have at least 1 check letter
- *   884 @@]PA
+ *   927  @^]A this is the most that can fit in size 30, as 4-byte Hamming blocks are not allowed
+ *   928 @@^^A
  *   961 @@__A
  *   962 @AAAA
  * 29316 @^PUA
@@ -203,7 +204,7 @@ int ndataletters(int n)
 {
   int nletters;
   nletters=n*(n+1)*3+1;
-  nletters-=6+(nletters>961);
+  nletters-=6+(nletters>961*3);
   return nletters;
 }
 
@@ -261,16 +262,36 @@ array<int,2> crissCrossFactor(int n)
 
 void listsizes()
 {
-  int i,nletters,nrows,leftover;
+  int i,nletters,nblocks;
   array<int,2> criss;
-  for (i=nletters=nrows=2;nletters-nrows<30752;i++)
+  for (i=nletters=nblocks=2;nblocks<29791;i++)
   {
     nletters=ndataletters(i);
-    nrows=(nletters+30)/31;
-    leftover=31*nrows-nletters;
+    if (nletters%3==1)
+      nblocks=(nletters-4)/3; // 2 blocks of 5 and the rest of 3
+    else // nletters%3 is never 2
+      nblocks=nletters/3;
     criss=crissCrossFactor(nletters);
-    printf("%3d %5d %5d %5d\n",i,nletters,criss[0],criss[1]);
+    printf("%3d %5d %5d %5d %5d\n",i,nletters,nblocks,criss[0],criss[1]);
   }
+}
+
+vector<int> arrangeHamming(int nletters,int nblocks)
+{
+  int i,nb1,xs,xs0,xs1,blocksize0,blocksize1;
+  vector<int> ret;
+  for (blocksize1=3;blocksize1*nblocks<=nletters;blocksize1=2*blocksize1+1);
+  blocksize0=blocksize1/2;
+  for (nb1=0;nb1<nblocks && nb1*blocksize1+(nblocks-nb1)*blocksize0<nletters;nb1++);
+  xs=nb1*blocksize1+(nblocks-nb1)*blocksize0-nletters;
+  xs1=xs%(nb1+nblocks);
+  xs0=0;
+  if (xs1>nb1)
+    xs0=xs1-nb1;
+  xs/=(nb1+nblocks);
+  for (i=0;i<nblocks;i++)
+    ret.push_back(((i<nb1)?blocksize1-2*xs:blocksize0-xs)-(nblocks-1-i<xs0)-(i<nb1 && nb1-1-i<xs1));
+  return ret;
 }
 
 int findsize(int n,double redundancy)
@@ -314,7 +335,16 @@ int decinc(int i)
 
 void testfindsize()
 {
-  int i,size03,size25,size50,size75,size97;
+  int i,j,size03,size25,size50,size75,size97;
+  vector<int> blksizes;
+  for (i=1;i<=10;i++)
+  {
+    blksizes=arrangeHamming(31,i);
+    cout<<i;
+    for (j=0;j<blksizes.size();j++)
+      cout<<' '<<blksizes[j];
+    cout<<endl;
+  }
   for (i=1;i<40000;i+=decinc(i))
   {
     size03=findsize(i,0.03);

@@ -444,7 +444,7 @@ void testmain()
   //testgalois();
   //testoutline();
   listsizes();
-  //testfindsize();
+  testfindsize();
   //testsetdata();
   //testshuffle();
   //testwhiten();
