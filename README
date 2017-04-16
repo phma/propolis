@@ -4,3 +4,5 @@ bit codes such as QR code.
 To compile, make a directory ~/build/propolis, cd to it, and type
 cmake ~/propolis
 where ~/propolis is the directory where you have untarred it. Then type "make".
+
+propolis.dxf is a drawing of the middle 19 letters of the 8191-bit pseudonoise code. You can make a PostScript file of the same by typing "propolis --pattern 8191 --size 2 -o 8191.ps". The drawing contains arc-style letters, which are easier to see as letters, as well as circle-style.
