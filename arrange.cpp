@@ -291,6 +291,9 @@ vector<int> arrangeHamming(int nletters,int nblocks)
   xs/=(nb1+nblocks);
   for (i=0;i<nblocks;i++)
     ret.push_back(((i<nb1)?blocksize1-2*xs:blocksize0-xs)-(nblocks-1-i<xs0)-(i<nb1 && nb1-1-i<xs1));
+  for (i=0;i<ret.size();i++)
+    if ((ret[i]&(ret[i]-1))==0)
+      ret.clear(); // Powers of 2 are not allowed.
   return ret;
 }
 
