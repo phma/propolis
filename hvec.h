@@ -129,7 +129,7 @@ void testpageinx();
  * Bytes 2 and 3: y-coordinate of start of strip divided by PAGEMOD
  * Bytes 4 and 5: number of pages in strip
  * Example (little-endian):
- * 06 7f 00 00 00 fa ff fa ff 07 00 <7×16 bytes of data>
+ * 01 06 7f 00 00 00 fa ff fa ff 07 00 <7×16 bytes of data>
  * Numbers of bits are expected to be 1, 2 (for art masks), 8, and 16. If 16, the data
  * will be stored in two-byte words, with the same endianness as PAGESIZE.
  * At first the program will read only files with its native endianness and PAGERAD;
