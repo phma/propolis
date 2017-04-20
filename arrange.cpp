@@ -65,6 +65,16 @@ codematrix thematrix;
 char bitctrot[]="@BDLHTXYPEIZQKSWAFJ\\RMU[CNV]G^O_",
 bitctunrot[]=   "@PAXBIQ\\DJRMCUY^HLTNEVZOFGKWS[]_",
 invoddmul[]=    "@UF[\\QBWXM^STIZOPEVKLARGH]NCDYJ_";
+short bitpermtab0[]=
+{ // These are the 26 involution permutations of 5 bits, which combine
+  043210, // with the 31 nonzero letters to yield 806-long whitening.
+  043201,043120,042310,034210,003214,
+  043012,041230,023410,040213,013240,
+  042301,034120,002314,034201,003124,
+  041032,021430,020413,010243,013042,
+  040123,012340,034012,001234,023401
+};
+vector<array<char,32> > bitpermtab;
 int debugwhiten;
 
 int oddmul(int a,int b)
@@ -75,6 +85,47 @@ int oddmul(int a,int b)
 int odddiv(int a,int b)
 {
   return oddmul(a,invoddmul[b&31]);
+}
+
+void fillbitpermtab()
+{
+  int i,j,b;
+  array<char,32> perm;
+  for (i=0;i<26;i++)
+  {
+    for (j=0;j<32;j++)
+    {
+      perm[j]=0;
+      for (b=0;b<5;b++)
+        if ((j>>b)&1)
+          perm[j]+=1<<((bitpermtab0[i]>>(3*b))&7);
+    }
+    bitpermtab.push_back(perm);
+  }
+}
+
+int whiten(int letter,int index)
+{
+  int highbits;
+  highbits=letter&-32;
+  letter&=31;
+  if (bitpermtab.size()==0)
+    fillbitpermtab();
+  letter=bitpermtab[index%26][letter^(index%31+1)];
+  letter|=highbits;
+  return letter;
+}
+
+int unwhiten(int letter,int index)
+{
+  int highbits;
+  highbits=letter&-32;
+  letter&=31;
+  if (bitpermtab.size()==0)
+    fillbitpermtab();
+  letter=bitpermtab[index%26][letter]^(index%31+1);
+  letter|=highbits;
+  return letter;
 }
 
 int whiten(int letter,int row,int column)
