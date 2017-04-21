@@ -6,6 +6,10 @@
 
 #include <vector>
 
+int databits(int codebits);
+std::vector<int> databits(std::vector<int> codebits);
+int totaldatabits(std::vector<int> codebits);
+
 class Hamming
 {
 protected:

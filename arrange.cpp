@@ -7,6 +7,7 @@
 #include "galois.h"
 #include "rs.h"
 #include "letters.h"
+#include "hamming.h"
 using namespace std;
 
 /* Change in code (April 2017):
@@ -319,7 +320,7 @@ void listsizes()
   {
     nletters=ndataletters(i);
     if (nletters%3==1)
-      nblocks=(nletters-4)/3; // 2 blocks of 5 and the rest of 3
+      nblocks=(nletters-4)/3; // 1 block of 7 and the rest of 3
     else // nletters%3 is never 2
       nblocks=nletters/3;
     criss=crissCrossFactor(nletters);
@@ -394,10 +395,10 @@ void testfindsize()
   for (i=1;i<=10;i++)
   {
     blksizes=arrangeHamming(31,i);
-    cout<<i;
+    cout<<i<<':';
     for (j=0;j<blksizes.size();j++)
       cout<<' '<<blksizes[j];
-    cout<<endl;
+    cout<<": "<<totaldatabits(blksizes)<<endl;
   }
   for (i=1;i<40000;i+=decinc(i))
   {

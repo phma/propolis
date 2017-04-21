@@ -18,6 +18,35 @@ using namespace std;
  *   ... (4242)7 (16968); (9898)3 (9898)
  */
 
+int databits(int codebits)
+{
+  int ret=codebits;
+  while (codebits)
+  {
+    codebits/=2;
+    ret--;
+  }
+  return ret;
+}
+
+vector<int> databits(vector<int> codebits)
+{
+  int i;
+  vector<int> ret;
+  for (i=0;i<codebits.size();i++)
+    ret.push_back(databits(codebits[i]));
+  return ret;
+}
+
+int totaldatabits(vector<int> codebits)
+{
+  int i;
+  int ret=0;
+  for (i=0;i<codebits.size();i++)
+    ret+=databits(codebits[i]);
+  return ret;
+}
+
 vector<signed char> Hamming::getCode()
 {
   return code;
