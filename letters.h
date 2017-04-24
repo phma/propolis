@@ -1,3 +1,4 @@
+#include <array>
 #include "propolis.h"
 #include "hvec.h"
 extern BIT16 letters[38];
@@ -28,3 +29,15 @@ void checkinvletters();
 void testroundframe();
 void testrotate();
 void debugframingerror();
+
+class litteron // blend of "littera" and "neuron"
+{
+private:
+  std::array<unsigned char,32> letterprob;
+  std::array<signed char,5> softbits;
+public:
+  void setprob(std::array<signed char,12> seen,int index);
+  void setprob(short seen,int index);
+  void propagate(std::array<signed char,5> belief);
+  signed char operator[](int n);
+};

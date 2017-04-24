@@ -148,6 +148,7 @@ const complex<double> ninedisp[]=
   complex<double>(0,-M_SQRT_1_3)
 };
 const short int weights[]={333,31,31,31,1812,31,31,31,333};
+vector<float> exp252tab;
 
 int bitcount(int n)
 {n=((n&0xaaaaaaaa)>>1)+(n&0x55555555);
@@ -748,4 +749,86 @@ void testrotate()
   for (i=0;i<4096;i++)
     if (rotate(rotate(rotate(i)))!=i)
       printf("rotate(%03x)=%03x\n",i,rotate(i));
+}
+
+void initexp252tab()
+/* exp252tab is used to store the probability that a seen letter, which may
+ * be misprinted, overlaid with artwork, or misread, is actually supposed to be
+ * each of the 32 letters. The seen bits are assumed to be correct with
+ * probability 2/3. If the bit pattern is valid (e.g. 11 011 0011 001), the
+ * probability of being that letter (G) is 4096 times the probability of the
+ * exact opposite letter (X). A span of 252 in the table is a ratio of 4096,
+ * each octave being a span of 21.
+ */
+{
+  int i;
+  for (i=0;i<256;i++)
+    exp252tab.push_back(pow(2,(i-128)/21.));
+}
+
+void litteron::setprob(array<signed char,12> seen,int index)
+/* Sets letterprob according to seen, as follows:
+ * Suppose seen is (127,127,-127,127,127,-127,-127,127,-127,-127,127,-127)
+ *   1 0
+ *  1 1 0
+ * 1 1 0 0
+ *  1 0 0
+ * This is most likely to be Z, H, or O, and least likely to be E, W, or P.
+ * letterprob is set to:
+ *  @   A   B   C   D   E   F   G   H   I   J   K   L   M   N   O
+ * 128,107,149, 65,128, 23,191, 65,233,149, 86,149, 65, 65, 86,233,
+ *  P   Q   R   S   T   U   V   W   X   Y   Z   [   \   ]   ^   _
+ *  23,170,191,191,107,170,107, 23,191, 65,233,128,191,107,149,128.
+ */
+{
+  int i,j;
+  float probf[32],maxprob=0,minprob=INFINITY,medprob;
+  if (!exp252tab.size())
+    initexp252tab();
+  for (i=0;i<32;i++)
+  {
+    for (j=0,probf[i]=1;j<12;j++)
+      probf[i]*=seen[j]*(1-((letters[i]>>j)&1)*2)+254;
+    if (probf[i]>maxprob)
+      maxprob=probf[i];
+    if (probf[i]<minprob)
+      minprob=probf[i];
+  }
+  medprob=sqrtf(maxprob*minprob);
+  for (i=0;i<32;i++)
+    letterprob[i]=21*log2f(probf[i]/medprob);
+}
+
+void litteron::setprob(short seen,int index)
+{
+  array<signed char,12> seena;
+  int i;
+  for (i=0;i<12;i++)
+    seena[i]=((seen>>i)&1)?-127:127;
+  setprob(seena,index);
+}
+
+void litteron::propagate(array<signed char,5> belief)
+{
+  float bittmp[5]={0,0,0,0,0};
+  float thisprob,maxprob=0;
+  int i,j;
+  for (i=0;i<32;i++)
+  {
+    for (thisprob=1,j=0;j<5;j++)
+      thisprob*=belief[j]*(1-((i>>j)&1)*2)+127;
+    for (j=0;j<5;j++)
+      bittmp[j]+=thisprob*exp252tab[letterprob[i]]*(1-((i>>j)&1)*2);
+  }
+  for (j=0;j<5;j++)
+    if (maxprob<bittmp[j])
+      maxprob=bittmp[j];
+  for (j=0;j<5;j++)
+    softbits[j]=rintf(bittmp[j]/maxprob*127.375);
+}
+
+signed char litteron::operator[](int n)
+{
+  assert(n>=0 && n<5);
+  return softbits[n];
 }
