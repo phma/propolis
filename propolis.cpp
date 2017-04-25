@@ -441,8 +441,10 @@ void testraster()
 
 void testmain()
 {
+  debugletters=0;
   //testgalois();
   //testoutline();
+  degauss();
   listsizes();
   testfindsize();
   //testsetdata();
