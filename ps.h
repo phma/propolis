@@ -21,7 +21,7 @@ void setcolor(double r,double g,double b);
 void setscale(double minx,double miny,double maxx,double maxy);
 void testpage();
 void plotpoint(double x,double y);
-void psdraw(vector<vector<hvec> > contours,int size,double width,double height,
-	    double scale,int dim,double inkspread,string filename);
+void psdraw(std::vector<std::vector<hvec> > contours,int size,double width,double height,
+	    double scale,int dim,double inkspread,std::string filename);
 // All dimensions are in millimeters. If height and width
 // are 0, they will be set to the symbol size.

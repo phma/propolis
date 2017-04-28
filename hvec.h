@@ -13,14 +13,13 @@
 // The continued fraction expansion is 0;1,6,2,6,2,6,2,...
 #define M_SQRT_3 1.73205080756887729352744634
 #define M_SQRT_1_3 0.5773502691896257645091487805
-using namespace std;
 
 //PAGERAD should be 1 or 6 mod 8, which makes PAGESIZE 7 mod 8.
 // The maximum is 147 because of the file format.
 #define PAGERAD 6
 #define PAGESIZE (PAGERAD*(PAGERAD+1)*3+1)
 #define sqr(a) ((a)*(a))
-extern const complex<double> omega,ZLETTERMOD;
+extern const std::complex<double> omega,ZLETTERMOD;
 
 class hvec
 {
@@ -39,7 +38,7 @@ public:
   {x=xa;
    y=ya;
    }
-  hvec(complex<double> z);
+  hvec(std::complex<double> z);
   hvec operator+(hvec b);
   hvec operator-();
   hvec operator-(hvec b);
@@ -61,9 +60,9 @@ public:
   int gety()
   {return y;
    }
-  operator complex<double>() const
+  operator std::complex<double>() const
   {
-    return complex<double>(x-y/2.,y*M_SQRT_3_4);
+    return std::complex<double>(x-y/2.,y*M_SQRT_3_4);
   }
   void inc(int n);
   bool cont(int n);
@@ -79,7 +78,7 @@ class sixvec
 public:
   double v[6];
   sixvec();
-  sixvec(complex<double> z);
+  sixvec(std::complex<double> z);
   sixvec operator+(const sixvec b);
   sixvec operator-(const sixvec b);
   sixvec operator*(const double b);
@@ -91,7 +90,7 @@ public:
 };
 
 template <typename T> class harray
-{map<hvec,T *> index;
+{std::map<hvec,T *> index;
  public:
  T& operator[](hvec i);
  void clear();
@@ -107,14 +106,14 @@ template <typename T> T& harray<T>::operator[](hvec i)
  }
 
 template <typename T> void harray<T>::clear()
-{typename map<hvec,T *>::iterator i;
+{typename std::map<hvec,T *>::iterator i;
  for (i=index.start();i!=index.end();i++)
      {free(i->second);
       i->second=NULL;
       }
  }
 
-int region(complex<double> z);
+int region(std::complex<double> z);
 void testcomplex();
 void testsixvec();
 void testpageinx();

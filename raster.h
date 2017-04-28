@@ -19,6 +19,6 @@ void initsubsample(int q);
  * q=10: 221 dots per square, the most that makes sense
  */
 void rasterdraw(int size,double width,double height,
-	    double scale,int dim,int imagetype,string filename);
-int filletbit(complex<double> z);
+	    double scale,int dim,int imagetype,std::string filename);
+int filletbit(std::complex<double> z);
 void checkregbits();

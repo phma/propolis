@@ -31,6 +31,8 @@
 #include "letters.h"
 #include "raster.h"
 
+using namespace std;
+
 BIT16 letters[38]={
 0x000, // 00000  00 000 0000 000
 0x007, // 00001  00 000 0000 111

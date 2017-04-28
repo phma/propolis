@@ -17,6 +17,8 @@
 #include "encoding.h"
 #include "raster.h"
 
+using namespace std;
+
 hvec a,b,q,r;
 harray<char> hletters,hbits;
 

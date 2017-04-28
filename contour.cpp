@@ -2,6 +2,8 @@
 #include "hvec.h"
 #include "contour.h"
 
+using namespace std;
+
 bool isedge(hvec z)
 {hvec q,r;
  q=z/2;

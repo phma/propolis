@@ -3,5 +3,5 @@
 bool isedge(hvec z);
 bool ismarked(hvec z);
 void mark(hvec z);
-vector<hvec> trace(hvec stpoint);
-vector<vector<hvec> > traceall(int size);
+std::vector<hvec> trace(hvec stpoint);
+std::vector<std::vector<hvec> > traceall(int size);

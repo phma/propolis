@@ -3,8 +3,6 @@
 #include "hvec.h"
 #include "hamming.h"
 
-using namespace std;
-
 int ndataletters(int n);
 void listsizes();
 int findsize(int n,double redundancy);
@@ -40,13 +38,13 @@ public:
 class codematrix
 {
 private:
-  vector<row> rows;
+  std::vector<row> rows;
   int size,nletters,nrows,ndata,leftover;
 public:
   void setsize(int sz);
   int getsize();
   bool setndata(int nd,bool marrel=false); // returns true if successful
-  void setdata(string str,int encoding); // str should consist of letters @ through _; encoding should be 1-31
+  void setdata(std::string str,int encoding); // str should consist of letters @ through _; encoding should be 1-31
   void scramble();
   void unscramble();
   void encode();

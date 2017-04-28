@@ -9,6 +9,8 @@
 #include "hvec.h"
 #include "ps.h"
 
+using namespace std;
+
 //Page size for storing arrays subscripted by hvec
 /* A page looks like this:
  *       * * * * * *
