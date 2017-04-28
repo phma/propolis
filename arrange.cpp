@@ -7,7 +7,6 @@
 #include "galois.h"
 #include "rs.h"
 #include "letters.h"
-#include "hamming.h"
 using namespace std;
 
 /* Change in code (April 2017):

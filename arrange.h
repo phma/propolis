@@ -1,6 +1,7 @@
 #include <string>
 #include <vector>
 #include "hvec.h"
+#include "hamming.h"
 
 using namespace std;
 
@@ -51,6 +52,23 @@ public:
   void encode();
   void dump();
   void arrange(harray<char> &hletters);
+};
+
+class CodeMatrix
+{
+private:
+  std::vector<Hamming> hammingBlocks;
+  std::vector<int> hammingSizes;
+  int size,nLetters,nData,nDataCheck;
+  /* Consider a size-3 symbol holding "1.618033988749894848204" in decimal
+   * encoding. This is encoded as "_I_ZSJAA^\WM[^ZPFL". There must be a
+   * check-count letter, so this takes at least 19 letters. The next space
+   * available within size 3 is 20, so there is one check-padding letter.
+   * The letters are arranged in the Hamming blocks as follows:
+   * cc_cI_ZcSJAA^ cc\cWM[c^ZPF ccLc** where the first * is check-padding
+   * and the second is check-count.
+   * size=3; nLetters=31; nData=18; nDataCheck=20;
+   */
 };
 
 extern codematrix thematrix;
