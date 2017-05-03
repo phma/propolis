@@ -277,34 +277,35 @@ unsigned gcd(unsigned a,unsigned b)
 array<int,2> crissCrossFactor(int n)
 /* Used for criss-crossing the five layers of Hamming codes.
  * Returns the number such that its least power which is 1 or -1
- * is as small as possible at least 5.
+ * is as small as possible at least 5. The five layers are rotated by
+ * primes to make them not line up on any letter.
  * Example: n=55 (size 4 symbol), returns (16,8). Four blocks: 14,14,14,13.
- *    aaAaAAAaAAAAAAbbBbBBBbBBBBBBccCcCCCcCCCCCCddDdDDDdDDDDD
- * 08 aabbccddaAbBcCdDAABBCCDDaAbBcCdDAABBCCDDAABBCCDDAABBCCD
- * 18 aDdDdCCCccBBBBAAaAaDDDDCCcCcBBBbbAAAADDDddCCCCBBbBbAAAa
- * 13 abCDACDABdABCaBcDbcDABDABCABCDbCdAcdaBCaBCDBCDAcDABdAbC
- * 43 aCACBDBACAdBDcACbdBacADbDCaCBDBACAdBDcACbDBaCAdBDcACbDB
- * 28 aAAAAAAbBBBBBBcCCCCCCdDDDDDDaaAaAAAbbBbBBBccCcCCCddDdDD
+ *        aaAaAAAaAAAAAAbbBbBBBbBBBBBBccCcCCCcCCCCCCddDdDDDdDDDDD
+ * 08 +02 CDaabbccddaAbBcCdDAABBCCDDaAbBcCdDAABBCCDDAABBCCDDAABBC
+ * 18 +03 AAaaDdDdCCCccBBBBAAaAaDDDDCCcCcBBBbbAAAADDDddCCCCBBbBbA
+ * 13 +05 BdAbCabCDACDABdABCaBcDbcDABDABCABCDbCdAcdaBCaBCDBCDAcDA
+ * 43 +07 DcACbDBaCACBDBACAdBDcACbdBacADbDCaCBDBACAdBDcACbDBaCAdB
+ * 28 +11 CcCCCddDdDDaAAAAAAbBBBBBBcCCCCCCdDDDDDDaaAaAAAbbBbBBBcc
  *       Bit 0             Bit 1             Bit 2
- *     * C C D *         * A A a *         * A b C *
- *    D D A A B B       B B b B b A       A c D A B d
- *   D A A B B C C     D d d C C C C     a B C D B C D
- *  D A A B B C C D   b b A A A A D D   C d A c d a B C
- * * a A b B c C d * * C c C c B B B * * B C A B C D b *
- *  A A B B C C D D   a A a D D D D C   D b c D A B D A
- *   A b B c C d D     c B B B B A A     d A B C a B c
- *    b c c d d a       D d C C C c       D A C D A B
- *     * a a b *         * a D d *         * a b C *
+ *     * B B C *         * B b A *         * c D A *
+ *    C C D D A A       C C C B B b       C D B C D A
+ *   C D D A A B B     A D D D d d C     c d a B C a B
+ *  C d D A A B B C   B B B b b A A A   A B C D b C d A
+ * * D D a A b B c * * D D C C c C c * * D A B D A B C *
+ *  d D A A B B C C   B A A a A a D D   B C a B c D b c
+ *   d a A b B c C     C C c c B B B     A C D A B d A
+ *    a b b c c d       a D d D d C       b C a b C D
+ *     * C D a *         * A A a *         * B d A *
  *       Bit 3             Bit 4
- *     * b D B *         * d D D *
- *    d B D c A C       C C C d d D
- *   C b D B a C A     B B B c c C c
- *  A C A d B D c A   a A A A b b B b
- * * D C a C B D B * * D D D D a a A *
- *  b d B a c A D b   C C C C C d D D
- *   A d B D c A C     B B B B B c C
- *    C B D B A C       A A A A b B
- *     * a C A *         * a A A *
+ *     * A d B *         * B c c *
+ *    C b D B a C       b b B b B B
+ *   C A d B D c A     a a A a A A A
+ *  D C a C B D B A   C d D D D D D D
+ * * d B a c A D b * * B c C C C C C *
+ *  A d B D c A C b   A A b B B B B B
+ *   A C B D B A C     D D a A A A A
+ *    C b D B a C       C C d d D d
+ *     * D c A *         * C c C *
  */
 {
   int i,j,k,minsofar=n,maxsofar=0;
