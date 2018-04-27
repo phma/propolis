@@ -407,6 +407,37 @@ int findsize(int n,double redundancy)
   return best;
 }
 
+int CodeMatrix::getSize()
+{
+  return size;
+}
+
+int CodeMatrix::getNLetters()
+{
+  return nLetters;
+}
+
+int CodeMatrix::getNData()
+{
+  return nData;
+}
+
+int CodeMatrix::getNDataCheck()
+{
+  return nDataCheck;
+}
+
+void CodeMatrix::findSize(int n,double redundancy)
+/* redundancy should be between 0 and 2/3. The symbol size will be set so that
+ * there is at least that much redundancy, unless this is impossible, in which
+ * case it will be set to the maximum redundancy, which is all Hamming blocks
+ * of size 3, except for one of size 7 in smaller symbols. n is the number of
+ * data letters, not including check-count or check-padding letters.
+ */
+{
+  nData=n;
+}
+
 int decinc(int i)
 {
   int inc;

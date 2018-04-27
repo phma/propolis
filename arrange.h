@@ -67,6 +67,12 @@ private:
    * and the second is check-count.
    * size=3; nLetters=31; nData=18; nDataCheck=20;
    */
+public:
+  int getSize();
+  int getNLetters();
+  int getNData();
+  int getNDataCheck();
+  void findSize(int n,double redundancy);
 };
 
 extern codematrix thematrix;
