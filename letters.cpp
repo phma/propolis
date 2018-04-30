@@ -545,7 +545,7 @@ void debugframingerror()
 {
   int i,j,k,l,m,n,t,r,c,ch,il,in,stats[6],readings0[9][12],readings1[9][12];
   bool flip=false; // either flip all the bits, or rotate 120°
-  bool err;
+  bool err=false;
   hvec disp,a,rem;
   complex<double> frame;
   i=16;
