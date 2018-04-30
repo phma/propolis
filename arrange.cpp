@@ -474,8 +474,9 @@ int decinc(int i)
 
 void testfindsize()
 {
-  int i,j,size03,size25,size50,size75,size97;
+  int i,j,size00,size20,size40,size60,size67;
   vector<int> blksizes;
+  CodeMatrix cm;
   for (i=1;i<=10;i++)
   {
     blksizes=arrangeHamming(31,i);
@@ -486,12 +487,12 @@ void testfindsize()
   }
   for (i=1;i<40000;i+=decinc(i))
   {
-    size03=findsize(i,0.03);
-    size25=findsize(i,0.25);
-    size50=findsize(i,0.50);
-    size75=findsize(i,0.75);
-    size97=findsize(i,0.97);
-    printf("%5d %3d %3d %3d %3d %3d\n",i,size03,size25,size50,size75,size97);
+    size00=cm.findSize(i,0);
+    size20=cm.findSize(i,0.2);
+    size40=cm.findSize(i,0.4);
+    size60=cm.findSize(i,0.6);
+    size67=cm.findSize(i,0.67);
+    printf("%5d %3d %3d %3d %3d %3d\n",i,size00,size20,size40,size60,size67);
   }
 }
 
