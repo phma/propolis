@@ -435,7 +435,7 @@ int CodeMatrix::findSize(int n,double redundancy)
  * data letters, not including check-count or check-padding letters.
  */
 {
-  int minSize,nBlocks,i,j;
+  int minSize,nBlocks,step;
   nData=n++; // increment n for the check-count letter
   minSize=trunc(sqrt(n/(1-redundancy)/3))-1;
   if (minSize<2)
@@ -444,14 +444,27 @@ int CodeMatrix::findSize(int n,double redundancy)
   for (size=minSize;;size++)
   {
     nLetters=ndataletters(size);
-    //cout<<"Size "<<size<<", "<<nLetters<<" letters\n";
-    for (nBlocks=1;nBlocks*3<=nLetters;nBlocks++)
+    step=rint(sqrt(nLetters/3));
+    //cout<<"Size "<<size<<", "<<nLetters<<" letters, step "<<step<<"\n";
+    for (nBlocks=floor(nLetters/3);nBlocks>0;nBlocks-=step)
+    {
+      hammingSizes=arrangeHamming(nLetters,nBlocks);
+      nDataCheck=totaldatabits(hammingSizes);
+      //cout<<"Size "<<size<<", "<<nBlocks<<" blocks, "<<nDataCheck<<" data and check letters, redundancy "<<(nLetters-nDataCheck)/(double)nLetters<<endl;
+      if (nDataCheck>nData)
+	break;
+    }
+    if (nBlocks<1)
+      nBlocks=1;
+    for (;nBlocks*3<=nLetters;nBlocks++)
     {
       hammingSizes=arrangeHamming(nLetters,nBlocks);
       nDataCheck=totaldatabits(hammingSizes);
       //cout<<"Size "<<size<<", "<<nBlocks<<" blocks, "<<nDataCheck<<" data and check letters, redundancy "<<(nLetters-nDataCheck)/(double)nLetters<<endl;
       if (nDataCheck>nData && (nLetters-nDataCheck)/(double)nLetters>=redundancy)
 	break;
+      if (nDataCheck<=nData && nDataCheck>0)
+	nBlocks+=step-1;
     }
     if (nDataCheck==0) // went past the maximum number of blocks
     {
