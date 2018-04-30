@@ -359,7 +359,7 @@ vector<int> arrangeHamming(int nletters,int nblocks)
 {
   int i,nb1,xs,xs0,xs1,blocksize0,blocksize1;
   vector<int> ret;
-  for (blocksize1=3;blocksize1*nblocks<=nletters;blocksize1=2*blocksize1+1);
+  for (blocksize1=3;nblocks && blocksize1*nblocks<=nletters;blocksize1=2*blocksize1+1);
   blocksize0=blocksize1/2;
   for (nb1=0;nb1<nblocks && nb1*blocksize1+(nblocks-nb1)*blocksize0<nletters;nb1++);
   xs=nb1*blocksize1+(nblocks-nb1)*blocksize0-nletters;
@@ -436,12 +436,13 @@ int CodeMatrix::findSize(int n,double redundancy)
  */
 {
   int minSize,nBlocks,step;
+  bool maxRedundancy=false;
   nData=n++; // increment n for the check-count letter
   minSize=trunc(sqrt(n/(1-redundancy)/3))-1;
   if (minSize<2)
     minSize=2;
   cout<<nData<<" data letters, redundancy "<<redundancy<<endl;
-  for (size=minSize;;size++)
+  for (size=minSize;size>=minSize;size+=(maxRedundancy?-1:1))
   {
     nLetters=ndataletters(size);
     step=rint(sqrt(nLetters/3));
@@ -461,7 +462,7 @@ int CodeMatrix::findSize(int n,double redundancy)
       hammingSizes=arrangeHamming(nLetters,nBlocks);
       nDataCheck=totaldatabits(hammingSizes);
       cout<<"Size "<<size<<", "<<nBlocks<<" blocks, "<<nDataCheck<<" data and check letters, redundancy "<<(nLetters-nDataCheck)/(double)nLetters<<endl;
-      if (nDataCheck>nData && nDataCheck-nData<=32 && (nLetters-nDataCheck)/(double)nLetters>=redundancy)
+      if (nDataCheck>nData && nDataCheck-nData<=32 && (maxRedundancy || (nLetters-nDataCheck)/(double)nLetters>=redundancy))
 	break;
       if (nDataCheck<=nData && nDataCheck>0)
 	nBlocks+=step-1;
@@ -471,6 +472,8 @@ int CodeMatrix::findSize(int n,double redundancy)
       nBlocks-=2; // -1 to get to previous number, -1 to undo last for-loop increment
       hammingSizes=arrangeHamming(nLetters,nBlocks);
       nDataCheck=totaldatabits(hammingSizes);
+      if (nDataCheck>nData)
+	maxRedundancy=true;
       cout<<"Size "<<size<<", "<<nBlocks<<" blocks, "<<nDataCheck<<" data and check letters, redundancy "<<(nLetters-nDataCheck)/(double)nLetters<<endl;
     }
     if (nDataCheck>nData && nDataCheck-nData<=32)
