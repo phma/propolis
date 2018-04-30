@@ -72,7 +72,7 @@ public:
   int getNLetters();
   int getNData();
   int getNDataCheck();
-  void findSize(int n,double redundancy);
+  int findSize(int n,double redundancy);
 };
 
 extern codematrix thematrix;

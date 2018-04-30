@@ -427,7 +427,7 @@ int CodeMatrix::getNDataCheck()
   return nDataCheck;
 }
 
-void CodeMatrix::findSize(int n,double redundancy)
+int CodeMatrix::findSize(int n,double redundancy)
 /* redundancy should be between 0 and 2/3. The symbol size will be set so that
  * there is at least that much redundancy, unless this is impossible, in which
  * case it will be set to the maximum redundancy, which is all Hamming blocks
@@ -435,7 +435,33 @@ void CodeMatrix::findSize(int n,double redundancy)
  * data letters, not including check-count or check-padding letters.
  */
 {
-  nData=n;
+  int minSize,nBlocks,i,j;
+  nData=n++; // increment n for the check-count letter
+  minSize=trunc(sqrt(n/(1-redundancy)/3));
+  if (minSize<2)
+    minSize=2;
+  for (size=minSize;;size++)
+  {
+    nLetters=ndataletters(size);
+    for (nBlocks=1;nBlocks*3<=nLetters;nBlocks++)
+    {
+      hammingSizes=arrangeHamming(nLetters,nBlocks);
+      nDataCheck=totaldatabits(hammingSizes);
+      if (nDataCheck>nData && (nLetters-nDataCheck)/(double)nLetters>=redundancy)
+	break;
+    }
+    if (nDataCheck==0) // went past the maximum number of blocks
+    {
+      nBlocks--;
+      hammingSizes=arrangeHamming(nLetters,nBlocks);
+      nDataCheck=totaldatabits(hammingSizes);
+    }
+    if (nDataCheck>nData)
+      break;
+  }
+  if (nBlocks>31*31*31)
+    size=0;
+  return size;
 }
 
 int decinc(int i)
