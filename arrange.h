@@ -52,6 +52,13 @@ public:
   void arrange(harray<char> &hletters);
 };
 
+struct SizeBlocks
+{
+  int size,nDataCheck;
+  std::vector<int> hammingSizes;
+  double redundancy;
+};
+
 class CodeMatrix
 {
 private:

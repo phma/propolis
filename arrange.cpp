@@ -435,49 +435,48 @@ int CodeMatrix::findSize(int n,double redundancy)
  * data letters, not including check-count or check-padding letters.
  */
 {
-  int minSize,nBlocks,step;
-  bool maxRedundancy=false;
+  int minSize,nBlocks,maxBlocks,minBl,maxBl;
+  //vector sizeBlocksList;
+  bool goodRedundancy=false,tooFar=false;
+  SizeBlocks sizeBlocks;
   nData=n++; // increment n for the check-count letter
   minSize=trunc(sqrt(n/(1-redundancy)/3))-1;
   if (minSize<2)
     minSize=2;
   cout<<nData<<" data letters, redundancy "<<redundancy<<endl;
-  for (size=minSize;size>=minSize;size+=(maxRedundancy?-1:1))
+  for (size=minSize;;size++)
   {
     nLetters=ndataletters(size);
-    step=rint(sqrt(nLetters/3));
-    cout<<"Size "<<size<<", "<<nLetters<<" letters, step "<<step<<"\n";
-    for (nBlocks=floor(nLetters/3);nBlocks>0;nBlocks-=step)
+    if (nLetters%3)
+      maxBlocks=(nLetters-4)/3;
+    else
+      maxBlocks=nLetters/3;
+    cout<<"Size "<<size<<", "<<nLetters<<" letters\n";
+    minBl=0;
+    maxBl=maxBlocks+1;
+    while (maxBl-minBl>1)
     {
+      nBlocks=(minBl+maxBl)/2;
       hammingSizes=arrangeHamming(nLetters,nBlocks);
       nDataCheck=totaldatabits(hammingSizes);
       cout<<"Size "<<size<<", "<<nBlocks<<" blocks, "<<nDataCheck<<" data and check letters, redundancy "<<(nLetters-nDataCheck)/(double)nLetters<<endl;
-      if (nDataCheck>nData && (nLetters-nDataCheck)/(double)nLetters<redundancy)
-	break;
-    }
-    if (nBlocks<1)
-      nBlocks=1;
-    for (;nBlocks*3<=nLetters;nBlocks++)
-    {
-      hammingSizes=arrangeHamming(nLetters,nBlocks);
-      nDataCheck=totaldatabits(hammingSizes);
-      cout<<"Size "<<size<<", "<<nBlocks<<" blocks, "<<nDataCheck<<" data and check letters, redundancy "<<(nLetters-nDataCheck)/(double)nLetters<<endl;
-      if (nDataCheck>nData && nDataCheck-nData<=32 && (maxRedundancy || (nLetters-nDataCheck)/(double)nLetters>=redundancy))
-	break;
-      if (nDataCheck<=nData && nDataCheck>0)
-	nBlocks+=step-1;
-    }
-    if (nDataCheck==0) // went past the maximum number of blocks
-    {
-      nBlocks-=2; // -1 to get to previous number, -1 to undo last for-loop increment
-      hammingSizes=arrangeHamming(nLetters,nBlocks);
-      nDataCheck=totaldatabits(hammingSizes);
       if (nDataCheck>nData)
-	maxRedundancy=true;
-      cout<<"Size "<<size<<", "<<nBlocks<<" blocks, "<<nDataCheck<<" data and check letters, redundancy "<<(nLetters-nDataCheck)/(double)nLetters<<endl;
+	minBl=nBlocks;
+      else
+	maxBl=nBlocks;
     }
-    if (nDataCheck>nData && nDataCheck-nData<=32)
-      break; // The check-count letter encodes the number of check-padding letters from 0 to 31.
+    nBlocks=minBl;
+    if (nBlocks)
+    {
+      hammingSizes=arrangeHamming(nLetters,nBlocks);
+      nDataCheck=totaldatabits(hammingSizes);
+    }
+    else
+      nDataCheck=nLetters;
+    goodRedundancy=(nLetters-nDataCheck)/(double)nLetters>redundancy;
+    tooFar=nDataCheck-nData>32;
+    if (goodRedundancy || tooFar)
+      break;
   }
   if (nBlocks>31*31*31)
     size=0;
