@@ -72,6 +72,7 @@ public:
   int getNLetters();
   int getNData();
   int getNDataCheck();
+  double getRedundancy();
   int findSize(int n,double redundancy);
 };
 

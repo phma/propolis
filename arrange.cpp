@@ -427,6 +427,11 @@ int CodeMatrix::getNDataCheck()
   return nDataCheck;
 }
 
+double CodeMatrix::getRedundancy()
+{
+  return (nLetters-nDataCheck)/(double)nLetters;
+}
+
 int CodeMatrix::findSize(int n,double redundancy)
 /* redundancy should be between 0 and 2/3. The symbol size will be set so that
  * there is at least that much redundancy, unless this is impossible, in which
@@ -435,7 +440,11 @@ int CodeMatrix::findSize(int n,double redundancy)
  * data letters, not including check-count or check-padding letters.
  *
  * It is possible, even if the specified redundancy is somewhat less than 2/3,
- * for the actual redundancy to be less than the specified redundancy.
+ * for the actual redundancy to be less than the specified redundancy. For
+ * small symbols (fewer than 250 data letters or smaller than size 16), the
+ * maximum guaranteed redundancy is 11/17 (0.647), which occurs from 1 to 9
+ * letters. For large symbols, the maximum guaranteed redundancy is 1484/2263
+ * (0.65488), which occurs at 779 letters.
  */
 {
   int minSize,nBlocks,maxBlocks,minBl,maxBl;
@@ -511,6 +520,8 @@ void testfindsize()
 {
   int i,j,size00,size20,size40,size60,size67;
   vector<int> blksizes;
+  int lastsize[2];
+  double red,lastred[2];
   CodeMatrix cm;
   for (i=1;i<=10;i++)
   {
@@ -528,6 +539,17 @@ void testfindsize()
     size60=cm.findSize(i,0.6);
     size67=cm.findSize(i,0.67);
     printf("%5d %3d %3d %3d %3d %3d\n",i,size00,size20,size40,size60,size67);
+  }
+  for (i=1;i<2048;i++)
+  {
+    size67=cm.findSize(i,0.67);
+    red=cm.getRedundancy();
+    if (i>1 && fabs(lastred[1]+red-2*lastred[0])>1.5e-4)
+      printf("%5d %3d %17.15f\n",i-1,lastsize[0],lastred[0]);
+    lastsize[1]=lastsize[0];
+    lastred[1]=lastred[0];
+    lastsize[0]=size67;
+    lastred[0]=red;
   }
 }
 
