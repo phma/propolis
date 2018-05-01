@@ -433,17 +433,19 @@ int CodeMatrix::findSize(int n,double redundancy)
  * case it will be set to the maximum redundancy, which is all Hamming blocks
  * of size 3, except for one of size 7 in smaller symbols. n is the number of
  * data letters, not including check-count or check-padding letters.
+ *
+ * It is possible, even if the specified redundancy is somewhat less than 2/3,
+ * for the actual redundancy to be less than the specified redundancy.
  */
 {
   int minSize,nBlocks,maxBlocks,minBl,maxBl;
-  //vector sizeBlocksList;
+  int lastGoodSize=0,lastGoodBlocks;
   bool goodRedundancy=false,tooFar=false;
-  SizeBlocks sizeBlocks;
   nData=n++; // increment n for the check-count letter
   minSize=trunc(sqrt(n/(1-redundancy)/3))-1;
   if (minSize<2)
     minSize=2;
-  cout<<nData<<" data letters, redundancy "<<redundancy<<endl;
+  //cout<<nData<<" data letters, redundancy "<<redundancy<<endl;
   for (size=minSize;;size++)
   {
     nLetters=ndataletters(size);
@@ -451,7 +453,7 @@ int CodeMatrix::findSize(int n,double redundancy)
       maxBlocks=(nLetters-4)/3;
     else
       maxBlocks=nLetters/3;
-    cout<<"Size "<<size<<", "<<nLetters<<" letters\n";
+    //cout<<"Size "<<size<<", "<<nLetters<<" letters\n";
     minBl=0;
     maxBl=maxBlocks+1;
     while (maxBl-minBl>1)
@@ -459,7 +461,7 @@ int CodeMatrix::findSize(int n,double redundancy)
       nBlocks=(minBl+maxBl)/2;
       hammingSizes=arrangeHamming(nLetters,nBlocks);
       nDataCheck=totaldatabits(hammingSizes);
-      cout<<"Size "<<size<<", "<<nBlocks<<" blocks, "<<nDataCheck<<" data and check letters, redundancy "<<(nLetters-nDataCheck)/(double)nLetters<<endl;
+      //cout<<"Size "<<size<<", "<<nBlocks<<" blocks, "<<nDataCheck<<" data and check letters, redundancy "<<(nLetters-nDataCheck)/(double)nLetters<<endl;
       if (nDataCheck>nData)
 	minBl=nBlocks;
       else
@@ -475,9 +477,23 @@ int CodeMatrix::findSize(int n,double redundancy)
       nDataCheck=nLetters;
     goodRedundancy=(nLetters-nDataCheck)/(double)nLetters>redundancy;
     tooFar=nDataCheck-nData>32;
+    if (nBlocks && nDataCheck>nData && !tooFar)
+    {
+      lastGoodBlocks=nBlocks;
+      lastGoodSize=size;
+    }
     if (goodRedundancy || tooFar)
       break;
   }
+  if (lastGoodSize<size)
+  {
+    size=lastGoodSize;
+    nBlocks=lastGoodBlocks;
+    nLetters=ndataletters(size);
+    hammingSizes=arrangeHamming(nLetters,nBlocks);
+    nDataCheck=totaldatabits(hammingSizes);
+  }
+  hammingBlocks.clear();
   if (nBlocks>31*31*31)
     size=0;
   return size;
