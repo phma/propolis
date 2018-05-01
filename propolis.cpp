@@ -449,6 +449,7 @@ void testmain()
   degauss();
   listsizes();
   testfindsize();
+  testCheckLetters();
   //testsetdata();
   //testshuffle();
   //testwhiten();

@@ -3,6 +3,7 @@
 #include <iostream>
 #include <cmath>
 #include <cstring>
+#include <cassert>
 #include "arrange.h"
 #include "galois.h"
 #include "rs.h"
@@ -508,6 +509,21 @@ int CodeMatrix::findSize(int n,double redundancy)
   return size;
 }
 
+string appendCheckLetters(string str,int len)
+{
+  int i,j,acc;
+  len-=str.length();
+  assert(len>0 && len<=32);
+  for (i=0;i<len;i++)
+  {
+    for (j=0,acc='@'+len-i-1;j<str.length();j++)
+      acc=bitctrot[oddmul(acc,str[j])];
+    acc^=i;
+    str+=acc;
+  }
+  return str;
+}
+
 int decinc(int i)
 {
   int inc;
@@ -544,8 +560,8 @@ void testfindsize()
   {
     size67=cm.findSize(i,0.67);
     red=cm.getRedundancy();
-    if (i>1 && fabs(lastred[1]+red-2*lastred[0])>1.5e-4)
-      printf("%5d %3d %17.15f\n",i-1,lastsize[0],lastred[0]);
+    //if (i>1 && fabs(lastred[1]+red-2*lastred[0])>1.5e-4)
+      //printf("%5d %3d %17.15f\n",i-1,lastsize[0],lastred[0]);
     lastsize[1]=lastsize[0];
     lastred[1]=lastred[0];
     lastsize[0]=size67;
@@ -808,5 +824,17 @@ void testshuffle()
       putchar((n)+'@');
     }
     putchar('\n');
+  }
+}
+
+void testCheckLetters()
+{
+  string teststr="PACK@MY@BOX@WITH@FIVE@DOZEN@LIQUOR@JUGS@";
+  string checkstr,verifystr;
+  int i;
+  for (i=41;i<73;i++)
+  {
+    checkstr=appendCheckLetters(teststr,i);
+    cout<<checkstr<<endl;
   }
 }
