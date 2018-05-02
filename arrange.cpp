@@ -524,6 +524,29 @@ string appendCheckLetters(string str,int len)
   return str;
 }
 
+string verifyCheckLetters(string str)
+/* Returns the string passed to appendCheckLetters if the check letters
+ * are correct. If they are wrong, returns "!". There is a small chance
+ * of falsely saying that the check letters are correct and returning garbage.
+ */
+{
+  int i,j,acc;
+  string checks;
+  for (i=0;(checks.length()==0 || i<=(checks[0]&31)) && str.length();i++)
+  {
+    for (acc=i+'@',j=0;j<str.length()-1;j++)
+      acc=bitctrot[oddmul(acc,str[j])];
+    checks+=(char)(acc^str[j]^'@');
+    str.pop_back();
+  }
+  for (i=0;i<checks.length();i++)
+    if (i+checks[i]!=checks.length()+'@'-1)
+      str="!";
+  if (checks.length()==0 || checks.length()>32)
+    str="!";
+  return str;
+}
+
 int decinc(int i)
 {
   int inc;
@@ -830,11 +853,17 @@ void testshuffle()
 void testCheckLetters()
 {
   string teststr="PACK@MY@BOX@WITH@FIVE@DOZEN@LIQUOR@JUGS@";
-  string checkstr,verifystr;
+  string checkstr,verifystr,checkstr1,verifystr1;
   int i;
   for (i=41;i<73;i++)
   {
-    checkstr=appendCheckLetters(teststr,i);
-    cout<<checkstr<<endl;
+    checkstr1=checkstr=appendCheckLetters(teststr,i);
+    checkstr1[i-41]='[';
+    verifystr=verifyCheckLetters(checkstr);
+    verifystr1=verifyCheckLetters(checkstr1);
+    cout<<checkstr;
+    if (verifystr==teststr && verifystr1=="!")
+      cout<<" ✓";
+    cout<<'\n';
   }
 }
