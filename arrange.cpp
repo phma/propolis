@@ -22,7 +22,7 @@ using namespace std;
  * The metadata will have check letters in F31 Lagrange polynomials.
  */
 
-/* Metadata letters are put at the six corners and, for size>17, in the center.
+/* Metadata letters are put at the six corners and, for size>30, in the center.
  *    + - - +       + - - +
  *   / [   \ \     / [   \ \
  *  /         \   /         \
@@ -31,34 +31,35 @@ using namespace std;
  *   \ _   ^ /     \ _   ^ /
  *    + - - +       + - - +
  * Size<=30:
- * @-Y: unwritten zeros
  * Z:	zero (@) used as index marker
- * [:	nhammingblocks/31+1
- * \:	nhammingblocks%31+1
+ * [:	(nhammingblocks-1)/31+1
+ * \:	(nhammingblocks-1)%31+1
  * ]:	encoding (ASCII, numeric, Unicode, etc.)
  * ^-_: Lagrange check letters
  * Size>30:
- * @-W: unwritten zeros
  * Y:	zero (@) used as index marker
- * Z:	(nhammingblocks)/961
- * [:	((nhammingblocks)%961)/31+1
- * \:	(nhammingblocks)%31+1
+ * Z:	(nhammingblocks-1)/961+1
+ * [:	((nhammingblocks-1)%961)/31+1
+ * \:	(nhammingblocks-1)%31+1
  * ]:	encoding (ASCII, numeric, Unicode, etc.)
  * ^-_: Lagrange check letters
+ *
+ * If the letter at ] is @, which means "test pattern", the number of Hamming
+ * blocks is meaningless, and the check letters are undefined. The letters at
+ * \ and ^ should not be @, so that the orientation is unique.
+ *
  * Examples: (using encoding 1)
  * nhamm YZ[\]
  *     1  @AAA
  *    12  @ALA
  *    31  @A_A
  *    32  @BAA
- *   927  @^]A this is the most that can fit in size 30, as 4-byte Hamming blocks are not allowed
- *   928 @@^^A
- *   961 @@__A
- *   962 @AAAA
+ *   927  @^\A this is the most that can fit in size 30, as 4-byte Hamming blocks are not allowed
+ *   928 @A^]A
+ *   961 @A__A
+ *   962 @BAAA
  * 29316 @^PUA
- * 29903 @_DSA
- * 30495 @_WVA
- * 30752 @___A
+ * 27971 @___A
  */
 
 codematrix thematrix;
