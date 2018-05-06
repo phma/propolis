@@ -1,7 +1,8 @@
 project(propolis)
 cmake_minimum_required(VERSION 2.8)
 
-add_executable(propolis propolis.cpp hvec.cpp letters.cpp galois.cpp rs.cpp contour.cpp ps.cpp arrange.cpp encoding.cpp raster.cpp hamming.cpp)
+add_executable(propolis propolis.cpp hvec.cpp letters.cpp galois.cpp rs.cpp contour.cpp
+               lagrange.cpp ps.cpp arrange.cpp encoding.cpp raster.cpp hamming.cpp)
 
 set(CMAKE_CXX_FLAGS "-std=c++11")
 install(TARGETS propolis DESTINATION bin)
