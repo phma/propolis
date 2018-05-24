@@ -125,6 +125,12 @@ poly31 poly31::operator+(int31 b)
   return ret;
 }
 
+poly31& poly31::operator+=(int31 b)
+{
+  coeff[0]+=b;
+  return *this;
+}
+
 poly31 poly31::operator+(poly31 &b)
 {
   poly31 ret;
@@ -159,6 +165,14 @@ poly31 poly31::operator*(int31 b)
   return ret;
 }
 
+poly31& poly31::operator*=(int31 b)
+{
+  int i;
+  for (i=0;i<30;i++)
+    coeff[i]*=b;
+  return *this;
+}
+
 poly31 poly31::operator*(poly31 &b)
 {
   poly31 ret;
@@ -166,5 +180,61 @@ poly31 poly31::operator*(poly31 &b)
   for (i=0;i<30;i++)
     for (j=0;j<30;j++)
       ret.coeff[(i+j)%30]+=coeff[i]*b.coeff[j];
+  return ret;
+}
+
+poly31& poly31::operator*=(const poly31 &b)
+{
+  poly31 tmp;
+  int i,j;
+  for (i=0;i<30;i++)
+    for (j=0;j<30;j++)
+      tmp.coeff[(i+j)%30]+=coeff[i]*b.coeff[j];
+  for (i=0;i<30;i++)
+    coeff[i]=tmp.coeff[i];
+  return *this;
+}
+
+poly31 poly31::operator/(int31 b)
+{
+  poly31 ret;
+  int i;
+  assert(b.n);
+  b.n=inv31[b.n];
+  for (i=0;i<30;i++)
+    ret.coeff[i]=coeff[i]*b;
+  return ret;
+}
+
+poly31& poly31::operator/=(int31 b)
+{
+  int i;
+  assert(b.n);
+  b.n=inv31[b.n];
+  for (i=0;i<30;i++)
+    coeff[i]*=b;
+  return *this;
+}
+
+poly31 interceptor(int31 x)
+{
+  poly31 ret;
+  ret+=int31(1);
+  ret=(ret<<1)-x;
+  return ret;
+}
+
+poly31 impulse(int bitmask,int31 x)
+/* Returns a polynomial which is 0 at all arguments where bitmask is 1,
+ * except at x, where it is 1.
+ */
+{
+  int i;
+  poly31 ret;
+  ret+=int31(1);
+  for (i=0;i<31;i++)
+    if ((bitmask&(1<<i)) && i!=x.val())
+      ret*=interceptor(int31(i));
+  ret/=ret(x);
   return ret;
 }
