@@ -14,6 +14,7 @@
 #include "ps.h"
 #include "rs.h"
 #include "arrange.h"
+#include "lagrange.h"
 #include "encoding.h"
 #include "raster.h"
 
@@ -302,6 +303,15 @@ void initialize()
  readinvletters();
  }
 
+void testlagrange()
+{
+  int i;
+  poly31 poly=impulse(0x7f,3);
+  for (i=0;i<31;i++)
+    cout<<poly(int31(i)).letter();
+  cout<<endl;
+}
+
 void testsetdata()
 {
   hvec k;
@@ -450,6 +460,7 @@ void testmain()
   listsizes();
   testfindsize();
   testCheckLetters();
+  testlagrange();
   //testsetdata();
   //testshuffle();
   //testwhiten();

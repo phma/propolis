@@ -28,6 +28,14 @@ int int31::val()
   return n;
 }
 
+char int31::letter()
+{
+  char ret=n;
+  while (ret<'J')
+    ret+=31;
+  return ret;
+}
+
 int31 int31::operator+(int31 b)
 {
   return int31(n+b.n);
