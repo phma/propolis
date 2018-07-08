@@ -308,7 +308,7 @@ void testlagrange()
   int i;
   poly31 poly=impulse(0x7f,3);
   for (i=0;i<31;i++)
-    cout<<poly(int31(i)).letter();
+    cout<<poly(int31(i)).locase();
   cout<<endl;
 }
 

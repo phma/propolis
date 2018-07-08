@@ -28,10 +28,11 @@ int int31::val()
   return n;
 }
 
-char int31::letter()
+char int31::locase()
+// |^\`abcdefghijklmnopqrstuvwxyz{
 {
   char ret=n;
-  while (ret<'J')
+  while (ret<'^')
     ret+=31;
   return ret;
 }

@@ -9,7 +9,7 @@ public:
   int31();
   int31(int m);
   int val();
-  char letter();
+  char locase();
   int31 operator+(int31 b);
   int31 operator-(int31 b);
   int31 operator*(int31 b);
