@@ -24,32 +24,32 @@ using namespace std;
 
 /* Metadata letters are put at the six corners and, for size>30, in the center.
  *    + - - +       + - - +
- *   / [   \ \     / [   \ \
+ *   / a   ` \     / a   ` \
  *  /         \   /         \
- * X Z       ] X X Y   Z   ] X
+ * X b       \ X X c   b   \ X
  *  \         /   \         /
- *   \ _   ^ /     \ _   ^ /
+ *   \ \   ^ /     \ |   ^ /
  *    + - - +       + - - +
  * Size<=30:
- * Z:	zero (@) used as index marker
- * [:	(nhammingblocks-1)/31+1
- * \:	(nhammingblocks-1)%31+1
- * ]:	encoding (ASCII, numeric, Unicode, etc.)
- * ^-_: Lagrange check letters
+ * b:	zero (@) used as index marker
+ * a:	(nhammingblocks-1)/31+1
+ * `:	(nhammingblocks-1)%31+1
+ * \:	encoding (ASCII, numeric, Unicode, etc.)
+ * ^-|: Lagrange check letters
  * Size>30:
- * Y:	zero (@) used as index marker
- * Z:	(nhammingblocks-1)/961+1
- * [:	((nhammingblocks-1)%961)/31+1
- * \:	(nhammingblocks-1)%31+1
- * ]:	encoding (ASCII, numeric, Unicode, etc.)
- * ^-_: Lagrange check letters
+ * c:	zero (@) used as index marker
+ * b:	(nhammingblocks-1)/961+1
+ * a:	((nhammingblocks-1)%961)/31+1
+ * `:	(nhammingblocks-1)%31+1
+ * \:	encoding (ASCII, numeric, Unicode, etc.)
+ * ^-|: Lagrange check letters
  *
- * If the letter at ] is @, which means "test pattern", the number of Hamming
+ * If the letter at \ is @, which means "test pattern", the number of Hamming
  * blocks is meaningless, and the check letters are undefined. The letters at
- * \ and ^ should not be @, so that the orientation is unique.
+ * | and ^ should not be @, so that the orientation is unique.
  *
  * Examples: (using encoding 1)
- * nhamm YZ[\]
+ * nhamm cba`\
  *     1  @AAA
  *    12  @ALA
  *    31  @A_A
