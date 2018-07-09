@@ -57,6 +57,7 @@ class CodeMatrix
 private:
   std::vector<Hamming> hammingBlocks;
   std::vector<int> hammingSizes;
+  std::string metadata; // 6 or 7 letters, depending on size
   int size,nLetters,nData,nDataCheck;
   /* Consider a size-3 symbol holding "1.618033988749894848204" in decimal
    * encoding. This is encoded as "_I_ZSJAA^\WM[^ZPFL". There must be a

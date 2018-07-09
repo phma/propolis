@@ -1,5 +1,6 @@
 /* Lagrange polynomial interpolation in F31
  */
+#include <vector>
 
 class int31
 {
@@ -17,6 +18,7 @@ public:
   int31& operator+=(int31 b);
   int31& operator-=(int31 b);
   int31& operator*=(int31 b);
+  bool operator==(int31 b);
   friend class poly31;
 };
 
@@ -33,6 +35,7 @@ public:
   poly31 operator+(int31 b);
   poly31& operator+=(int31 b);
   poly31 operator+(poly31 &b);
+  poly31 operator+=(const poly31 &b);
   poly31 operator-(int31 b);
   poly31 operator-(poly31 &b);
   poly31 operator*(int31 b);
@@ -45,3 +48,4 @@ public:
 
 poly31 interceptor(int31 x);
 poly31 impulse(int bitmask,int31 x);
+void putMetadataCheck(std::vector<int31> &metadata);

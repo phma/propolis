@@ -1,5 +1,6 @@
 #include <cassert>
 #include "lagrange.h"
+using namespace std;
 
 const char inv31[]=
 {
@@ -76,6 +77,11 @@ int31& int31::operator*=(int31 b)
   return *this;
 }
 
+bool int31::operator==(int31 b)
+{
+  return n==b.n;
+}
+
 poly31::poly31()
 {
   int i;
@@ -147,6 +153,14 @@ poly31 poly31::operator+(poly31 &b)
   for (i=0;i<30;i++)
     ret.coeff[i]=coeff[i]+b.coeff[i];
   return ret;
+}
+
+poly31 poly31::operator+=(const poly31 &b)
+{
+  int i;
+  for (i=0;i<30;i++)
+    coeff[i]+=b.coeff[i];
+  return *this;
 }
 
 poly31 poly31::operator-(int31 b)
@@ -246,4 +260,54 @@ poly31 impulse(int bitmask,int31 x)
       ret*=interceptor(int31(i));
   ret/=ret(x);
   return ret;
+}
+
+poly31 decodingPoly7[105],decodingPoly6[60];
+// The first 5 of 105 and first 4 of 60 are used for encoding.
+short index7[105],index6[60];
+
+void initPoly()
+{
+  int i,j,k,n,mask;
+  for (i=n=0;i<7;i++)
+    for (j=0;j<i;j++)
+    {
+      mask=127-(1<<i)-(1<<j);
+      for (k=0;k<7;k++)
+	if (k!=i && k!=j)
+	{
+	  decodingPoly7[n]=impulse(mask,int31(k));
+	  index7[n++]=mask+(k<<8);
+	}
+    }
+  for (i=n=0;i<6;i++)
+    for (j=0;j<i;j++)
+    {
+      mask=63-(1<<i)-(1<<j);
+      for (k=0;k<6;k++)
+	if (k!=i && k!=j)
+	{
+	  decodingPoly6[n]=impulse(mask,int31(k));
+	  index6[n++]=mask+(k<<8);
+	}
+    }
+}
+
+void putMetadataCheck(vector<int31> &metadata)
+/* metadata should be a vector of 6 or 7 int31s with the ones in 0 and 1 unset.
+ * It sets them according to the other 4 or 5 int31s.
+ */
+{
+  poly31 checkpoly;
+  int i;
+  if (decodingPoly6[0](0)==int31(0))
+    initPoly();
+  if (metadata.size()==6)
+    for (i=0;i<4;i++)
+      checkpoly+=decodingPoly6[i]*metadata[i+2];
+  if (metadata.size()==7)
+    for (i=0;i<5;i++)
+      checkpoly+=decodingPoly7[i]*metadata[i+2];
+  metadata[0]=checkpoly(0);
+  metadata[1]=checkpoly(1);
 }
