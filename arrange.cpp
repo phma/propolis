@@ -345,6 +345,7 @@ void listsizes()
 {
   int i,nletters,nblocks;
   array<int,2> criss;
+  cout<<"Size Letters Blocks Criss-cross\n";
   for (i=nletters=nblocks=2;nblocks<29791;i++)
   {
     nletters=ndataletters(i);
@@ -353,7 +354,7 @@ void listsizes()
     else // nletters%3 is never 2
       nblocks=nletters/3;
     criss=crissCrossFactor(nletters);
-    printf("%3d %5d %5d %5d %5d\n",i,nletters,nblocks,criss[0],criss[1]);
+    printf("%3d   %5d  %5d  %5d %5d\n",i,nletters,nblocks,criss[0],criss[1]);
   }
 }
 
