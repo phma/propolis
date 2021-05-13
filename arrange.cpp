@@ -511,6 +511,22 @@ int CodeMatrix::findSize(int n,double redundancy)
   return size;
 }
 
+void CodeMatrix::setDataCheck(std::string str,int encoding)
+/* str should have the check letters already appended, and findSize should
+ * have been called already.
+ */
+{
+  int i,j,k;
+  for (i=k=0;i<hammingSizes.size();i++)
+  {
+    if (i>=hammingBlocks.size())
+      hammingBlocks.push_back(Hamming());
+    for (j=0;j<hammingSizes[i];j++,k++)
+      if (k<str.length())
+	hammingBlocks[i].push_back(str[k]);
+  }
+}
+
 string appendCheckLetters(string str,int len)
 {
   int i,j,acc;
