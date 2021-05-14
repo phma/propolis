@@ -76,6 +76,7 @@ short bitpermtab0[]=
   041032,021430,020413,010243,013042,
   040123,012340,034012,001234,023401
 };
+char prime[]={2,3,5,7,11};
 vector<array<char,32> > bitpermtab;
 int debugwhiten;
 
@@ -517,6 +518,9 @@ void CodeMatrix::setDataCheck(std::string str,int encoding)
  */
 {
   int i,j,k;
+  array<int,2> ccf;
+  array<int,5> ccf5;
+  vector<signed char> unCrissCrossed,ham1;
   for (i=k=0;i<hammingSizes.size();i++)
   {
     if (i>=hammingBlocks.size())
@@ -525,6 +529,21 @@ void CodeMatrix::setDataCheck(std::string str,int encoding)
       if (k<str.length())
 	hammingBlocks[i].push_back(str[k]);
   }
+  for (i=0;i<hammingSizes.size();i++)
+  {
+    ham1=hammingBlocks[i].getCode();
+    for (j=0;j<ham1.size();j++)
+      unCrissCrossed.push_back(ham1[j]);
+  }
+  ccf=crissCrossFactor(nLetters);
+  ccf5[0]=ccf[1];
+  for (i=1;i<5;i++)
+    ccf5[i]=(ccf5[i-1]*ccf[0])%nLetters;
+  data.clear();
+  data.resize(nLetters,0x40);
+  for (i=0;i<nLetters;i++)
+    for (j=0;j<5;j++)
+      data[(i*ccf5[j]+prime[j])%nLetters]|=unCrissCrossed[i]&(1<<j);
 }
 
 string appendCheckLetters(string str,int len)
