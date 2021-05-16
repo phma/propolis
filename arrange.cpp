@@ -544,6 +544,8 @@ void CodeMatrix::setDataCheck(std::string str,int encoding)
   for (i=0;i<nLetters;i++)
     for (j=0;j<5;j++)
       data[(i*ccf5[j]+prime[j])%nLetters]|=unCrissCrossed[i]&(1<<j);
+  for (i=0;i<nLetters;i++)
+    data[i]=whiten(data[i],i);
 }
 
 string appendCheckLetters(string str,int len)
