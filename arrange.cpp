@@ -525,7 +525,7 @@ void CodeMatrix::setDataCheck(std::string str,int encoding)
   {
     if (i>=hammingBlocks.size())
       hammingBlocks.push_back(Hamming());
-    for (j=0;j<hammingSizes[i];j++,k++)
+    for (j=0;j<databits(hammingSizes[i]);j++,k++)
       if (k<str.length())
 	hammingBlocks[i].push_back(str[k]);
   }
