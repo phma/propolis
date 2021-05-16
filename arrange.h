@@ -80,6 +80,7 @@ public:
 };
 
 extern codematrix thematrix;
+extern CodeMatrix theMatrix;
 void testbitctrot();
 void testshuffle();
 void testwhiten();

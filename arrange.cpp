@@ -63,6 +63,7 @@ using namespace std;
  */
 
 codematrix thematrix;
+CodeMatrix theMatrix;
 //               @ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_
 char bitctrot[]="@BDLHTXYPEIZQKSWAFJ\\RMU[CNV]G^O_",
 bitctunrot[]=   "@PAXBIQ\\DJRMCUY^HLTNEVZOFGKWS[]_",
