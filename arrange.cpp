@@ -513,7 +513,7 @@ int CodeMatrix::findSize(int n,double redundancy)
   return size;
 }
 
-void CodeMatrix::setDataCheck(std::string str,int encoding)
+void CodeMatrix::setDataCheck(string str,int encoding)
 /* str should have the check letters already appended, and findSize should
  * have been called already.
  */
@@ -585,6 +585,11 @@ string verifyCheckLetters(string str)
   if (checks.length()==0 || checks.length()>32)
     str="!";
   return str;
+}
+
+void CodeMatrix::setData(string str,int encoding)
+{
+  setDataCheck(appendCheckLetters(str,nDataCheck),encoding);
 }
 
 int decinc(int i)

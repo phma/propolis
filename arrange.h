@@ -77,6 +77,7 @@ public:
   double getRedundancy();
   int findSize(int n,double redundancy);
   void setDataCheck(std::string str,int encoding); // str should consist of letters @ through _; encoding should be 1-31
+  void setData(std::string str,int encoding);
 };
 
 extern codematrix thematrix;
