@@ -316,21 +316,20 @@ void testsetdata()
 {
   hvec k;
   checkinvletters();
-  thematrix.setsize(7);
-  thematrix.setndata(100);
-  thematrix.setdata("LATE@ONE@MORNING@IN@THE@MIDDLE@OF@THE@NIGHT@TWO@DEAD@BOYS@GOT@UP@TO@FIGHT@BACK@TO@BACK@THEY@FACED@EACH@OTHER",5);
-  thematrix.dump();
-  thematrix.encode();
-  thematrix.dump();
-  thematrix.scramble();
-  thematrix.dump();
-  thematrix.arrange(hletters);
-  thematrix.unscramble();
-  thematrix.dump();
-  for (k=start(thematrix.getsize());k.cont(thematrix.getsize());k.inc(thematrix.getsize()))
-    drawletter(hletters[k]&31,k);
-  border(thematrix.getsize());
-  psdraw(traceall(thematrix.getsize()),thematrix.getsize(),210,297,200,DIM_DIAPOTHEM,0,"lateonemorning.ps");
+  theMatrix.findSize(108,0.4);
+  //theMatrix.setData("LATE@ONE@MORNING@IN@THE@MIDDLE@OF@THE@NIGHT@TWO@DEAD@BOYS@GOT@UP@TO@FIGHT@BACK@TO@BACK@THEY@FACED@EACH@OTHER",5);
+  //thematrix.dump();
+  //thematrix.encode();
+  //thematrix.dump();
+  //thematrix.scramble();
+  //thematrix.dump();
+  //thematrix.arrange(hletters);
+  //thematrix.unscramble();
+  //thematrix.dump();
+  //for (k=start(thematrix.getsize());k.cont(thematrix.getsize());k.inc(thematrix.getsize()))
+    //drawletter(hletters[k]&31,k);
+  //border(thematrix.getsize());
+  //psdraw(traceall(thematrix.getsize()),thematrix.getsize(),210,297,200,DIM_DIAPOTHEM,0,"lateonemorning.ps");
 }
 
 void makesymbol(string text,int asize,double redundancy,int format,string outfilename)
