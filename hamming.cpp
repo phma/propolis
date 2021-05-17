@@ -68,3 +68,22 @@ void Hamming::push_back(char byte)
     if (i&code.size())
       code[i-1]^=byte;
 }
+
+string Hamming::dumpLetters()
+// Use this when the Hamming contains five-bit letters.
+{
+  int i;
+  string ret;
+  char ch;
+  for (i=0;i<code.size();i++)
+  {
+    if (i&(i+1))
+      ch=code[i]|'@';
+    else
+      ch=code[i]|'`';
+    if (ch==127)
+      ch='?';
+    ret.push_back(ch);
+  }
+  return ret;
+}

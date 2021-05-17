@@ -5,6 +5,7 @@
 /******************************************************/
 
 #include <vector>
+#include <string>
 
 int databits(int codebits);
 std::vector<int> databits(std::vector<int> codebits);
@@ -22,4 +23,5 @@ public:
   std::vector<signed char> getCode();
   void setCode(std::vector<signed char> Code);
   void push_back(char byte);
+  std::string dumpLetters();
 };

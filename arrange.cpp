@@ -594,7 +594,29 @@ void CodeMatrix::setData(string str,int encoding)
 
 void CodeMatrix::dump()
 {
+  int i,column=0;
+  string ham;
   cout<<"Size: "<<size<<" Letters: "<<nLetters<<" Data: "<<nData<<" Data+Check: "<<nDataCheck<<endl;
+  cout<<"Hamming blocks:\n";
+  for (i=0;i<hammingBlocks.size();i++)
+  {
+    ham=hammingBlocks[i].dumpLetters();
+    if (column)
+      if (column+ham.length()>78)
+      {
+	cout<<endl;
+	column=0;
+      }
+      else
+      {
+	cout<<' ';
+	column++;
+      }
+    cout<<ham;
+    column+=ham.length();
+  }
+  cout<<endl;
+  column=0;
 }
 
 int decinc(int i)
