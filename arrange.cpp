@@ -617,6 +617,16 @@ void CodeMatrix::dump()
   }
   cout<<endl;
   column=0;
+  cout<<"Metadata: "<<metadata<<endl;
+  cout<<"Data:\n";
+  for (i=0;i<data.size();i++)
+  {
+    cout<<data[i];
+    if (i%64==63)
+      cout<<endl;
+  }
+  if (i%64)
+    cout<<endl;
 }
 
 int decinc(int i)
