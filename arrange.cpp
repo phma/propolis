@@ -592,6 +592,11 @@ void CodeMatrix::setData(string str,int encoding)
   setDataCheck(appendCheckLetters(str,nDataCheck),encoding);
 }
 
+void CodeMatrix::dump()
+{
+  cout<<"Size: "<<size<<" Letters: "<<nLetters<<" Data: "<<nData<<" Data+Check: "<<nDataCheck<<endl;
+}
+
 int decinc(int i)
 {
   int inc;
