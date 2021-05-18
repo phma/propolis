@@ -57,7 +57,7 @@ class CodeMatrix
 private:
   std::vector<Hamming> hammingBlocks;
   std::vector<int> hammingSizes;
-  std::string metadata; // 6 or 7 letters, depending on size
+  std::vector<char> metadata; // 6 or 7 letters, depending on size
   std::vector<char> data; // rearranged by criss-crossing
   int size,nLetters,nData,nDataCheck;
   /* Consider a size-3 symbol holding "1.618033988749894848204" in decimal

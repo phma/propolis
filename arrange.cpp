@@ -617,8 +617,10 @@ void CodeMatrix::dump()
   }
   cout<<endl;
   column=0;
-  cout<<"Metadata: "<<metadata<<endl;
-  cout<<"Data:\n";
+  cout<<"Metadata: ";
+  for (i=0;i<metadata.size();i++)
+    cout<<metadata[i];
+  cout<<"\nData:\n";
   for (i=0;i<data.size();i++)
   {
     cout<<data[i];
