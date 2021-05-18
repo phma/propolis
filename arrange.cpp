@@ -8,6 +8,7 @@
 #include "galois.h"
 #include "rs.h"
 #include "letters.h"
+#include "lagrange.h"
 using namespace std;
 
 /* Change in code (April 2017):
@@ -521,6 +522,7 @@ void CodeMatrix::setDataCheck(string str,int encoding)
   int i,j,k;
   array<int,2> ccf;
   array<int,5> ccf5;
+  vector<int31> lagrange;
   vector<signed char> unCrissCrossed,ham1;
   for (i=k=0;i<hammingSizes.size();i++)
   {
@@ -555,6 +557,13 @@ void CodeMatrix::setDataCheck(string str,int encoding)
   metadata.push_back((k%961)/31+'A');
   metadata.push_back(k%31+'A');
   metadata.push_back(encoding+'@');
+  lagrange.push_back(int31(0));
+  lagrange.push_back(int31(0));
+  for (i=metadata.size()-1;i>=0;i--)
+    lagrange.push_back(int31(metadata[i]-'A'));
+  putMetadataCheck(lagrange);
+  metadata.push_back(lagrange[1].val()+'A');
+  metadata.push_back(lagrange[0].val()+'A');
 }
 
 string appendCheckLetters(string str,int len)
