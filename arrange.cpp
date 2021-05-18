@@ -547,6 +547,14 @@ void CodeMatrix::setDataCheck(string str,int encoding)
       data[(i*ccf5[j]+prime[j])%nLetters]|=unCrissCrossed[i]&(1<<j);
   for (i=0;i<nLetters;i++)
     data[i]=whiten(data[i],i);
+  metadata.clear();
+  metadata.push_back('@');
+  k=hammingBlocks.size()-1;
+  if (size>30)
+    metadata.push_back(k/961+'A');
+  metadata.push_back((k%961)/31+'A');
+  metadata.push_back(k%31+'A');
+  metadata.push_back(encoding+'@');
 }
 
 string appendCheckLetters(string str,int len)
