@@ -319,13 +319,7 @@ void testsetdata()
   theMatrix.findSize(108,0.4);
   theMatrix.setData("LATE@ONE@MORNING@IN@THE@MIDDLE@OF@THE@NIGHT@TWO@DEAD@BOYS@GOT@UP@TO@FIGHT@BACK@TO@BACK@THEY@FACED@EACH@OTHER",5);
   theMatrix.dump();
-  //thematrix.encode();
-  //thematrix.dump();
-  //thematrix.scramble();
-  //thematrix.dump();
   theMatrix.arrange(hletters);
-  //thematrix.unscramble();
-  //thematrix.dump();
   for (k=start(theMatrix.getSize());k.cont(theMatrix.getSize());k.inc(theMatrix.getSize()))
     drawletter(hletters[k]&31,k);
   border(theMatrix.getSize());
