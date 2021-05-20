@@ -459,9 +459,9 @@ void testmain()
   //testwhiten();
   testenc();
   testencodings();
-  //testcomplex();
-  //testraster();
-  //testsixvec();
+  testcomplex();
+  testraster();
+  testsixvec();
   testpageinx();
   testroundframe();
   testrotate();
