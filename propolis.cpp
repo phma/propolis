@@ -316,7 +316,7 @@ void testsetdata()
 {
   hvec k;
   checkinvletters();
-  theMatrix.findSize(108,0.4);
+  theMatrix.findSize(108,0.2);
   theMatrix.setData("LATE@ONE@MORNING@IN@THE@MIDDLE@OF@THE@NIGHT@TWO@DEAD@BOYS@GOT@UP@TO@FIGHT@BACK@TO@BACK@THEY@FACED@EACH@OTHER",5);
   theMatrix.dump();
   theMatrix.arrange(hletters);
