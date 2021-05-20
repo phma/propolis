@@ -648,6 +648,37 @@ void CodeMatrix::dump()
     cout<<endl;
 }
 
+void CodeMatrix::arrange(harray<char> &hletters)
+{
+  int i;
+  hvec k;
+  assert(metadata.size()>=6);
+  hletters[hvec(-size,0)]=metadata[0];
+  if (metadata.size()==7)
+  {
+    hletters[hvec(0,0)]        =metadata[1];;
+    hletters[hvec(0,size)]     =metadata[2];
+    hletters[hvec(size,size)]  =metadata[3];
+    hletters[hvec(size,0)]     =metadata[4];
+    hletters[hvec(0,-size)]    =metadata[5];
+    hletters[hvec(-size,-size)]=metadata[6];
+  }
+  else
+  {
+    hletters[hvec(0,size)]     =metadata[1];
+    hletters[hvec(size,size)]  =metadata[2];
+    hletters[hvec(size,0)]     =metadata[3];
+    hletters[hvec(0,-size)]    =metadata[4];
+    hletters[hvec(-size,-size)]=metadata[5];
+  }
+  for (i=0,k=start(size);i<data.size();i++,k.inc(size))
+  {
+    if (k.norm()==sqr(size) || (metadata.size()==7 && k==0))
+      k.inc(size); // skip the 6 or 7 metadata letters
+    hletters[k]=data[i];
+  }
+}
+
 int decinc(int i)
 {
   int inc;

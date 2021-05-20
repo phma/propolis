@@ -323,13 +323,13 @@ void testsetdata()
   //thematrix.dump();
   //thematrix.scramble();
   //thematrix.dump();
-  //thematrix.arrange(hletters);
+  theMatrix.arrange(hletters);
   //thematrix.unscramble();
   //thematrix.dump();
-  //for (k=start(thematrix.getsize());k.cont(thematrix.getsize());k.inc(thematrix.getsize()))
-    //drawletter(hletters[k]&31,k);
-  //border(thematrix.getsize());
-  //psdraw(traceall(thematrix.getsize()),thematrix.getsize(),210,297,200,DIM_DIAPOTHEM,0,"lateonemorning.ps");
+  for (k=start(theMatrix.getSize());k.cont(theMatrix.getSize());k.inc(theMatrix.getSize()))
+    drawletter(hletters[k]&31,k);
+  border(theMatrix.getSize());
+  psdraw(traceall(theMatrix.getSize()),theMatrix.getSize(),210,297,200,DIM_DIAPOTHEM,0,"lateonemorning.ps");
 }
 
 void makesymbol(string text,int asize,double redundancy,int format,string outfilename)
