@@ -457,7 +457,8 @@ void testmain()
   testsetdata();
   //testshuffle();
   //testwhiten();
-  //testenc();
+  testenc();
+  testencodings();
   //testcomplex();
   //testraster();
   //testsixvec();
