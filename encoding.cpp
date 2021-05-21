@@ -484,18 +484,33 @@ vector<encoded> encodedlist(string text)
 {
   wstring unitext;
   vector<encoded> list;
+  encoded enc;
   unitext=halffront(fromutf8(text));
-  list.push_back(encodeu1(unitext));
+  enc=encodeu1(unitext);
+  // At least one encoding produces a nonempty codetext.
+  // If text is empty, encodedecimal returns "@"; else encodebyte returns nonempty.
+  if (enc.codestring.length())
+    list.push_back(enc);
   sort1(list);
-  list.push_back(encodeu2(unitext));
+  enc=encodeu2(unitext);
+  if (enc.codestring.length())
+    list.push_back(enc);
   sort1(list);
-  list.push_back(encode32(text));
+  enc=encode32(text);
+  if (enc.codestring.length())
+    list.push_back(enc);
   sort1(list);
-  list.push_back(encodeascii(text));
+  enc=encodeascii(text);
+  if (enc.codestring.length())
+    list.push_back(enc);
   sort1(list);
-  list.push_back(encodebyte(text));
+  enc=encodebyte(text);
+  if (enc.codestring.length())
+    list.push_back(enc);
   sort1(list);
-  list.push_back(encodedecimal(text));
+  enc=encodedecimal(text);
+  if (enc.codestring.length())
+    list.push_back(enc);
   sort1(list);
   return list;
 }
