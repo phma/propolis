@@ -331,37 +331,50 @@ void makesymbol(string text,int asize,double redundancy,int format,string outfil
   hvec k;
   int i,size;
   bool canfit;
+  double red,hired,lored;
   vector<encoded> encodings;
   checkinvletters();
   encodings=encodedlist(text);
   for (i=0;i<encodings.size();i++)
   {
-    if (asize<2)
-      size=findsize(encodings[i].codestring.size(),redundancy);
+    if (asize<2 || redundancy>0)
+      theMatrix.findSize(encodings[i].codestring.size(),redundancy);
     else
-      size=asize;
-    thematrix.setsize(size);
-    canfit=thematrix.setndata(encodings[i].codestring.size());
+    {
+      lored=0;
+      hired=43/64.; // a little more than 2/3, which is the max
+      size=0;
+      do
+      {
+	red=(lored+hired)/2;
+	size=theMatrix.findSize(encodings[i].codestring.size(),red);
+	if (size>asize)
+	  hired=red;
+	if (size<asize)
+	  lored=red;
+      }
+      while (size!=asize && red<2/3. && red>0.5/encodings[i].codestring.size());
+    }
+    canfit=(asize<2 && theMatrix.getSize()>1) || theMatrix.getSize()==asize;
     if (canfit)
       break;
   }
   if (!canfit)
     throw(runtime_error("makesymbol: No encoding fits the specified size"));
-  thematrix.setdata(encodings[i].codestring,encodings[i].encoding);
-  thematrix.encode();
-  thematrix.scramble();
-  thematrix.arrange(hletters);
-  thematrix.unscramble();
-  for (k=start(thematrix.getsize());k.cont(thematrix.getsize());k.inc(thematrix.getsize()))
+  theMatrix.setData(encodings[i].codestring,encodings[i].encoding);
+  theMatrix.arrange(hletters);
+  size=theMatrix.getSize();
+  redundancy=theMatrix.getRedundancy();
+  for (k=start(size);k.cont(size);k.inc(size))
     drawletter(hletters[k]&31,k);
-  border(thematrix.getsize());
+  border(size);
   switch (format)
   {
     case FMT_PS:
-      psdraw(traceall(thematrix.getsize()),thematrix.getsize(),210,297,200,DIM_DIAPOTHEM,0,outfilename);
+      psdraw(traceall(size),size,210,297,200,DIM_DIAPOTHEM,0,outfilename);
       break;
     case FMT_PNM:
-      rasterdraw(thematrix.getsize(),0,0,600,DIM_DIAPOTHEM,format,outfilename);
+      rasterdraw(size,0,0,600,DIM_DIAPOTHEM,format,outfilename);
       break;
     case FMT_INFO:
       cout<<"Redundancy: "<<redundancy<<endl;
