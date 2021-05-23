@@ -21,7 +21,7 @@ extern const hvec twelve[];
 // See calculation in hvec.cpp
 
 void degauss();
-void drawletter(int letter,hvec place);
+void drawletter(int letter,hvec place,harray<char> &canvas=hbits);
 void fillinvletters();
 void readinvletters();
 void writeinvletters();

@@ -224,23 +224,24 @@ int invar12(int bitpattern)
   return inv;
 }
 
-void drawletter(int letter,hvec place)
+void drawletter(int letter,hvec place,harray<char> &canvas)
 // letter is from 0x00 to 0x25; place is any hvec
-{letter=letters[letter];
- place*=LETTERMOD;
- hbits[place+hvec( 0,-2)]=(letter>> 0)&1;
- hbits[place+hvec(-1,-2)]=(letter>> 1)&1;
- hbits[place+hvec(-2,-2)]=(letter>> 2)&1;
- hbits[place+hvec( 1,-1)]=(letter>> 3)&1;
- hbits[place+hvec( 0,-1)]=(letter>> 4)&1;
- hbits[place+hvec(-1,-1)]=(letter>> 5)&1;
- hbits[place+hvec(-2,-1)]=(letter>> 6)&1;
- hbits[place+hvec( 1, 0)]=(letter>> 7)&1;
- hbits[place+hvec( 0, 0)]=(letter>> 8)&1;
- hbits[place+hvec(-1, 0)]=(letter>> 9)&1;
- hbits[place+hvec( 1, 1)]=(letter>>10)&1;
- hbits[place+hvec( 0, 1)]=(letter>>11)&1;
- }
+{
+  letter=letters[letter];
+  place*=LETTERMOD;
+  canvas[place+hvec( 0,-2)]=(letter>> 0)&1;
+  canvas[place+hvec(-1,-2)]=(letter>> 1)&1;
+  canvas[place+hvec(-2,-2)]=(letter>> 2)&1;
+  canvas[place+hvec( 1,-1)]=(letter>> 3)&1;
+  canvas[place+hvec( 0,-1)]=(letter>> 4)&1;
+  canvas[place+hvec(-1,-1)]=(letter>> 5)&1;
+  canvas[place+hvec(-2,-1)]=(letter>> 6)&1;
+  canvas[place+hvec( 1, 0)]=(letter>> 7)&1;
+  canvas[place+hvec( 0, 0)]=(letter>> 8)&1;
+  canvas[place+hvec(-1, 0)]=(letter>> 9)&1;
+  canvas[place+hvec( 1, 1)]=(letter>>10)&1;
+  canvas[place+hvec( 0, 1)]=(letter>>11)&1;
+}
 
 hvec roundframe(sixvec s)
 {
