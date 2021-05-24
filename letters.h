@@ -1,4 +1,5 @@
 #include <array>
+#include <map>
 #include "propolis.h"
 #include "hvec.h"
 extern BIT16 letters[38];
@@ -29,6 +30,16 @@ void checkinvletters();
 void testroundframe();
 void testrotate();
 void debugframingerror();
+
+struct InvLetterResult
+/* Used by threads to return the result of all framings of
+ * one combination of four letters.
+ */
+{
+  std::map<int,sixvec> torus;
+  int suminv;
+  int i,j,k,l;
+};
 
 class litteron // blend of "littera" and "neuron"
 {
