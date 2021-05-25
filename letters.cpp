@@ -271,6 +271,7 @@ InvLetterResult shiftFrame(harray<char> hletters,int i,int j,int k,int l)
   hvec disp;
   complex<double> frame;
   InvLetterResult ret;
+  ret.suminv=0;
   for (disp=start(2);disp.cont(2);disp.inc(2))
     drawletter(hletters[disp],disp,hbits);
   for (n=0;n<9;n++)
@@ -279,7 +280,7 @@ InvLetterResult shiftFrame(harray<char> hletters,int i,int j,int k,int l)
       il=0;
       frame=ninedisp[n]-(complex<double>)twelve[t];
       for (m=0;m<12;m++)
-	il|=filletbit((complex<double>)twelve[m]+frame)<<m;
+	il|=filletbit((complex<double>)twelve[m]+frame,hbits)<<m;
       ret.torus[il]+=sixvec(frame/ZLETTERMOD)*weights[n];
       ret.suminv+=invar12(il)*weights[n];
     }
