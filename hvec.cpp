@@ -30,8 +30,7 @@ const hvec LETTERMOD(-2,-4);
 const complex<double> ZLETTERMOD(0,-2*M_SQRT_3);
 const complex<double> omega(-0.5,M_SQRT_3_4); // this is hvec(0,1)
 int debughvec;
-
-int hvec::numx,hvec::numy,hvec::denx=0,hvec::deny=0,hvec::quox,hvec::quoy,hvec::remx,hvec::remy;
+thread_local int numx,numy,denx,deny,quox,quoy,remx,remy;
 
 unsigned long _norm(int x,int y)
 {return sqr(x)+sqr(y)-x*y;

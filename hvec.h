@@ -25,7 +25,6 @@ class hvec
 {
 private:
   int x,y; // x is the real part, y is at 120°
-  static int numx,numy,denx,deny,quox,quoy,remx,remy;
   void divmod(hvec b);
 public:
   hvec()
