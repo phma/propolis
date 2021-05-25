@@ -20,5 +20,5 @@ void initsubsample(int q);
  */
 void rasterdraw(int size,double width,double height,
 	    double scale,int dim,int imagetype,std::string filename);
-int filletbit(std::complex<double> z);
+int filletbit(std::complex<double> z,harray<char> &canvas=hbits);
 void checkregbits();

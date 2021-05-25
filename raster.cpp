@@ -102,22 +102,22 @@ void pgmheader(int width,int height)
   rfile<<"P5\n"<<width<<" "<<height<<endl<<255<<endl;
 }
 
-int bit7(hvec place)
+int bit7(hvec place,harray<char> &canvas)
 {
   hvec k;
   int bits;
   for (k=start(1),bits=0;k.cont(1);k.inc(1))
-    bits=(bits<<1)|(hbits[place+k]&1);
+    bits=(bits<<1)|(canvas[place+k]&1);
   return bits;
 }
 
-int filletbit(complex<double> z)
+int filletbit(complex<double> z,harray<char> &canvas)
 // Returns whether the point is white or black in the symbol as drawn with fillets and lines.
 {
   int index,shift;
   locreg place;
   place=locregion(z);
-  index=bit7(place.location);
+  index=bit7(place.location,canvas);
   shift=index&31;
   index>>=5;
   return (regbits[place.region][index]>>shift)&1;
