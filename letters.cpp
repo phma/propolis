@@ -264,13 +264,40 @@ hvec roundframe(sixvec s)
   return closest;
 }
 
+InvLetterResult shiftFrame(harray<char> hletters,int i,int j,int k,int l)
+{
+  harray<char> hbits;
+  int m,n,t,il;
+  hvec disp;
+  complex<double> frame;
+  InvLetterResult ret;
+  for (disp=start(2);disp.cont(2);disp.inc(2))
+    drawletter(hletters[disp],disp,hbits);
+  for (n=0;n<9;n++)
+    for (t=0;t<12;t++)
+    {
+      il=0;
+      frame=ninedisp[n]-(complex<double>)twelve[t];
+      for (m=0;m<12;m++)
+	il|=filletbit((complex<double>)twelve[m]+frame)<<m;
+      ret.torus[il]+=sixvec(frame/ZLETTERMOD)*weights[n];
+      ret.suminv+=invar12(il)*weights[n];
+    }
+  ret.i=i;
+  ret.j=j;
+  ret.k=k;
+  ret.l=l;
+  return ret;
+}
+
 void fillinvletters()
 {
   int i,j,k,l,m,n,t,inv[4096],il,in,stats[6],watch=0x0e2;
+  map<int,sixvec>::iterator it;
   int suminvar[32][32][32][32];
   sixvec torussum[4096],watchlast;
   hvec disp;
-  complex<double> frame;
+  InvLetterResult result;
   fstream outfile;
   memset(inv,0,sizeof(inv));
   memset(suminvar,0,sizeof(suminvar));
@@ -415,18 +442,10 @@ void fillinvletters()
         for (l=0;l<32;l++)
 	{
 	  hletters[hvec(1,-1)]=hletters[hvec(-1,1)]=hletters[hvec(1,1)]=hletters[hvec(-1,-1)]=l;
-          for (disp=start(2);disp.cont(2);disp.inc(2))
-            drawletter(hletters[disp],disp);
-	  for (n=0;n<9;n++)
-	    for (t=0;t<12;t++)
-	    {
-	      il=0;
-	      frame=ninedisp[n]-(complex<double>)twelve[t];
-	      for (m=0;m<12;m++)
-	        il|=filletbit((complex<double>)twelve[m]+frame)<<m;
-	      torussum[il]+=sixvec(frame/ZLETTERMOD)*weights[n];
-	      suminvar[i][j][k][l]+=invar12(il)*weights[n];
-	    }
+	  result=shiftFrame(hletters,i,j,k,l);
+	  for (it=result.torus.begin();it!=result.torus.end();++it)
+	    torussum[it->first]+=it->second;
+	  suminvar[i][j][k][l]+=result.suminv;
 	  if (watchlast!=torussum[watch])
 	  {
 	    printf("%c%c ",k+'@',l+'@');
