@@ -71,6 +71,15 @@ InvLetterTask dequeueInvLetterTask()
   return ret;
 }
 
+int taskQueueSize()
+{
+  int ret;
+  taskMutex.lock();
+  ret=taskQueue.size();
+  taskMutex.unlock();
+  return ret;
+}
+
 void enqueueInvLetterResult(InvLetterResult result)
 {
   resultMutex.lock();
@@ -184,7 +193,7 @@ void waitForThreads(int newStatus)
 void PropThread::operator()(int thread)
 {
   int e=0,t=0,d=0;
-  int triResult,edgeResult;
+  InvLetterTask task;
   startMutex.lock();
   if (threadStatus.size()!=thread)
   {
@@ -198,7 +207,14 @@ void PropThread::operator()(int thread)
     if (threadCommand==TH_RUN)
     {
       threadStatus[thread]=TH_RUN;
-      sleep(thread);
+      task=dequeueInvLetterTask();
+      if (task.i<0)
+	sleep(thread);
+      else
+      {
+	enqueueInvLetterResult(shiftFrame(task.hletters,task.i,task.j,task.k,task.l));
+	unsleep(thread);
+      }
     }
     if (threadCommand==TH_PAUSE)
     {

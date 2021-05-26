@@ -20,6 +20,7 @@ void startThreads(int n);
 void joinThreads();
 void enqueueInvLetterTask(InvLetterTask task);
 InvLetterTask dequeueInvLetterTask();
+int taskQueueSize();
 void enqueueInvLetterResult(InvLetterResult result);
 InvLetterResult dequeueInvLetterResult();
 void sleepRead();

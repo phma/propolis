@@ -60,4 +60,7 @@ public:
   void propagate(std::array<signed char,5> belief);
   signed char operator[](int n);
 };
+
+InvLetterResult shiftFrame(harray<char> hletters,int i,int j,int k,int l);
+
 #endif

@@ -30,6 +30,7 @@
 #include <cassert>
 #include "letters.h"
 #include "raster.h"
+#include "threads.h"
 
 using namespace std;
 
@@ -294,10 +295,12 @@ InvLetterResult shiftFrame(harray<char> hletters,int i,int j,int k,int l)
 void fillinvletters()
 {
   int i,j,k,l,m,n,t,inv[4096],il,in,stats[6],watch=0x0e2;
+  int done=0;
   map<int,sixvec>::iterator it;
   int suminvar[32][32][32][32];
   sixvec torussum[4096],watchlast;
   hvec disp;
+  InvLetterTask task;
   InvLetterResult result;
   fstream outfile;
   memset(inv,0,sizeof(inv));
@@ -443,10 +446,25 @@ void fillinvletters()
         for (l=0;l<32;l++)
 	{
 	  hletters[hvec(1,-1)]=hletters[hvec(-1,1)]=hletters[hvec(1,1)]=hletters[hvec(-1,-1)]=l;
-	  result=shiftFrame(hletters,i,j,k,l);
-	  for (it=result.torus.begin();it!=result.torus.end();++it)
-	    torussum[it->first]+=it->second;
-	  suminvar[i][j][k][l]+=result.suminv;
+	  task.hletters=hletters;
+	  task.i=i;
+	  task.j=j;
+	  task.k=k;
+	  task.l=l;
+	  n=taskQueueSize();
+	  this_thread::sleep_for(chrono::microseconds(n*n));
+	  enqueueInvLetterTask(task);
+	  for (n=0;n<2 || ((i&j&k&l)==31 && done<1048576);n++)
+	  {
+	    result=dequeueInvLetterResult();
+	    if (result.i>=0)
+	    {
+	      ++done;
+	      for (it=result.torus.begin();it!=result.torus.end();++it)
+		torussum[it->first]+=it->second;
+	      suminvar[result.i][result.j][result.k][result.l]+=result.suminv;
+	    }
+	  }
 	  if (watchlast!=torussum[watch])
 	  {
 	    printf("%c%c ",k+'@',l+'@');
