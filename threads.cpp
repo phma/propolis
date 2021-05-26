@@ -5,19 +5,16 @@
 using namespace std;
 namespace cr=std::chrono;
 
-shared_mutex adjLog;
-mutex actMutex;
-mutex bucketMutex;
 mutex startMutex;
-mutex opTimeMutex;
-mutex blockTaskMutex;
-mutex contourMutex;
+mutex taskMutex;
+mutex resultMutex;
 
 int threadCommand;
 vector<thread> threads;
 vector<int> threadStatus; // Bit 8 indicates whether the thread is sleeping.
 vector<double> sleepTime,sleepFraction;
-//mutex 
+queue<InvLetterTask> taskQueue;
+queue<InvLetterResult> resultQueue;
 
 cr::steady_clock clk;
 double opTime; // time for triop and edgeop, in milliseconds
@@ -51,6 +48,48 @@ void joinThreads()
   int i;
   for (i=0;i<threads.size();i++)
     threads[i].join();
+}
+
+void enqueueInvLetterTask(InvLetterTask task)
+{
+  taskMutex.lock();
+  taskQueue.push(task);
+  taskMutex.unlock();
+}
+
+InvLetterTask dequeueInvLetterTask()
+{
+  InvLetterTask ret;
+  ret.i=-1;
+  taskMutex.lock();
+  if (taskQueue.size())
+  {
+    ret=taskQueue.front();
+    taskQueue.pop();
+  }
+  taskMutex.unlock();
+  return ret;
+}
+
+void enqueueInvLetterResult(InvLetterResult result)
+{
+  resultMutex.lock();
+  resultQueue.push(result);
+  resultMutex.unlock();
+}
+
+InvLetterResult dequeueInvLetterResult()
+{
+  InvLetterResult ret;
+  ret.i=-1;
+  resultMutex.lock();
+  if (resultQueue.size())
+  {
+    ret=resultQueue.front();
+    resultQueue.pop();
+  }
+  resultMutex.unlock();
+  return ret;
 }
 
 void sleepCommon(cr::steady_clock::time_point wakeTime,int thread)
@@ -101,16 +140,6 @@ double maxSleepTime()
     if (sleepTime[i]>max)
       max=sleepTime[i];
   return max;
-}
-
-void updateOpTime(cr::nanoseconds duration)
-{
-  double time=duration.count()/1e6;
-  opTimeMutex.lock();
-  opTime*=0.999;
-  if (time>opTime)
-    opTime=time;
-  opTimeMutex.unlock();
 }
 
 void setThreadCommand(int newStatus)
@@ -169,13 +198,13 @@ void PropThread::operator()(int thread)
     if (threadCommand==TH_RUN)
     {
       threadStatus[thread]=TH_RUN;
-      //sleep
+      sleep(thread);
     }
     if (threadCommand==TH_PAUSE)
-    { // The job is ongoing, but has to pause to write out the files.
+    {
     }
     if (threadCommand==TH_WAIT)
-    { // There is no job. The threads are waiting for a job.
+    {
     }
   }
   threadStatus[thread]=TH_STOP;

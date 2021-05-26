@@ -664,6 +664,7 @@ int main(int argc,char **argv)
 	break;
     }
   }
+  waitForThreads(TH_RUN);
   if (makedata)
   {
     fillinvletters();

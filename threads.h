@@ -5,6 +5,7 @@
 #include <vector>
 #include <array>
 #include "mthreads.h"
+#include "letters.h"
 
 // These are used as both commands to the threads and status from the threads.
 #define TH_RUN 1
@@ -17,8 +18,10 @@ extern std::chrono::steady_clock clk;
 
 void startThreads(int n);
 void joinThreads();
-//void enqueueInvLetterTask(InvLetterTask task);
-//InvLetterTask dequeueInvLetterTask();
+void enqueueInvLetterTask(InvLetterTask task);
+InvLetterTask dequeueInvLetterTask();
+void enqueueInvLetterResult(InvLetterResult result);
+InvLetterResult dequeueInvLetterResult();
 void sleepRead();
 void sleep(int thread);
 void sleepDead(int thread);

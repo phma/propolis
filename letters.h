@@ -1,3 +1,5 @@
+#ifndef LETTERS_H
+#define LETTERS_H
 #include <array>
 #include <map>
 #include "propolis.h"
@@ -31,6 +33,12 @@ void testroundframe();
 void testrotate();
 void debugframingerror();
 
+struct InvLetterTask
+{
+  harray<char> hletters;
+  int i,j,k,l;
+};
+
 struct InvLetterResult
 /* Used by threads to return the result of all framings of
  * one combination of four letters.
@@ -52,3 +60,4 @@ public:
   void propagate(std::array<signed char,5> belief);
   signed char operator[](int n);
 };
+#endif
