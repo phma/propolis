@@ -1,10 +1,25 @@
 project(propolis)
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.8.0)
+
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_CXX_STANDARD 17) # appeared in CMake 3.8
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS ON)
+set(SHARE_DIR ${CMAKE_INSTALL_PREFIX}/share/propolis)
+add_definitions(-DBOOST_ALL_NO_LIB)
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+set(Boost_USE_STATIC_LIBS ON)
+else ()
+set(Boost_USE_STATIC_LIBS OFF)
+endif ()
+
+find_package(Threads)
 
 add_executable(propolis propolis.cpp hvec.cpp letters.cpp galois.cpp rs.cpp contour.cpp
-               lagrange.cpp ps.cpp arrange.cpp encoding.cpp raster.cpp hamming.cpp)
+               lagrange.cpp ps.cpp arrange.cpp encoding.cpp raster.cpp hamming.cpp threads.cpp)
 
-set(CMAKE_CXX_FLAGS "-std=c++11")
+target_link_libraries(propolis ${CMAKE_THREAD_LIBS_INIT})
+
 install(TARGETS propolis DESTINATION bin)
 include(TestBigEndian)
 include(CheckIncludeFiles)
