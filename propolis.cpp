@@ -689,6 +689,7 @@ int main(int argc,char **argv)
     copyleft();
     //cout<<"size "<<size<<" redundancy "<<redundancy<<" text "<<text<<endl;
   }
+  waitForThreads(TH_STOP);
   joinThreads();
   return 0;
 }
