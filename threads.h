@@ -15,6 +15,8 @@
 
 extern std::chrono::steady_clock clk;
 
+void startThreads(int n);
+void joinThreads();
 //void enqueueInvLetterTask(InvLetterTask task);
 //InvLetterTask dequeueInvLetterTask();
 void sleepRead();

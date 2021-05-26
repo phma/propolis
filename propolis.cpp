@@ -17,6 +17,7 @@
 #include "lagrange.h"
 #include "encoding.h"
 #include "raster.h"
+#include "threads.h"
 
 using namespace std;
 
@@ -297,11 +298,13 @@ void fac8191()
  }
 
 void initialize()
-{initialize_ecc();
- fillpn();
- initsubsample(1);
- readinvletters();
- }
+{
+  initialize_ecc();
+  fillpn();
+  initsubsample(1);
+  readinvletters();
+  startThreads(thread::hardware_concurrency());
+}
 
 void testlagrange()
 {
@@ -686,5 +689,6 @@ int main(int argc,char **argv)
     copyleft();
     //cout<<"size "<<size<<" redundancy "<<redundancy<<" text "<<text<<endl;
   }
+  joinThreads();
   return 0;
 }
