@@ -89,28 +89,38 @@ public:
 };
 
 template <typename T> class harray
-{std::map<hvec,T *> index;
- public:
- T& operator[](hvec i);
- void clear();
- };
+{
+  std::map<hvec,T *> index;
+public:
+  ~harray();
+  T& operator[](hvec i);
+  void clear();
+};
+
+template <typename T> harray<T>::~harray<T>()
+{
+  clear();
+}
 
 template <typename T> T& harray<T>::operator[](hvec i)
-{hvec q,r;
- q=i/PAGEMOD;
- r=i%PAGEMOD;
- if (!index[q])
+{
+  hvec q,r;
+  q=i/PAGEMOD;
+  r=i%PAGEMOD;
+  if (!index[q])
     index[q]=(T*)calloc(PAGESIZE,sizeof(T));
- return index[q][r.pageinx()];
- }
+  return index[q][r.pageinx()];
+}
 
 template <typename T> void harray<T>::clear()
-{typename std::map<hvec,T *>::iterator i;
- for (i=index.start();i!=index.end();i++)
-     {free(i->second);
-      i->second=NULL;
-      }
- }
+{
+  typename std::map<hvec,T *>::iterator i;
+  for (i=index.begin();i!=index.end();i++)
+  {
+    free(i->second);
+    i->second=NULL;
+  }
+}
 
 int region(std::complex<double> z);
 void testcomplex();
