@@ -462,7 +462,6 @@ void testraster()
 
 void testmain()
 {
-  debugletters=0;
   //testgalois();
   //testoutline();
   degauss();
@@ -588,6 +587,7 @@ int main(int argc,char **argv)
     {0,            0,                0,0}
   };
   initialize();
+  debugletters=1;
   while (1)
   {
     option_index=-1;
