@@ -112,11 +112,12 @@ template <typename T> harray<T>::harray(const harray<T> &h)
     }
 }
 
-template <typename T> harray<T> &operator=(const harray<T> &h)
+template <typename T> harray<T> &harray<T>::operator=(const harray<T> &h)
 {
   typename std::map<hvec,T *>::const_iterator i;
   if (this==&h)
     return *this;
+  clear();
   for (i=h.index.begin();i!=h.index.end();i++)
     if (i->second)
     {
