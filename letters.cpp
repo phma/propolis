@@ -742,17 +742,19 @@ void checkinvletters()
         if (((g-h*omega)%FRAMEMOD).norm()>1)
 	{
 	  valid=false;
-          /*printf("i=%03x, f.e. %4d (%3d,%3d)  r=%03x, f.e. %4d (%3d,%3d)\n",
-	         i,invletters[i]-0x6000,h.getx(),h.gety(),
-	         r,invletters[r]-0x6000,g.getx(),g.gety());*/
+	  if (debugletters)
+	    printf("i=%03x, f.e. %4d (%3d,%3d)  r=%03x, f.e. %4d (%3d,%3d)\n",
+		   i,invletters[i]-0x6000,h.getx(),h.gety(),
+	           r,invletters[r]-0x6000,g.getx(),g.gety());
 	}
       }
       else
       {
 	valid=false;
-        /*printf("i=%03x, invletters[i]=%04x   r=%03x, invletters[r]=%04x\n",
-	       i,invletters[i],
-	       r,invletters[r]);*/
+	if (debugletters)
+	  printf("i=%03x, invletters[i]=%04x   r=%03x, invletters[r]=%04x\n",
+	         i,invletters[i],
+	         r,invletters[r]);
       }
 	
       r=4095-i;
@@ -762,17 +764,19 @@ void checkinvletters()
         if (((g-h)%FRAMEMOD).norm()>1)
 	{
 	  valid=false;
-          /*printf("i=%03x, f.e. %4d (%3d,%3d)  r=%03x, f.e. %4d (%3d,%3d)\n",
-	         i,invletters[i]-0x6000,h.getx(),h.gety(),
-	         r,invletters[r]-0x6000,g.getx(),g.gety());*/
+	  if (debugletters)
+            printf("i=%03x, f.e. %4d (%3d,%3d)  r=%03x, f.e. %4d (%3d,%3d)\n",
+	           i,invletters[i]-0x6000,h.getx(),h.gety(),
+	           r,invletters[r]-0x6000,g.getx(),g.gety());
 	}
       }
       else
       {
 	valid=false;
-        /*printf("i=%03x, invletters[i]=%04x   r=%03x, invletters[r]=%04x\n",
-	       i,invletters[i],
-	       r,invletters[r]);*/
+	if (debugletters)
+          printf("i=%03x, invletters[i]=%04x   r=%03x, invletters[r]=%04x\n",
+	         i,invletters[i],
+	         r,invletters[r]);
       }
 	
     }
