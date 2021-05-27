@@ -7,6 +7,7 @@
 
 #include <cmath>
 #include <cstdlib>
+#include <cstring>
 #include <map>
 #include <complex>
 #define M_SQRT_3_4 0.86602540378443864676372317
@@ -92,10 +93,23 @@ template <typename T> class harray
 {
   std::map<hvec,T *> index;
 public:
+  harray()=default;
+  harray(const harray &h);
   ~harray();
   T& operator[](hvec i);
   void clear();
 };
+
+template <typename T> harray<T>::harray(const harray<T> &h)
+{
+  typename std::map<hvec,T *>::const_iterator i;
+  for (i=h.index.begin();i!=h.index.end();i++)
+    if (i->second)
+    {
+      index[i->first]=(T*)calloc(PAGESIZE,sizeof(T));
+      memcpy(index[i->first],i->second,PAGESIZE*sizeof(T));
+    }
+}
 
 template <typename T> harray<T>::~harray<T>()
 {
