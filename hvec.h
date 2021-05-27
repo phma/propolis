@@ -95,6 +95,7 @@ template <typename T> class harray
 public:
   harray()=default;
   harray(const harray &h);
+  harray &operator=(const harray &h);
   ~harray();
   T& operator[](hvec i);
   void clear();
@@ -109,6 +110,20 @@ template <typename T> harray<T>::harray(const harray<T> &h)
       index[i->first]=(T*)calloc(PAGESIZE,sizeof(T));
       memcpy(index[i->first],i->second,PAGESIZE*sizeof(T));
     }
+}
+
+template <typename T> harray<T> &operator=(const harray<T> &h)
+{
+  typename std::map<hvec,T *>::const_iterator i;
+  if (this==&h)
+    return *this;
+  for (i=h.index.begin();i!=h.index.end();i++)
+    if (i->second)
+    {
+      index[i->first]=(T*)calloc(PAGESIZE,sizeof(T));
+      memcpy(index[i->first],i->second,PAGESIZE*sizeof(T));
+    }
+  return *this;
 }
 
 template <typename T> harray<T>::~harray<T>()
