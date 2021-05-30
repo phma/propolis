@@ -929,6 +929,14 @@ int splay2(int letter,int n)
   return letter;
 }
 
+int twist5(int letter,int n)
+// Rotates letter by n times the number of bits set in letter.
+{
+  int cnt=bitcount(letter);
+  letter*=0x2108421;
+  return (letter>>(25-n*cnt))&31;
+}
+
 BIT16 abdhp[]={0x007,0xf80,0xc00,0xa64,0x499};
 
 void fillLetters(int perm,int negs,int splay,int twist)
@@ -953,7 +961,7 @@ void fillLetters(int perm,int negs,int splay,int twist)
 	bits=rotate(bits);
       if (j>1)
 	bits=rotate(bits);
-      letters[let]=bits;
-      letters[let^31]=bits^0xfff;
+      letters[twist5(let,twist)]=bits;
+      letters[twist5(let^31,twist)]=bits^0xfff;
     }
 }
