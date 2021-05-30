@@ -972,7 +972,7 @@ int totalBitsDifferent()
  */
 {
   int count=0,i,j;
-  for (i=0;i<31;i++)
+  for (i=0;i<32;i++)
     for (j=0;j<i;j++)
       if (bitcount(letters[i]^letters[j])<=3)
 	count+=bitcount(i^j);
