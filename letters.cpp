@@ -891,3 +891,51 @@ signed char litteron::operator[](int n)
   assert(n>=0 && n<5);
   return softbits[n];
 }
+
+/* Find the best letter assignment for belief propagation. The original
+ * assignment had D differing by only two bits from @, so if a Hamming code
+ * in bit 2 is uncertain between D/@ or [/_, the other bits can't help decide.
+ */
+
+int perm4(int letter,int perm)
+// Permutes bits 1-4, leaving bit 0. perm is from 0 to 23.
+{
+  int i,n,a,b;
+  for (i=2;i<5;i++)
+  {
+    n=perm%i+1;
+    perm/=i;
+    a=(letter>>i)&1;
+    b=(letter>>n)&1;
+    if (a!=b)
+      letter^=(1<<n)+(1<<i);
+  }
+  return letter;
+}
+
+int splay2(int letter,int n)
+// letter has 1 or 4 bits set; n is 0 or 1.
+{
+  bool neg=bitcount(letter)>2;
+  if (neg)
+    letter^=31;
+  letter*=33;
+  if (n)
+    letter=((letter>>3)|(letter>>7))&31;
+  else
+    letter=((letter>>4)|(letter>>6))&31;
+  if (neg)
+    letter^=31;
+  return letter;
+}
+
+void fillLetters(int perm,int negs,int splay,int twist)
+/* Fills letters with one of 7680 assignments:
+ * perm (0-23) permutes the single-bit letters (A,B,D,H,P) and their complements;
+ * negs (0-31) exchanges A/^, B/], D/[, H/W, or P/O;
+ * splay (0-1) rotates D left to I and right to Q or vice versa;
+ * twist (0-4) rotates each five-bit letter by a multiple of its bit count.
+ */
+{
+  int i,j;
+}
