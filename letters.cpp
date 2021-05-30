@@ -919,7 +919,7 @@ int splay2(int letter,int n)
   bool neg=bitcount(letter)>2;
   if (neg)
     letter^=31;
-  letter*=33;
+  letter*=0x2108421;
   if (n)
     letter=((letter>>3)|(letter>>7))&31;
   else
