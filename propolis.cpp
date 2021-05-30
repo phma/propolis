@@ -482,6 +482,7 @@ void testmain()
   testrotate();
   debugframingerror();
   checkregbits();
+  findLetterAssignment();
 }
 
 double stringtod(string str)

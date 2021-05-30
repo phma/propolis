@@ -965,3 +965,34 @@ void fillLetters(int perm,int negs,int splay,int twist)
       letters[twist5(let^31,twist)]=bits^0xfff;
     }
 }
+
+int totalBitsDifferent()
+/* Returns the total number of bits different in pairs of 5-bit letters whose
+ * 12-bit patterns differ by 2 or 3 bits.
+ */
+{
+  int count=0,i,j;
+  for (i=0;i<31;i++)
+    for (j=0;j<i;j++)
+      if (bitcount(letters[i]^letters[j])<=3)
+	count+=bitcount(i^j);
+  return count;
+}
+
+void findLetterAssignment()
+{
+  int perm,negs,splay,twist,count,bestcount=0;
+  for (perm=0;perm<24;perm++)
+    for (negs=0;negs<32;negs++)
+      for (splay=0;splay<2;splay++)
+	for (twist=0;twist<5;twist++)
+	{
+	  fillLetters(perm,negs,splay,twist);
+	  count=totalBitsDifferent();
+	  if (count>=bestcount)
+	  {
+	    printf("%2d%3d%2d%2d%5d\n",perm,negs,splay,twist,count);
+	    bestcount=count;
+	  }
+	}
+}

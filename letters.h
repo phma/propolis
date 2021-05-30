@@ -32,6 +32,7 @@ void checkinvletters();
 void testroundframe();
 void testrotate();
 void debugframingerror();
+void findLetterAssignment();
 
 struct InvLetterTask
 {
