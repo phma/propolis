@@ -959,7 +959,7 @@ void fillLetters(int perm,int negs,int splay,int twist)
       bits=abdhp[i];
       if (j)
 	bits=rotate(bits);
-      if (j>1)
+      if (j==1)
 	bits=rotate(bits);
       letters[twist5(let,twist)]=bits;
       letters[twist5(let^31,twist)]=bits^0xfff;
