@@ -968,7 +968,7 @@ void fillLetters(int perm,int negs,int splay,int twist)
 
 int totalBitsDifferent()
 /* Returns the total number of bits different in pairs of 5-bit letters whose
- * 12-bit patterns differ by 2 or 3 bits.
+ * 12-bit patterns differ by 2 or 3 bits. This is out of 420 bits.
  */
 {
   int count=0,i,j;
