@@ -929,6 +929,8 @@ int splay2(int letter,int n)
   return letter;
 }
 
+BIT16 abdhp[]={0x007,0xf80,0xc00,0xa64,0x499};
+
 void fillLetters(int perm,int negs,int splay,int twist)
 /* Fills letters with one of 7680 assignments:
  * perm (0-23) permutes the single-bit letters (A,B,D,H,P) and their complements;
@@ -937,5 +939,21 @@ void fillLetters(int perm,int negs,int splay,int twist)
  * twist (0-4) rotates each five-bit letter by a multiple of its bit count.
  */
 {
-  int i,j;
+  int i,j,let,bits;
+  for (i=0;i<5;i++)
+    for (j=0;j<3;j++)
+    {
+      let=perm4(1<<i,perm);
+      if (negs&(1<<i))
+	let^=31;
+      if (j)
+	let=splay2(let,(j-1)^splay);
+      bits=abdhp[i];
+      if (j)
+	bits=rotate(bits);
+      if (j>1)
+	bits=rotate(bits);
+      letters[let]=bits;
+      letters[let^31]=bits^0xfff;
+    }
 }
