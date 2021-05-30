@@ -903,7 +903,7 @@ int perm4(int letter,int perm)
   int i,n,a,b;
   for (i=2;i<5;i++)
   {
-    n=perm%i+1;
+    n=i-perm%i;
     perm/=i;
     a=(letter>>i)&1;
     b=(letter>>n)&1;
