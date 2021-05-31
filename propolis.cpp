@@ -301,6 +301,7 @@ void initialize()
 {
   initialize_ecc();
   fillpn();
+  fillLetters(0,0,0,0);
   initsubsample(1);
   readinvletters();
   startThreads(thread::hardware_concurrency());

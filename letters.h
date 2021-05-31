@@ -32,6 +32,7 @@ void checkinvletters();
 void testroundframe();
 void testrotate();
 void debugframingerror();
+void fillLetters(int perm,int negs,int splay,int twist);
 void findLetterAssignment();
 
 struct InvLetterTask
