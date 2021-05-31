@@ -964,6 +964,10 @@ void fillLetters(int perm,int negs,int splay,int twist)
       letters[twist5(let,twist)]=bits;
       letters[twist5(let^31,twist)]=bits^0xfff;
     }
+  for (i=0;i<32;i++)
+    for (j=0;j<32;j++)
+      if (letters[i]==rotate(letters[j]))
+	rotateletter[j]=i;
 }
 
 int totalBitsDifferent()
@@ -981,7 +985,7 @@ int totalBitsDifferent()
 
 void findLetterAssignment()
 {
-  int perm,negs,splay,twist,count,bestcount=0;
+  int i,perm,negs,splay,twist,count,bestcount=0;
   for (perm=0;perm<24;perm++)
     for (negs=0;negs<32;negs++)
       for (splay=0;splay<2;splay++)
@@ -991,7 +995,10 @@ void findLetterAssignment()
 	  count=totalBitsDifferent();
 	  if (count>=bestcount)
 	  {
-	    printf("%2d%3d%2d%2d%5d\n",perm,negs,splay,twist,count);
+	    printf("%2d%3d%2d%2d%5d ",perm,negs,splay,twist,count);
+	    for (i=0;i<32;i++)
+	      putchar(rotateletter[i]+'@');
+	    putchar('\n');
 	    bestcount=count;
 	  }
 	}
