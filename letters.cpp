@@ -902,6 +902,44 @@ signed char litteron::operator[](int n)
  * in bit 2 is uncertain between D/@ or [/_, the other bits can't help decide.
  */
 
+char rowbit[]={0,3,7,10,12};
+char rowindent[]={1,0,1,2};
+
+void write1Ambig(int bits)
+{
+  vector<int> nearLetters;
+  int i,j;
+  for (i=0;i<32;i++)
+    if (bitcount(bits^letters[i])<2)
+      nearLetters.push_back(i);
+  for (i=3;i>=0;i--)
+  {
+    for (j=0;j<rowindent[i];j++)
+      putchar(' ');
+    for (j=rowbit[i+1]-1;j>=rowbit[i];j--)
+    {
+      putchar(((bits>>j)&1)?'*':'o');
+      putchar(' ');
+    }
+    for (j=0;j<rowindent[i];j++)
+      putchar(' ');
+    if (i<nearLetters.size())
+    {
+      for (j=4;j>=0;j--)
+	putchar(((nearLetters[i]>>j)&1)+'0');
+    }
+    putchar('\n');
+  }
+  putchar('\n');
+}
+
+void writeAmbig()
+{
+  int i;
+  for (i=0;i<12;i++)
+    write1Ambig(ambig3[i]);
+}
+
 int perm4(int letter,int perm)
 // Permutes bits 1-4, leaving bit 0. perm is from 0 to 23.
 {

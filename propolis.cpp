@@ -483,7 +483,8 @@ void testmain()
   testrotate();
   debugframingerror();
   checkregbits();
-  findLetterAssignment();
+  writeAmbig();
+  //findLetterAssignment();
 }
 
 double stringtod(string str)
