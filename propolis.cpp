@@ -589,7 +589,7 @@ int main(int argc,char **argv)
     {0,            0,                0,0}
   };
   initialize();
-  debugletters=1;
+  debugletters=0;
   while (1)
   {
     option_index=-1;
