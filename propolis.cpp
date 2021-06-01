@@ -470,7 +470,7 @@ void testmain()
   testfindsize();
   testCheckLetters();
   testlagrange();
-  testsetdata();
+  //testsetdata();
   //testshuffle();
   //testwhiten();
   testenc();
