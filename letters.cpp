@@ -929,6 +929,8 @@ int write1Ambig(int bits)
     }
     for (j=0;j<rowindent[i];j++)
       putchar(' ');
+    if (i==3)
+      cout<<5-bitcount(any-all);
     if (i<nearLetters.size())
     {
       for (j=4;j>=0;j--)
