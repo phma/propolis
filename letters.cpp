@@ -28,6 +28,7 @@
 #include <stdexcept>
 #include <vector>
 #include <cassert>
+#include <iostream>
 #include "letters.h"
 #include "raster.h"
 #include "threads.h"
@@ -905,13 +906,18 @@ signed char litteron::operator[](int n)
 char rowbit[]={0,3,7,10,12};
 char rowindent[]={1,0,1,2};
 
-void write1Ambig(int bits)
+int write1Ambig(int bits)
+// Returns the number of bits that are the same in all three letters.
 {
   vector<int> nearLetters;
-  int i,j;
+  int i,j,all=31,any=0;
   for (i=0;i<32;i++)
     if (bitcount(bits^letters[i])<2)
+    {
       nearLetters.push_back(i);
+      all&=i;
+      any|=i;
+    }
   for (i=3;i>=0;i--)
   {
     for (j=0;j<rowindent[i];j++)
@@ -931,13 +937,15 @@ void write1Ambig(int bits)
     putchar('\n');
   }
   putchar('\n');
+  return 5-bitcount(any-all);
 }
 
 void writeAmbig()
 {
-  int i;
+  int i,countSame=0;
   for (i=0;i<12;i++)
-    write1Ambig(ambig3[i]);
+    countSame+=write1Ambig(ambig3[i]);
+  cout<<countSame<<endl;
 }
 
 int perm4(int letter,int perm)
