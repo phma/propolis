@@ -8,7 +8,11 @@
  * codeword 120° and flipping all bits do consistent things to plaintext,
  * but neither rotating nor changing two bits (the Hamming distance is 2)
  * does anything related to a Reed-Solomon code.
- * 
+ *
+ * The following is the original code. I'm considering replacing it with
+ * another code which is better for belief propagation. This could be one of
+ * the 7680 orders produced by fillLetters, or I may find it otherwise.
+ *
  * Codes for single 1 bits are:
  *  00001   00010   00100   01000   10000
  *   0 0     1 1     1 1     1 0     0 1

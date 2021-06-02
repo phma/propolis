@@ -674,7 +674,7 @@ int main(int argc,char **argv)
     writeinvletters();
   }
   if (testflag)
-    writeAmbig();//testmain();
+    testmain();
   else if (pattern)
     makepattern(pattern,size,format,outfilename);
   else if (text.size())
