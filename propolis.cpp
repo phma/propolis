@@ -9,10 +9,8 @@
 #include <getopt.h>
 #include "hvec.h"
 #include "letters.h"
-#include "galois.h"
 #include "contour.h"
 #include "ps.h"
-#include "rs.h"
 #include "arrange.h"
 #include "lagrange.h"
 #include "encoding.h"
@@ -59,26 +57,6 @@ void fillpn()
       //printf("%4x ",pncode[i]);
       }
  }
-
-void testgalois()
-{
-  int i,j;
-  for (i=0;i<32;i++)
-     {for (j=0;j<32;j++)
-          printf("%c ",gmult(i,j)+'@');
-      printf("\n");
-      }
-  printf("\n");
-  for (i=0;i<32;i++)
-    printf("%c ",ginv(i)+'@');
-  printf("\n");
-  for (i=0;i<31;i++)
-     {for (j=0;j<32;j++)
-          printf("%c ",genPoly[i][j]+'@');
-      printf("\n");
-      }
-  printf("\n");
-}
 
 void pattern19()
 {hletters[hvec(0,2)]=1;
@@ -299,7 +277,6 @@ void fac8191()
 
 void initialize()
 {
-  initialize_ecc();
   fillpn();
   fillLetters(0,0,0,0);
   initsubsample(1);
@@ -449,7 +426,6 @@ void testraster()
 
 void testmain()
 {
-  //testgalois();
   //testoutline();
   degauss();
   listsizes();
@@ -457,8 +433,6 @@ void testmain()
   testCheckLetters();
   testlagrange();
   //testsetdata();
-  //testshuffle();
-  //testwhiten();
   testenc();
   testencodings();
   testcomplex();

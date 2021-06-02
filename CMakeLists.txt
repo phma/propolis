@@ -15,7 +15,7 @@ endif ()
 
 find_package(Threads)
 
-add_executable(propolis propolis.cpp hvec.cpp letters.cpp galois.cpp rs.cpp contour.cpp
+add_executable(propolis propolis.cpp hvec.cpp letters.cpp contour.cpp
                lagrange.cpp ps.cpp arrange.cpp encoding.cpp raster.cpp hamming.cpp threads.cpp)
 
 target_link_libraries(propolis ${CMAKE_THREAD_LIBS_INIT})

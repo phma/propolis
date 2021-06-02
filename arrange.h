@@ -41,5 +41,4 @@ public:
 extern CodeMatrix theMatrix;
 void testbitctrot();
 void testshuffle();
-void testwhiten();
 void testCheckLetters();

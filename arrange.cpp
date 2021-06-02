@@ -5,8 +5,6 @@
 #include <cstring>
 #include <cassert>
 #include "arrange.h"
-#include "galois.h"
-#include "rs.h"
 #include "letters.h"
 #include "lagrange.h"
 using namespace std;
@@ -132,35 +130,6 @@ int unwhiten(int letter,int index)
   return letter;
 }
 
-int whiten(int letter,int row,int column)
-{
-  int highbits; // save the high 3 bits of the letter byte, which indicate whether it's data or check
-  highbits=letter&-32;
-  letter=(letter+column+1)&31;
-  letter='_'-bitctrot[gmult(letter,column+1)];
-  letter=bitctrot[oddmul(letter,row)&31];
-  return (letter&31)|highbits;
-}
-
-int unwhiten(int letter,int row,int column)
-{
-  int highbits; // save the high 3 bits of the letter byte, which indicate whether it's data or check
-  highbits=letter&-32;
-  if (debugwhiten)
-    printf("r%d c%d %c->",row,column,(letter&31)+'@');
-  letter=bitctunrot[letter&31]-'@';
-  if (debugwhiten)
-    printf("%c->",(letter&31)+'@');
-  letter='_'-bitctrot[oddmul(letter,invoddmul[row&31])];
-  letter&=31;
-  if (debugwhiten)
-    printf("%c->",(letter&31)+'@');
-  letter=gmult(letter,ginv(column+1))-column-1;
-  if (debugwhiten)
-    printf("%c\n",(letter&31)+'@');
-  return (letter&31)|highbits;
-}
-
 int tripleindex(int x,int y,int z)
 // x!=y, y!=z, z!=x
 {
@@ -185,71 +154,6 @@ int tripleindex(int x,int y,int z)
   z=(z-2)*(z-1)*z/6;
   y=(y-1)*y/2;
   return x+y+z;
-}
-
-void testwhiten()
-{
-  int letter,row,column,white[31],unwhite[31],histo[256],i,x,y,z,inx;
-  char boxes[4960],triples[12][3];
-  char teststr[]="PACK@MY@BOX@WITH@FIVE@DOZEN@LIQUOR@JUGS@";
-  memset(boxes,0,sizeof(boxes));
-  memset(histo,0,sizeof(histo));
-  for (row=i=0;row<32;row++)
-  {
-    for (column=0;column<31;column++)
-    {
-      letter=teststr[i];
-      if (!letter)
-        letter=teststr[i=0];
-      i++;
-      white[column]=whiten(letter,row,column);
-      unwhite[column]=unwhiten(white[column],row,column);
-    }
-    for (column=0;column<31;column++)
-      putchar(white[column]);
-    putchar(' ');
-    for (column=0;column<31;column++)
-      putchar(unwhite[column]);
-    putchar('\n');
-  }      
-  for (i=row=0;i<4096;i++)
-    if (invletters[i]&0x8000)
-    {
-      putchar(((invletters[i])    &31)+'@');
-      putchar(((invletters[i]>>5) &31)+'@');
-      putchar(((invletters[i]>>10)&31)+'@');
-      triples[row][0]=((invletters[i])    &31);
-      triples[row][1]=((invletters[i]>>5) &31);
-      triples[row][2]=((invletters[i]>>10)&31);
-      row++;
-      putchar('\n');
-    }
-  for (row=i=0;row<32;row++)
-    for (column=0;column<31;column++)
-      for (i=0;i<12;i++)
-      {
-	x=unwhiten(triples[i][0],row,column);
-	y=unwhiten(triples[i][1],row,column);
-	z=unwhiten(triples[i][2],row,column);
-	inx=tripleindex(x,y,z);
-	boxes[inx]++;
-	if (inx<10)
-	  printf("inx=%d i=%d row=%d column=%d\n",inx,i,row,column);
-      }
-  for (x=2;x<31;x++)
-    for (y=1;y<x;y++)
-      for (z=0;z<y;z++)
-	if (boxes[tripleindex(x,y,z)]+1)
-	  printf("%c%c%c%3d  ",x+'@',y+'@',z+'@',boxes[tripleindex(x,y,z)]);
-  putchar('\n');
-  debugwhiten=1;
-  unwhiten('F',5,16);
-  unwhiten('Y',26,16);
-  debugwhiten=0;
-  for (i=0;i<4960;i++)
-    histo[boxes[i]]++;
-  for (i=0;i<10;i++)
-    printf("%2d %2d\n",i,histo[i]);
 }
 
 int ndataletters(int n)
@@ -732,20 +636,6 @@ void testbitctrot()
   for (i=0;i<32;i++)
     putchar(bitctunrot[31-i]+bitctrot[i]-'@');
   putchar('\n');
-}
-
-void testshuffle()
-{
-  int i,j,n;
-  for (i=0;i<31;i++)
-  {
-    for (j=0;j<31;j++)
-    {
-      n=gmult(ginv(i+1),(bitctrot[j]&31)+1)-1;
-      putchar((n)+'@');
-    }
-    putchar('\n');
-  }
 }
 
 void testCheckLetters()
