@@ -412,7 +412,7 @@ void makepattern(int pattern,int asize,int format,string outfilename)
       cerr<<"Pattern should be 8191 or 8191b"<<endl;
   }
   if (letterpattern>1)
-    thematrix.arrange(hletters);
+    theMatrix.arrange(hletters);
   if (letterpattern)
     for (k=start(size);k.cont(size);k.inc(size))
       drawletter(hletters[k]&31,k);
@@ -431,20 +431,6 @@ void makepattern(int pattern,int asize,int format,string outfilename)
     default:
       cerr<<"Format should be pgm, ps, or info"<<endl;
   }
-}
-
-void testencode()
-{
-  thematrix.setsize(3);
-  thematrix.setndata(29);
-  thematrix.setdata("@@@@@@@@@@@@@@@@@@@@@@@@@@@@A",5);
-  thematrix.dump();
-  thematrix.encode();
-  thematrix.dump();
-  thematrix.scramble();
-  thematrix.dump();
-  thematrix.unscramble();
-  thematrix.dump();
 }
 
 void testencodings()
