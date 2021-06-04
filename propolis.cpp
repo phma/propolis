@@ -1,6 +1,7 @@
 /* Hexagonal code
  */
 
+#include <boost/program_options.hpp>
 #include <cstdio>
 #include <fstream>
 #include <iostream>
@@ -18,6 +19,7 @@
 #include "threads.h"
 
 using namespace std;
+namespace po=boost::program_options;
 
 hvec a,b,q,r;
 harray<char> hletters,hbits;
@@ -535,6 +537,12 @@ int main(int argc,char **argv)
   stringbuf filebuf;
   fstream infile;
   int format=FMT_PS,pattern=0;
+  bool validCmd=true;
+  po::options_description generic("Options");
+  po::options_description hidden("Hidden options");
+  po::options_description cmdline_options;
+  po::positional_options_description p;
+  po::variables_map vm;
   static option long_options[]=
   {
     {"test",       no_argument,      0,0},

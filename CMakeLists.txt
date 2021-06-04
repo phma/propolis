@@ -13,12 +13,13 @@ else ()
 set(Boost_USE_STATIC_LIBS OFF)
 endif ()
 
-find_package(Threads)
+find_package(Boost COMPONENTS program_options REQUIRED)
+find_package(Threads REQUIRED)
 
 add_executable(propolis propolis.cpp hvec.cpp letters.cpp contour.cpp
                lagrange.cpp ps.cpp arrange.cpp encoding.cpp raster.cpp hamming.cpp threads.cpp)
 
-target_link_libraries(propolis ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(propolis ${CMAKE_THREAD_LIBS_INIT} ${Boost_LIBRARIES})
 
 install(TARGETS propolis DESTINATION bin)
 include(TestBigEndian)
