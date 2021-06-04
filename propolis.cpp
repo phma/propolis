@@ -542,7 +542,7 @@ int main(int argc,char **argv)
   po::variables_map vm;
   generic.add_options()
     ("size,s",po::value<int>(&size),"Symbol size")
-    ("redundancy,r",po::value<string>(&redundancyStr)->default_value("4/7"),"Redundancy (0,2/3]")
+    ("redundancy,r",po::value<string>(&redundancyStr)->default_value("3/7"),"Redundancy (0,2/3]")
     ("text,t",po::value<string>(&text),"Text to encode")
     ("input,i",po::value<string>(&infilename),"File containing text to encode")
     ("output,o",po::value<string>(&outfilename),"Output file")
