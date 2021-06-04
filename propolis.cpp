@@ -535,7 +535,7 @@ int main(int argc,char **argv)
   string redundancyStr,formatStr,patternStr;
   fstream infile;
   int format=FMT_PS,pattern=0;
-  bool validCmd=true;
+  bool validCmd=true,helpFlag=false;
   po::options_description generic("Options");
   po::options_description hidden("Hidden options");
   po::options_description cmdline_options;
@@ -551,7 +551,8 @@ int main(int argc,char **argv)
     ("quality",po::value<int>(&quality),"Quality of raster image (0-10)")
     ("pattern",po::value<string>(&patternStr),"Write a test pattern")
     ("writetables","Write decoding tables")
-    ("test","Run tests");
+    ("test","Run tests")
+    ("help","Show options");
   initialize();
   cmdline_options.add(generic).add(hidden);
   debugletters=0;
@@ -563,6 +564,8 @@ int main(int argc,char **argv)
       testflag=1;
     if (vm.count("writetables"))
       makedata=1;
+    if (vm.count("help"))
+      cout<<"Usage: propolis [options]\n"<<generic;
   }
   catch (exception &ex)
   {
