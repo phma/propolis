@@ -422,7 +422,7 @@ void CodeMatrix::setDataCheck(string str,int encoding)
  * have been called already.
  */
 {
-  int i,j,k;
+  int64_t i,j,k;
   array<int,2> ccf;
   array<int,5> ccf5;
   vector<int31> lagrange;
