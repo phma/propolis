@@ -336,7 +336,7 @@ void makesymbol(string text,int asize,double redundancy,int format,string outfil
       }
       while (size!=asize && red<2/3. && red>0.5/encodings[i].codestring.size());
     }
-    canfit=(asize<2 && theMatrix.getSize()>1) || theMatrix.getSize()==asize;
+    canfit=(asize<2 && theMatrix.getSize()>1) || (asize>1 && theMatrix.getSize()==asize);
     if (canfit)
       break;
   }
