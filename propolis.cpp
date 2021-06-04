@@ -503,9 +503,8 @@ void copyleft()
   cout<<"Propolis version "<<VERSION<<" © Pierre Abbat 2011-2021\nGPL v3 licensed\n";
 }
 
-int formatnum(const char *optarg)
+int formatnum(string optstr)
 {
-  string optstr(optarg);
   if (optstr=="pnm" || optstr=="pgm")
     return FMT_PNM;
   if (optstr=="ps")
@@ -516,9 +515,8 @@ int formatnum(const char *optarg)
   return -1;
 }
 
-int patternnum(const char *optarg)
+int patternnum(string optstr)
 {
-  string optstr(optarg);
   if (optstr=="8191")
     return PATTERN_8191;
   if (optstr=="8191b")
@@ -570,8 +568,9 @@ int main(int argc,char **argv)
     {0,            0,                0,0}
   };
   initialize();
+  cmdline_options.add(generic).add(hidden);
   debugletters=0;
-  while (1)
+  while (0)
   {
     option_index=-1;
     c=getopt_long(argc,argv,"s:r:t:f:i:o:",long_options,&option_index);
@@ -647,31 +646,71 @@ int main(int argc,char **argv)
 	break;
     }
   }
+  try
+  {
+    po::store(po::command_line_parser(argc,argv).options(cmdline_options).positional(p).run(),vm);
+    po::notify(vm);
+    if (vm.count("test"))
+      testflag=1;
+    if (vm.count("writetables"))
+      makedata=1;
+  }
+  catch (exception &ex)
+  {
+    cerr<<ex.what()<<endl;
+    validCmd=false;
+  }
+  if (redundancyStr.length())
+  {
+    redundancy=parse_redundancy(redundancyStr);
+    if (redundancy>0)
+      size=0;
+    else
+    {
+      cerr<<"Could not parse redundancy: "<<redundancyStr<<endl;
+      validCmd=false;
+    }
+  }
+  if (formatStr.length())
+  {
+    format=formatnum(formatStr);
+    if (format<0)
+      validCmd=false;
+  }
+  if (patternStr.length())
+  {
+    pattern=patternnum(patternStr);
+    if (format<0)
+      validCmd=false;
+  }
   waitForThreads(TH_RUN);
-  if (makedata)
+  if (validCmd)
   {
-    fillinvletters();
-    writeinvletters();
-  }
-  if (testflag)
-    testmain();
-  else if (pattern)
-    makepattern(pattern,size,format,outfilename);
-  else if (text.size())
-  {
-    makesymbol(text,size,redundancy,format,outfilename);
-  }
-  else if (infilename.size())
-  {
-    infile.open(infilename.c_str(),ios_base::in|ios_base::binary);
-    infile>>&filebuf;
-    makesymbol(filebuf.str(),size,redundancy,format,outfilename);
-    infile.close();
-  }
-  else
-  {
-    copyleft();
-    //cout<<"size "<<size<<" redundancy "<<redundancy<<" text "<<text<<endl;
+    if (makedata)
+    {
+      fillinvletters();
+      writeinvletters();
+    }
+    if (testflag)
+      testmain();
+    else if (pattern)
+      makepattern(pattern,size,format,outfilename);
+    else if (text.size())
+    {
+      makesymbol(text,size,redundancy,format,outfilename);
+    }
+    else if (infilename.size())
+    {
+      infile.open(infilename.c_str(),ios_base::in|ios_base::binary);
+      infile>>&filebuf;
+      makesymbol(filebuf.str(),size,redundancy,format,outfilename);
+      infile.close();
+    }
+    else
+    {
+      copyleft();
+      //cout<<"size "<<size<<" redundancy "<<redundancy<<" text "<<text<<endl;
+    }
   }
   waitForThreads(TH_STOP);
   joinThreads();
