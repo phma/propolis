@@ -535,6 +535,7 @@ int main(int argc,char **argv)
   int size=0;
   string text,infilename,outfilename;
   stringbuf filebuf;
+  string redundancyStr,formatStr,patternStr;
   fstream infile;
   int format=FMT_PS,pattern=0;
   bool validCmd=true;
@@ -543,6 +544,17 @@ int main(int argc,char **argv)
   po::options_description cmdline_options;
   po::positional_options_description p;
   po::variables_map vm;
+  generic.add_options()
+    ("size,s",po::value<int>(&size),"Symbol size")
+    ("redundancy,r",po::value<string>(&redundancyStr),"Redundancy (0,2/3]")
+    ("text,t",po::value<string>(&text),"Text to encode")
+    ("input,i",po::value<string>(&infilename),"File containing text to encode")
+    ("output,o",po::value<string>(&outfilename),"Output file")
+    ("format,f",po::value<string>(&formatStr),"Output format")
+    ("quality",po::value<int>(&quality),"Quality of raster image (0-10)")
+    ("pattern",po::value<string>(&patternStr),"Write a test pattern")
+    ("writetables","Write decoding tables")
+    ("test","Run tests");
   static option long_options[]=
   {
     {"test",       no_argument,      0,0},
