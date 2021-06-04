@@ -7,7 +7,6 @@
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
-#include <getopt.h>
 #include "hvec.h"
 #include "letters.h"
 #include "contour.h"
@@ -553,99 +552,9 @@ int main(int argc,char **argv)
     ("pattern",po::value<string>(&patternStr),"Write a test pattern")
     ("writetables","Write decoding tables")
     ("test","Run tests");
-  static option long_options[]=
-  {
-    {"test",       no_argument,      0,0},
-    {"size",       required_argument,0,0},
-    {"redundancy", required_argument,0,0},
-    {"text",       required_argument,0,0},
-    {"writetables",no_argument,      0,0},
-    {"format",     required_argument,0,0},
-    {"input",      required_argument,0,0},
-    {"output",     required_argument,0,0},
-    {"pattern",    required_argument,0,0},
-    {"quality",    required_argument,0,0},
-    {0,            0,                0,0}
-  };
   initialize();
   cmdline_options.add(generic).add(hidden);
   debugletters=0;
-  while (0)
-  {
-    option_index=-1;
-    c=getopt_long(argc,argv,"s:r:t:f:i:o:",long_options,&option_index);
-    if (c<0)
-      break;
-    switch (c)
-    {
-      case 0:
-	//printf("option %d\n",option_index);
-	break;
-      case 's':
-	option_index=1;
-	break;
-      case 'r':
-	option_index=2;
-	break;
-      case 't':
-	option_index=3;
-	break;
-      case 'f':
-	option_index=5;
-	break;
-      case 'i':
-	option_index=6;
-	break;
-      case 'o':
-	option_index=7;
-	break;
-      default:
-	printf("c=%d\n",c);
-    }
-    switch (option_index)
-    {
-      case 0:
-	testflag=1;
-	break;
-      case 1:
-	size=atoi(optarg);
-	redundancy=nan("");
-	break;
-      case 2:
-	redundancy=parse_redundancy(optarg);
-	if (redundancy>0)
-	  size=0;
-	else
-	  cerr<<"Could not parse redundancy: "<<optarg<<endl;
-	break;
-      case 3:
-	text=optarg;
-	break;
-      case 4:
-	makedata=1;
-	break;
-      case 5:
-	format=formatnum(optarg);
-	break;
-      case 6:
-	infilename=optarg;
-	break;
-      case 7:
-	outfilename=optarg;
-	break;
-      case 8:
-	pattern=patternnum(optarg);
-	break;
-      case 9:
-	quality=atoi(optarg);
-	if (quality<0)
-	  quality=0;
-	if (quality>10)
-	  quality=10;
-	initsubsample(quality);
-	break;
-    }
-  }
   try
   {
     po::store(po::command_line_parser(argc,argv).options(cmdline_options).positional(p).run(),vm);
