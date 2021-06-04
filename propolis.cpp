@@ -280,7 +280,6 @@ void initialize()
 {
   fillpn();
   fillLetters(0,0,0,0);
-  initsubsample(1);
   readinvletters();
   startThreads(thread::hardware_concurrency());
 }
@@ -543,12 +542,12 @@ int main(int argc,char **argv)
   po::variables_map vm;
   generic.add_options()
     ("size,s",po::value<int>(&size),"Symbol size")
-    ("redundancy,r",po::value<string>(&redundancyStr),"Redundancy (0,2/3]")
+    ("redundancy,r",po::value<string>(&redundancyStr)->default_value("4/7"),"Redundancy (0,2/3]")
     ("text,t",po::value<string>(&text),"Text to encode")
     ("input,i",po::value<string>(&infilename),"File containing text to encode")
     ("output,o",po::value<string>(&outfilename),"Output file")
-    ("format,f",po::value<string>(&formatStr),"Output format")
-    ("quality",po::value<int>(&quality),"Quality of raster image (0-10)")
+    ("format,f",po::value<string>(&formatStr)->default_value("ps"),"Output format")
+    ("quality",po::value<int>(&quality)->default_value(1),"Quality of raster image (0-10)")
     ("pattern",po::value<string>(&patternStr),"Write a test pattern")
     ("writetables","Write decoding tables")
     ("test","Run tests")
@@ -598,6 +597,11 @@ int main(int argc,char **argv)
   waitForThreads(TH_RUN);
   if (validCmd)
   {
+    if (quality<0)
+      quality=0;
+    if (quality>10)
+      quality=10;
+    initsubsample(quality);
     if (makedata)
     {
       fillinvletters();
