@@ -16,7 +16,7 @@ endif ()
 find_package(Boost COMPONENTS program_options REQUIRED)
 find_package(Threads REQUIRED)
 
-add_executable(propolis propolis.cpp hvec.cpp letters.cpp contour.cpp
+add_executable(propolis propolis.cpp hvec.cpp letters.cpp contour.cpp genetic.cpp
                lagrange.cpp ps.cpp arrange.cpp encoding.cpp raster.cpp hamming.cpp threads.cpp)
 
 target_link_libraries(propolis ${CMAKE_THREAD_LIBS_INIT} ${Boost_LIBRARIES})

@@ -1,6 +1,6 @@
 /******************************************************/
 /*                                                    */
-/* genetic.cpp - genetic algorithm                    */
+/* genetic.h - genetic algorithm                      */
 /*                                                    */
 /******************************************************/
 /* Copyright 2021 Pierre Abbat.
@@ -20,19 +20,20 @@
  * You should have received a copy of the GNU General Public License
  * along with Propolis. If not, see <http://www.gnu.org/licenses/>.
  */
-/* A genome consists of a single gene, which is a permutation of 32 12-bit
- * patterns with 0x000 held fixed to @. The fitness is the sum of square
- * roots of bit difference counts. A mutation consists of swapping bit patterns.
- * Children are produced by taking some bit patterns from the mother and some
- * from the father in such a way that the child has 32 different bit patterns.
- */
-#include "genetic.h"
-using namespace std;
+#include <array>
+#include "letters.h"
 
-LetterMap::LetterMap()
+class LetterMap
 {
-  int i;
-  fit=NAN;
-  for (i=0;i<32;i++)
-    bitPatterns[i]=letters[i];
-}
+public:
+  LetterMap();
+  LetterMap(std::array<BIT16,5> init);
+  LetterMap(LetterMap &mother,LetterMap &father);
+  void computeFitness();
+  double fitness();
+  void mutate();
+  friend bool operator==(LetterMap &l,LetterMap &r);
+private:
+  std::array<BIT16,32> bitPatterns;
+  double fit;
+};
