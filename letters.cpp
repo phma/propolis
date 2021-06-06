@@ -770,7 +770,8 @@ void checkinvletters()
     sumLetters+=((invletters[j]>>0)&31)+((invletters[j]>>5)&31)+((invletters[j]>>10)&31);
     xorBits^=((invletters[j]>>0)&31)^((invletters[j]>>5)&31)^((invletters[j]>>10)&31);
   }
-  cout<<"sumLetters "<<sumLetters<<" xorBits "<<xorBits<<endl;
+  if (sumLetters!=18*31 || xorBits!=0)
+    valid=false;
   for (i=sumLetters=0;i<60;i++)
   {
     j=ambig2[i];
@@ -779,7 +780,8 @@ void checkinvletters()
     sumLetters+=((invletters[j]>>0)&31)+((invletters[j]>>5)&31);
     xorBits^=((invletters[j]>>0)&31)^((invletters[j]>>5)&31);
   }
-  cout<<"sumLetters "<<sumLetters<<" xorBits "<<xorBits<<endl;
+  if (sumLetters!=60*31 || xorBits!=0)
+    valid=false;
   for (i=countframingerrors=0;i<4096;i++)
   {
     if ((invletters[i]&0xf000)==0x6000 && (invletters[i]-0x6000)<FRAMESIZE)
