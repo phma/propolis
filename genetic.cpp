@@ -36,3 +36,38 @@ LetterMap::LetterMap()
   for (i=0;i<32;i++)
     bitPatterns[i]=letters[i];
 }
+
+LetterMap::LetterMap(array<BIT16,5> init)
+/* Initializes a LetterMap with 80 bits, which should be chosen at random.
+ * 31!=8.2e33; 2**80=1.2e24. This doesn't completely shuffle the letters,
+ * but it should be good enough to start breeding.
+ */
+{
+  int i,j,k,l;
+  array<BIT16,32> temp;
+  fit=NAN;
+  for (i=0;i<32;i++)
+    bitPatterns[i]=letters[i];
+  for (i=0;i<5;i++)
+  {
+    temp[0]=bitPatterns[0];
+    temp[16]=bitPatterns[16];
+    for (j=1;j<16;j++)
+      if ((init[i]>>j)&1)
+      {
+	temp[j]=bitPatterns[30-j];
+	temp[30-j]=bitPatterns[j];
+      }
+      else
+      {
+	temp[j]=bitPatterns[j];
+	temp[30-j]=bitPatterns[30-j];
+      }
+    for (j=0;j<32;j++)
+    {
+      k=(j+11*(init[i]&1))%32;
+      l=j*2-31*(j>15);
+      bitPatterns[l]=temp[k];
+    }
+  }
+}
