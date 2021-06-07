@@ -27,6 +27,7 @@
  * from the father in such a way that the child has 32 different bit patterns.
  */
 #include "genetic.h"
+#include "random.h"
 using namespace std;
 
 LetterMap::LetterMap()
@@ -70,4 +71,37 @@ LetterMap::LetterMap(array<BIT16,5> init)
       bitPatterns[l]=temp[k];
     }
   }
+}
+
+LetterMap::LetterMap(LetterMap &mother,LetterMap &father)
+{
+  int i,j;
+  unsigned rand;
+  array<char,32> cperm,cycles;
+  array<char,4096> bp;
+  fit=NAN;
+  // Compute the mother-inverse-father permutation
+  for (i=0;i<32;i++)
+    bp[mother.bitPatterns[i]]=i;
+  for (i=0;i<32;i++)
+    cperm[bp[i]]=father.bitPatterns[i];
+  // Find cycles
+  for (i=0;i<32;i++)
+    cycles[i]=64;
+  for (i=0;i<32;i++)
+  {
+    j=i;
+    while (cycles[j]==64)
+    {
+      cycles[j]=i;
+      j=cperm[j];
+    }
+  }
+  // Copy each cycle from the mother or the father, at random
+  rand=rng.uirandom();
+  for (i=0;i<32;i++)
+    if ((rand>>cycles[i])&1)
+      bitPatterns[i]=mother.bitPatterns[i];
+    else
+      bitPatterns[i]=father.bitPatterns[i];
 }
