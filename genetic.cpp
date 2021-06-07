@@ -105,3 +105,31 @@ LetterMap::LetterMap(LetterMap &mother,LetterMap &father)
     else
       bitPatterns[i]=father.bitPatterns[i];
 }
+
+void LetterMap::mutate()
+{
+  int r=rng.usrandom();
+  int a=r&31,b=(r>>5)&31,c=(r>>10)&31;
+  int toIgnore=-1;
+  if (a==b || a==0)
+    toIgnore=0;
+  if (b==c || b==0)
+    toIgnore=1;
+  if (c==a || c==0)
+    toIgnore=2;
+  switch (toIgnore)
+  {
+    case 0:
+      swap(bitPatterns[b],bitPatterns[c]);
+      break;
+    case 1:
+      swap(bitPatterns[c],bitPatterns[a]);
+      break;
+    case 2:
+      swap(bitPatterns[a],bitPatterns[b]);
+      break;
+    default:
+      swap(bitPatterns[a],bitPatterns[b]);
+      swap(bitPatterns[b],bitPatterns[c]);
+  }
+}
