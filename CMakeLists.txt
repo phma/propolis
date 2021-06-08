@@ -13,13 +13,15 @@ else ()
 set(Boost_USE_STATIC_LIBS OFF)
 endif ()
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+find_package(GMPXX REQUIRED)
 find_package(Boost COMPONENTS program_options REQUIRED)
 find_package(Threads REQUIRED)
 
 add_executable(propolis propolis.cpp hvec.cpp letters.cpp contour.cpp genetic.cpp random.cpp
                lagrange.cpp ps.cpp arrange.cpp encoding.cpp raster.cpp hamming.cpp threads.cpp)
 
-target_link_libraries(propolis ${CMAKE_THREAD_LIBS_INIT} ${Boost_LIBRARIES})
+target_link_libraries(propolis ${CMAKE_THREAD_LIBS_INIT} ${GMP_LIBRARY} ${GMPXX_LIBRARIES} ${Boost_LIBRARIES})
 
 install(TARGETS propolis DESTINATION bin)
 include(TestBigEndian)

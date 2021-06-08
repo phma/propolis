@@ -154,6 +154,13 @@ void LetterMap::mutate()
   }
 }
 
+double prog(int nsteady,int niter)
+// Decreases to 0 as progress is made.
+{
+  int endpt=niter/3+20;
+  return ((double)endpt-nsteady)/(endpt+0.5);
+}
+
 void findLetterMapGenetic()
 {
   vector<LetterMap> population;

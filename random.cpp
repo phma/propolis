@@ -24,6 +24,7 @@
 #define _CRT_RAND_S
 #include <cstdlib>
 #include <cstdio>
+#include <cassert>
 #include <cmath>
 #include "random.h"
 
@@ -111,6 +112,61 @@ double randm::expsrandom()
 double randm::expcrandom()
 {
   return -log((ucrandom()+0.5)/256.);
+}
+
+bool randm::brandom()
+{
+  bool ret;
+  if (bitcnt==0)
+  {
+    bitbuf=uirandom();
+    bitcnt=32;
+  }
+  ret=bitbuf&1;
+  bitbuf>>=1;
+  bitcnt--;
+  return ret;
+}
+
+mpz_class randm::rangerandom(mpz_class range)
+{
+  mpz_class ret;
+  assert(range>0);
+  while (bigrange<16777216*range || bigacc/range==bigrange/range)
+  {
+    bigacc=(bigacc<<32)+uirandom();
+    bigrange<<=32;
+  }
+  ret=bigacc%range;
+  bigrange/=range;
+  bigacc/=range;
+  return ret;
+}
+
+bool randm::frandom(mpq_class prob)
+{
+  bool ret;
+  mpz_class upper0,lower1;
+  prob.canonicalize();
+  assert(prob>=0 && prob<=1);
+  while (true)
+  {
+    upper0=bigrange*prob.get_num()/prob.get_den();
+    lower1=(bigrange*prob.get_num()+prob.get_den()-1)/prob.get_den();
+    if (bigacc<upper0 || bigacc>=lower1)
+      break;
+    bigacc=(bigacc<<32)+uirandom();
+    bigrange<<=32;
+  }
+  ret=bigacc<upper0;
+  if (ret)
+    bigrange=upper0;
+  else
+  {
+    bigacc-=lower1;
+    bigrange-=lower1;
+  }
+  return ret;
 }
 
 randm rng;

@@ -22,6 +22,7 @@
  */
 #ifndef RANDOM_H
 #define RANDOM_H
+#include <gmpxx.h>
 #include "config.h"
 
 class randm
@@ -34,6 +35,13 @@ public:
   double expirandom();
   double expsrandom();
   double expcrandom();
+  bool brandom();
+  mpz_class rangerandom(mpz_class range);
+  unsigned int rangerandom(unsigned int range)
+  {
+    return rangerandom(mpz_class(range)).get_ui();
+  }
+  bool frandom(mpq_class prob);
   ~randm();
 private:
 #if defined(_WIN32)
@@ -41,6 +49,8 @@ private:
 #else
   FILE *randfil;
 #endif
+  unsigned int bitbuf,bitcnt;
+  mpz_class bigacc,bigrange;
 };
 
 extern randm rng;
