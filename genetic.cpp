@@ -89,7 +89,7 @@ LetterMap::LetterMap(LetterMap &mother,LetterMap &father)
   for (i=0;i<32;i++)
     bp[mother.bitPatterns[i]]=i;
   for (i=0;i<32;i++)
-    cperm[bp[i]]=father.bitPatterns[i];
+    cperm[bp[father.bitPatterns[i]]]=i;
   // Find cycles
   for (i=0;i<32;i++)
     cycles[i]=64;
