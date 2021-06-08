@@ -30,7 +30,10 @@ public:
   LetterMap(std::array<BIT16,5> init);
   LetterMap(LetterMap &mother,LetterMap &father);
   void computeFitness();
-  double fitness();
+  double fitness()
+  {
+    return fit;
+  }
   void mutate();
   friend bool operator==(LetterMap &l,LetterMap &r);
 private:

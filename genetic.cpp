@@ -106,6 +106,23 @@ LetterMap::LetterMap(LetterMap &mother,LetterMap &father)
       bitPatterns[i]=father.bitPatterns[i];
 }
 
+void LetterMap::computeFitness()
+{
+  int i,j;
+  fit=0;
+  for (i=0;i<32;i++)
+    for (j=0;j<i;j++)
+      switch (bitcount(bitPatterns[i]^bitPatterns[j]))
+      {
+	case 2:
+	  fit+=sqrt(bitcount(i^j));
+	  break;
+	case 3:
+	  fit+=sqrt(bitcount(i^j))*2/3;
+	  break;
+      }
+}
+
 void LetterMap::mutate()
 {
   int r=rng.usrandom();

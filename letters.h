@@ -23,6 +23,7 @@ extern const hvec twelve[];
 #define SLIVER_CENTROID 0.447545911917060126823164181486
 // See calculation in hvec.cpp
 
+int bitcount(int n);
 void degauss();
 void drawletter(int letter,hvec place,harray<char> &canvas=hbits);
 void fillinvletters();
