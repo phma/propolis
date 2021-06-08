@@ -29,7 +29,9 @@
 #include <vector>
 #include "genetic.h"
 #include "random.h"
+#include "threads.h"
 using namespace std;
+namespace cr=std::chrono;
 
 LetterMap::LetterMap()
 {
@@ -160,6 +162,8 @@ void findLetterMapGenetic()
   array<BIT16,5> initBits;
   double lastFitness=0;
   int i,j,sz,dim,nParents,popLimit,niter=0,nsteady=0;
+  cr::nanoseconds elapsed;
+  cr::time_point<cr::steady_clock> timeStart;
   popLimit=1024;
   for (i=0;i<popLimit;i++)
   {
@@ -167,4 +171,7 @@ void findLetterMapGenetic()
       initBits[j]=rng.usrandom();
     population.push_back(LetterMap(initBits));
   }
+  for (i=0;i<population.size();i++)
+    population[i].computeFitness();
+  delenda.clear();
 }
