@@ -26,6 +26,7 @@
  * Children are produced by taking some bit patterns from the mother and some
  * from the father in such a way that the child has 32 different bit patterns.
  */
+#include <vector>
 #include "genetic.h"
 #include "random.h"
 using namespace std;
@@ -148,5 +149,22 @@ void LetterMap::mutate()
     default:
       swap(bitPatterns[a],bitPatterns[b]);
       swap(bitPatterns[b],bitPatterns[c]);
+  }
+}
+
+void findLetterMap()
+{
+  vector<LetterMap> population;
+  vector<int> delenda;
+  int mutationRate=256; // out of 65536
+  array<BIT16,5> initBits;
+  double lastFitness=0;
+  int i,j,sz,dim,nParents,popLimit,niter=0,nsteady=0;
+  popLimit=1024;
+  for (i=0;i<popLimit;i++)
+  {
+    for (j=0;j<5;j++)
+      initBits[j]=rng.usrandom();
+    population.push_back(LetterMap(initBits));
   }
 }

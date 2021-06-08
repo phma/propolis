@@ -40,3 +40,5 @@ private:
   std::array<BIT16,32> bitPatterns;
   double fit;
 };
+
+void findLetterMap();
