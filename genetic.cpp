@@ -269,8 +269,15 @@ void findLetterMapGenetic()
       printf("0x%03x, // ",population[i][j]);
       for (k=4;k>=0;k--)
 	putchar(((j>>k)&1)+'0');
+      putchar(' ');
+      for (k=11;k>=0;k--)
+      {
+	if (k==11 || k==9 || k==6 || k==2)
+	  putchar(' ');
+	putchar(((population[i][j]>>k)&1)+'0');
+      }
       putchar('\n');
     }
-    putchar('\n');
+    printf("Fitness=%f\n",population[i].fitness());
   }
 }
