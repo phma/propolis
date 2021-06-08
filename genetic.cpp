@@ -27,6 +27,7 @@
  * from the father in such a way that the child has 32 different bit patterns.
  */
 #include <vector>
+#include <iostream>
 #include "genetic.h"
 #include "random.h"
 #include "threads.h"
@@ -151,6 +152,24 @@ void LetterMap::mutate()
     default:
       swap(bitPatterns[a],bitPatterns[b]);
       swap(bitPatterns[b],bitPatterns[c]);
+  }
+}
+
+void shuffle(vector<LetterMap> &pop)
+{
+  int i;
+  for (i=pop.size();i>1;i-=2)
+    swap(pop[i-1],pop[rng.rangerandom(i)]);
+}
+
+void dumpfit(vector<LetterMap> &pop)
+{
+  int i;
+  for (i=0;i<pop.size();i++)
+  {
+    cout<<i<<' '<<pop[i].fitness()<<"  ";
+    if (i==pop.size()-1 || i%5==4)
+      cout<<endl;
   }
 }
 
