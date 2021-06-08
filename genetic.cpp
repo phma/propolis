@@ -211,7 +211,7 @@ void findLetterMapGenetic()
   mpq_class mutationRate(1,256);
   array<BIT16,5> initBits;
   double lastFitness=0;
-  int i,j,sz,dim,nParents,popLimit,niter=0,nsteady=0;
+  int i,j,k,sz,dim,nParents,popLimit,niter=0,nsteady=0;
   cr::nanoseconds elapsed;
   cr::time_point<cr::steady_clock> timeStart;
   popLimit=1024;
@@ -262,4 +262,15 @@ void findLetterMapGenetic()
     }
   }
   dotbaton.update(0,0);
+  for (i=0;i<3;i++)
+  {
+    for (j=0;j<32;j++)
+    {
+      printf("0x%03x, // ",population[i][j]);
+      for (k=4;k>=0;k--)
+	putchar(((j>>k)&1)+'0');
+      putchar('\n');
+    }
+    putchar('\n');
+  }
 }

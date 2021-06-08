@@ -35,6 +35,10 @@ public:
     return fit;
   }
   void mutate();
+  int operator[](int n)
+  {
+    return bitPatterns[n];
+  }
   friend bool operator==(const LetterMap &l,const LetterMap &r);
   friend bool operator<(const LetterMap &l,const LetterMap &r); // for sort
 private:
