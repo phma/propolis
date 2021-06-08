@@ -30,6 +30,7 @@
 #include <iostream>
 #include "genetic.h"
 #include "random.h"
+#include "dotbaton.h"
 #include "threads.h"
 using namespace std;
 namespace cr=std::chrono;
@@ -138,6 +139,8 @@ void LetterMap::mutate()
     toIgnore=1;
   if (c==a || c==0)
     toIgnore=2;
+  if ((a==0)+(b==0)+(c==0)>1)
+    toIgnore=3;
   switch (toIgnore)
   {
     case 0:
@@ -148,6 +151,8 @@ void LetterMap::mutate()
       break;
     case 2:
       swap(bitPatterns[a],bitPatterns[b]);
+      break;
+    case 3:
       break;
     default:
       swap(bitPatterns[a],bitPatterns[b]);
@@ -202,7 +207,8 @@ void findLetterMapGenetic()
 {
   vector<LetterMap> population;
   vector<int> delenda;
-  int mutationRate=256; // out of 65536
+  DotBaton dotbaton;
+  mpq_class mutationRate(1,256);
   array<BIT16,5> initBits;
   double lastFitness=0;
   int i,j,sz,dim,nParents,popLimit,niter=0,nsteady=0;
@@ -217,5 +223,43 @@ void findLetterMapGenetic()
   }
   for (i=0;i<population.size();i++)
     population[i].computeFitness();
-  delenda.clear();
+  while (prog(nsteady,niter) || population.size()<popLimit)
+  {
+    timeStart=clk.now();
+    shuffle(population);
+    nParents=population.size();
+    for (i=0;i<nParents;i+=2)
+      population.push_back(LetterMap(population[i],population[i+1]));
+    for (i=nParents;i<population.size();i++)
+      if (rng.frandom(mutationRate))
+        population[i].mutate();
+    elapsed=clk.now()-timeStart;
+    //cout<<"Breeding took "<<elapsed.count()/1e6<<" ms\n";
+    timeStart=clk.now();
+    for (i=nParents;i<population.size();i++)
+      population[i].computeFitness();
+    elapsed=clk.now()-timeStart;
+    //cout<<population.size()-nParents<<" new boxes took "<<elapsed.count()/1e6<<" ms\n";
+    sort(population.begin(),population.end());
+    delenda.clear();
+    sz=population.size();
+    for (i=0;i<popLimit-1 && i<sz-1;i++)
+      if (population[i]==population[i+1])
+	delenda.push_back(i+1); // Eliminate duplicates
+    for (i=0;i<delenda.size();i++)
+      if (popLimit+i<sz)
+	swap(population[delenda[i]],population[i+popLimit]);
+    if (sz>popLimit)
+      population.resize(popLimit);
+    niter++;
+    if (lastFitness==population[0].fitness())
+      nsteady++;
+    else
+    {
+      lastFitness=population[0].fitness();
+      //cout<<"iter "<<niter<<" disc "<<lastdisc<<endl;
+      nsteady=0;
+    }
+  }
+  dotbaton.update(0,0);
 }

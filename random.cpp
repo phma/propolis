@@ -33,6 +33,7 @@
 randm::randm()
 {
   ucnum=usnum=0;
+  bigrange=1;
 }
 
 randm::~randm()
@@ -70,6 +71,7 @@ unsigned char randm::ucrandom()
 randm::randm()
 {
   randfil=fopen("/dev/urandom","rb");
+  bigrange=1;
 }
 
 randm::~randm()
