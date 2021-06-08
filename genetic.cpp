@@ -57,17 +57,17 @@ LetterMap::LetterMap(array<BIT16,5> init)
     for (j=1;j<16;j++)
       if ((init[i]>>j)&1)
       {
-	temp[j]=bitPatterns[30-j];
-	temp[30-j]=bitPatterns[j];
+	temp[j]=bitPatterns[32-j];
+	temp[32-j]=bitPatterns[j];
       }
       else
       {
 	temp[j]=bitPatterns[j];
-	temp[30-j]=bitPatterns[30-j];
+	temp[32-j]=bitPatterns[32-j];
       }
     for (j=0;j<32;j++)
     {
-      k=(j+11*(init[i]&1))%32;
+      k=j?(j+10*(init[i]&1))%31+1:0;
       l=j*2-31*(j>15);
       bitPatterns[l]=temp[k];
     }
