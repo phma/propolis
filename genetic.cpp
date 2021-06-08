@@ -155,6 +155,24 @@ void LetterMap::mutate()
   }
 }
 
+bool operator==(const LetterMap &l,const LetterMap &r)
+{
+  int i;
+  bool ret=true;
+  for (i=0;ret && i<32;i++)
+    if (l.bitPatterns[i]!=r.bitPatterns[i])
+      ret=false;
+  return ret;
+}
+
+bool operator<(const LetterMap &l,const LetterMap &r)
+/* Returns true if l.fit is *greater* than r.fit. This function is for sorting,
+ * and the fittest LetterMap goes to the zeroth element of the vector.
+ */
+{
+  return l.fit>r.fit;
+}
+
 void shuffle(vector<LetterMap> &pop)
 {
   int i;
