@@ -41,4 +41,4 @@ private:
   double fit;
 };
 
-void findLetterMap();
+void findLetterMapGenetic();

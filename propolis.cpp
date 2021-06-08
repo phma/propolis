@@ -16,6 +16,7 @@
 #include "encoding.h"
 #include "raster.h"
 #include "threads.h"
+#include "genetic.h"
 
 using namespace std;
 namespace po=boost::program_options;
@@ -526,6 +527,7 @@ int patternnum(string optstr)
 int main(int argc,char **argv)
 {
   int testflag=0,option_index=0,makedata=0;
+  bool geneletters=false;
   int c,quality;
   double redundancy=0;
   int size=0;
@@ -550,6 +552,7 @@ int main(int argc,char **argv)
     ("quality",po::value<int>(&quality)->default_value(1),"Quality of raster image (0-10)")
     ("pattern",po::value<string>(&patternStr),"Write a test pattern")
     ("writetables","Write decoding tables")
+    ("geneletters","Optimize letters with genetic algorithm")
     ("test","Run tests")
     ("help","Show options");
   initialize();
@@ -563,6 +566,8 @@ int main(int argc,char **argv)
       testflag=1;
     if (vm.count("writetables"))
       makedata=1;
+    if (vm.count("geneletters"))
+      geneletters=true;
     if (vm.count("help"))
       cout<<"Usage: propolis [options]\n"<<generic;
   }
@@ -607,6 +612,8 @@ int main(int argc,char **argv)
       fillinvletters();
       writeinvletters();
     }
+    if (geneletters)
+      findLetterMapGenetic();
     if (testflag)
       testmain();
     else if (pattern)

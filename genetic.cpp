@@ -152,7 +152,7 @@ void LetterMap::mutate()
   }
 }
 
-void findLetterMap()
+void findLetterMapGenetic()
 {
   vector<LetterMap> population;
   vector<int> delenda;
