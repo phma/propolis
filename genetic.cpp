@@ -130,7 +130,10 @@ string LetterMap::summary()
 
 void LetterMap::computeFitness()
 {
-  int i,j;
+  int i,j,all,any,diff;
+  array<BIT32,5> amb2h,amb2l,amb3;
+  for (i=0;i<5;i++)
+    amb2h[i]=amb2l[i]=amb3[i]=0;
   fit=0;
   for (i=0;i<32;i++)
     for (j=0;j<i;j++)
@@ -143,6 +146,40 @@ void LetterMap::computeFitness()
 	  fit+=sqrt(bitcount(i^j))*2/3;
 	  break;
       }
+  for (i=0;i<12;i++)
+  {
+    all=31;
+    any=0;
+    for (j=0;j<32;j++)
+      if (bitcount(ambig3[i]^bitPatterns[j])<2)
+      {
+	all&=j;
+	any|=j;
+      }
+    diff=any^all;
+    for (j=0;j<5;j++)
+      amb3[j]|=((diff>>j)&1)<<i;
+  }
+  for (i=0;i<60;i++)
+  {
+    all=31;
+    any=0;
+    for (j=0;j<32;j++)
+      if (bitcount(ambig2[i]^bitPatterns[j])<2)
+      {
+	all&=j;
+	any|=j;
+      }
+    diff=any^all;
+    if (i<30)
+      for (j=0;j<5;j++)
+	amb2l[j]|=((diff>>j)&1)<<i;
+    else
+      for (j=0;j<5;j++)
+	amb2h[j]|=((diff>>j)&1)<<(i-30);
+  }
+  for (i=0;i<5;i++)
+    fit+=sqrt(bitcount(amb3[i]))+sqrt(bitcount(amb2l[i])+bitcount(amb2h[i]));
 }
 
 void LetterMap::mutate()

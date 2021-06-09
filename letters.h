@@ -17,6 +17,7 @@ extern BIT16 letters[38];
 extern int debugletters;
 extern BIT16 invletters[4096];
 extern const hvec twelve[];
+extern BIT16 ambig3[12],ambig2[60];
 #define FRAMERAD 25
 #define FRAMESIZE (FRAMERAD*(FRAMERAD+1)*3+1)
 // Possibly FRAMERAD should be 18 (almost 1 frame in each tiniest region) or 25 (1951, a little less than 2048).
