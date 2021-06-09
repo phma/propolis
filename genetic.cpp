@@ -290,6 +290,10 @@ void findLetterMapGenetic()
   int i,j,k,sz,dim,nParents,popLimit,niter=0,nsteady=0;
   cr::nanoseconds elapsed;
   cr::time_point<cr::steady_clock> timeStart;
+  population.push_back(LetterMap());
+  population[0].computeFitness();
+  printf("Current letters' fitness=%f\n",population[0].fitness());
+  population.clear();
   popLimit=32768;
   for (i=0;i<popLimit;i++)
   {
