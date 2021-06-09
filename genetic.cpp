@@ -269,7 +269,7 @@ void findLetterMapGenetic()
     for (i=nParents;i<population.size();i++)
       population[i].computeFitness();
     elapsed=clk.now()-timeStart;
-    //cout<<population.size()-nParents<<" new boxes took "<<elapsed.count()/1e6<<" ms\n";
+    //cout<<population.size()-nParents<<" new letter maps took "<<elapsed.count()/1e6<<" ms\n";
     sort(population.begin(),population.end());
     delenda.clear();
     sz=population.size();
@@ -281,6 +281,7 @@ void findLetterMapGenetic()
 	swap(population[delenda[i]],population[i+popLimit]);
     if (sz>popLimit)
       population.resize(popLimit);
+    sort(population.begin(),population.end());
     niter++;
     if (lastFitness==population[0].fitness())
       nsteady++;
