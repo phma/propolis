@@ -25,6 +25,7 @@ extern const hvec twelve[];
 
 int bitcount(int n);
 void degauss();
+int rotate(int bitpattern);
 void drawletter(int letter,hvec place,harray<char> &canvas=hbits);
 void fillinvletters();
 void readinvletters();

@@ -248,6 +248,7 @@ void findLetterMapGenetic()
   DotBaton dotbaton;
   mpq_class mutationRate(1,256);
   array<BIT16,5> initBits;
+  array<char,32> rotateletter;
   double lastFitness=0;
   int i,j,k,sz,dim,nParents,popLimit,niter=0,nsteady=0;
   cr::nanoseconds elapsed;
@@ -319,6 +320,20 @@ void findLetterMapGenetic()
 	putchar(((population[i][j]>>k)&1)+'0');
       }
       putchar('\n');
+    }
+    for (k=0;k<32;k++)
+      for (j=0;j<32;j++)
+	if (population[i][k]==rotate(population[i][j]))
+	  rotateletter[j]=k;
+    for (j=0;j<32;j++)
+    {
+      if (j%16==0)
+	printf("  ");
+      printf("0x%02x",rotateletter[j]);
+      if (j<31)
+	putchar(',');
+      if (j%16==15)
+	putchar('\n');
     }
     printf("Fitness=%f\n",population[i].fitness());
   }
