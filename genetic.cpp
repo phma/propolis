@@ -252,7 +252,7 @@ void findLetterMapGenetic()
   int i,j,k,sz,dim,nParents,popLimit,niter=0,nsteady=0;
   cr::nanoseconds elapsed;
   cr::time_point<cr::steady_clock> timeStart;
-  popLimit=1024;
+  popLimit=32768;
   for (i=0;i<popLimit;i++)
   {
     for (j=0;j<5;j++)
