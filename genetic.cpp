@@ -220,16 +220,24 @@ double prog(int nsteady,int niter)
   return ((double)endpt-nsteady)/(endpt+0.5);
 }
 
-void dumpPopulation(vector<LetterMap> &population)
+void dumpPopulation(vector<LetterMap> &population,bool oneLine)
 {
   int i;
-  for (i=0;i<population.size();i++)
+  int sz=population.size();
+  if (oneLine)
+    sz=11;
+  for (i=0;i<sz;i++)
   {
     cout<<population[i].summary()<<' ';
-    if (i%11==10)
+    if (i%11==10 && !oneLine)
       cout<<endl;
   }
-  if (i%11)
+  if (oneLine)
+  {
+    cout<<'\r';
+    cout.flush();
+  }
+  else if (i%11)
     cout<<endl;
 }
 
@@ -283,6 +291,7 @@ void findLetterMapGenetic()
       population.resize(popLimit);
     sort(population.begin(),population.end());
     niter++;
+    dumpPopulation(population,true);
     if (lastFitness==population[0].fitness())
       nsteady++;
     else
@@ -293,8 +302,9 @@ void findLetterMapGenetic()
     }
   }
   dotbaton.update(0,0);
-  dumpPopulation(population);
-  for (i=0;i<3;i++)
+  //dumpPopulation(population,false);
+  cout<<endl;
+  for (i=0;i<1;i++)
   {
     for (j=0;j<32;j++)
     {
