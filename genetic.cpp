@@ -35,6 +35,8 @@
 using namespace std;
 namespace cr=std::chrono;
 
+BIT16 letters57[]={0xf80,0xf64,0x266,0x07f,0x09b,0xd99};
+
 LetterMap::LetterMap()
 {
   int i;
@@ -109,6 +111,21 @@ LetterMap::LetterMap(LetterMap &mother,LetterMap &father)
       bitPatterns[i]=mother.bitPatterns[i];
     else
       bitPatterns[i]=father.bitPatterns[i];
+}
+
+string LetterMap::summary()
+/* Returns the six letters that have 5 or 7 bits set and have the line parallel
+ * to a side. Once a population is high in fitness, this should give a good
+ * idea what the whole mapping is.
+ */
+{
+  string ret;
+  int i,j;
+  for (i=0;i<6;i++)
+    for (j=0;j<32;j++)
+      if (bitPatterns[j]==letters57[i])
+	ret+=(char)j+64;
+  return ret;
 }
 
 void LetterMap::computeFitness()
@@ -203,6 +220,19 @@ double prog(int nsteady,int niter)
   return ((double)endpt-nsteady)/(endpt+0.5);
 }
 
+void dumpPopulation(vector<LetterMap> &population)
+{
+  int i;
+  for (i=0;i<population.size();i++)
+  {
+    cout<<population[i].summary()<<' ';
+    if (i%11==10)
+      cout<<endl;
+  }
+  if (i%11)
+    cout<<endl;
+}
+
 void findLetterMapGenetic()
 {
   vector<LetterMap> population;
@@ -262,6 +292,7 @@ void findLetterMapGenetic()
     }
   }
   dotbaton.update(0,0);
+  dumpPopulation(population);
   for (i=0;i<3;i++)
   {
     for (j=0;j<32;j++)

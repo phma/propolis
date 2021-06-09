@@ -29,6 +29,7 @@ public:
   LetterMap();
   LetterMap(std::array<BIT16,5> init);
   LetterMap(LetterMap &mother,LetterMap &father);
+  std::string summary();
   void computeFitness();
   double fitness()
   {
