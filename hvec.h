@@ -212,22 +212,5 @@ void testcomplex();
 void testsixvec();
 void testpageinx();
 
-/* Files for storing hexagonal arrays:
- * Byte 0: number of bits per element
- * Byte 1: PAGERAD
- * Bytes 2 and 3: PAGESIZE, native endianness
- * Bytes 4 and 5 additional information about an element format, currently 0000
- * This is followed by strips:
- * Bytes 0 and 1: x-coordinate of start of strip divided by PAGEMOD
- * Bytes 2 and 3: y-coordinate of start of strip divided by PAGEMOD
- * Bytes 4 and 5: number of pages in strip
- * Example (little-endian):
- * 01 06 7f 00 00 00 fa ff fa ff 07 00 <7×16 bytes of data>
- * Numbers of bits are expected to be 1, 2 (for art masks), 8, and 16. If 16, the data
- * will be stored in two-byte words, with the same endianness as PAGESIZE.
- * At first the program will read only files with its native endianness and PAGERAD;
- * later it will be able to convert them.
- */
-
 extern harray<char> hletters,hbits;
 #endif
