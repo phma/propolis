@@ -8,6 +8,8 @@
 #include <cmath>
 #include <cstdlib>
 #include <cstring>
+#include <cassert>
+#include <vector>
 #include <map>
 #include <complex>
 #define M_SQRT_3_4 0.86602540378443864676372317
@@ -98,7 +100,11 @@ public:
   harray &operator=(const harray &h);
   ~harray();
   T& operator[](hvec i);
+  std::vector<hvec> listPages();
+  std::vector<T> getPage(hvec q);
+  void putPage(hvec q,std::vector<T> pagevec);
   void clear();
+  void prune();
 };
 
 template <typename T> harray<T>::harray(const harray<T> &h)
@@ -142,13 +148,62 @@ template <typename T> T& harray<T>::operator[](hvec i)
   return index[q][r.pageinx()];
 }
 
+template <typename T> std::vector<hvec> harray<T>::listPages()
+{
+  typename std::map<hvec,T *>::iterator i;
+  std::vector<hvec> ret;
+  for (i=index.begin();i!=index.end();++i)
+    ret.push_back(i->first);
+  return ret;
+}
+
+template <typename T> std::vector<T> harray<T>::getPage(hvec q)
+{
+  T *page;
+  std::vector<T> ret;
+  int i;
+  if (!index[q]) // This shouldn't happen, as this is for getting a page that already exists.
+    index[q]=(T*)calloc(PAGESIZE,sizeof(T));
+  page=index[q];
+  for (i=0;i<PAGESIZE;i++)
+    ret.push_back(page[i]);
+  return ret;
+}
+
+template <typename T> void harray<T>::putPage(hvec q,std::vector<T> pagevec)
+{
+  T *page;
+  int i;
+  assert(pagevec.size()>=PAGESIZE);
+  if (!index[q])
+    index[q]=(T*)calloc(PAGESIZE,sizeof(T));
+  page=index[q];
+  for (i=0;i<PAGESIZE;i++)
+    page[i]=pagevec[i];
+}
+
 template <typename T> void harray<T>::clear()
 {
   typename std::map<hvec,T *>::iterator i;
-  for (i=index.begin();i!=index.end();i++)
+  for (i=index.begin();i!=index.end();++i)
   {
     free(i->second);
     i->second=NULL;
+  }
+}
+
+template <typename T> void harray<T>::prune()
+{
+  typename std::map<hvec,T *>::iterator i;
+  char *page;
+  for (i=index.begin();i!=index.end();++i)
+  {
+    page=(char *)i->second;
+    if (*page==0 && memcmp(page,page+1,PAGESIZE*sizeof(T)-1)==0)
+    {
+      free(i->second);
+      i->second=NULL;
+    }
   }
 }
 

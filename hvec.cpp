@@ -5,7 +5,6 @@
 #include <iostream>
 #include <cstring>
 #include <stdexcept>
-#include <cassert>
 #include "hvec.h"
 #include "ps.h"
 
