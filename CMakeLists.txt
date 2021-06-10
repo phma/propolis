@@ -20,7 +20,7 @@ find_package(Threads REQUIRED)
 
 add_executable(propolis propolis.cpp hvec.cpp letters.cpp contour.cpp genetic.cpp random.cpp
                lagrange.cpp ps.cpp arrange.cpp encoding.cpp raster.cpp hamming.cpp threads.cpp
-               dotbaton.cpp)
+               dotbaton.cpp binio.cpp)
 
 target_link_libraries(propolis ${CMAKE_THREAD_LIBS_INIT} ${GMP_LIBRARY} ${GMPXX_LIBRARIES} ${Boost_LIBRARIES})
 
