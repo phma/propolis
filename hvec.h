@@ -153,7 +153,8 @@ template <typename T> std::vector<hvec> harray<T>::listPages()
   typename std::map<hvec,T *>::iterator i;
   std::vector<hvec> ret;
   for (i=index.begin();i!=index.end();++i)
-    ret.push_back(i->first);
+    if (i->second)
+      ret.push_back(i->first);
   return ret;
 }
 
