@@ -30,13 +30,14 @@ using namespace std;
  * Byte 6: number of bits per element
  * Byte 7: PAGERAD
  * Bytes 8 and 9: PAGESIZE, little-endian
- * Bytes 10 and 11: additional information about an element format, currently 0000
+ * Bytes 10 and 11: symbol size
+ * Bytes 12 and 13: additional information about an element format, currently 0000
  * This is followed by strips:
  * Bytes 0 and 1: x-coordinate of start of strip divided by PAGEMOD
  * Bytes 2 and 3: y-coordinate of start of strip divided by PAGEMOD
  * Bytes 4 and 5: number of pages in strip
  * Example (little-endian):
- * 47 29 0c 05 00 00 01 06 7f 00 00 00 fa ff fa ff 07 00 <7×16 bytes of data>
+ * 47 29 0c 05 00 00 01 06 7f 00 02 00 00 00 fa ff fa ff 07 00 <7×16 bytes of data>
  * Numbers of bits are expected to be 1, 2 (for art masks), 8, and 16. If 16, the data
  * will be stored in two-byte words, little-endian.
  * At first the program will read only files with its native PAGERAD;
@@ -47,13 +48,14 @@ using namespace std;
  * 5: number of bits in a letter.
  */
 
-void writeHeader(ostream &file,int bits)
+void writeHeader(ostream &file,int bits,int size)
 {
   writebeint(file,0x47290c05);
   writeleshort(file,0);
   file.put(bits);
   file.put(PAGERAD);
   writeleshort(file,PAGESIZE);
+  writeleshort(file,size);
   writeleshort(file,0);
 }
 
@@ -63,14 +65,14 @@ void writeHvec(ostream &file,hvec h)
   writeleshort(file,h.gety());
 }
 
-void writeHexArray(string fileName,harray<char> &hexArray,int bits)
+void writeHexArray(string fileName,harray<char> &hexArray,int bits,int size)
 {
   ofstream file(fileName,ios::binary);
   vector<hvec> pages;
   vector<char> page,packedPage;
   int i,j,stripStart,stripEnd,mask=(1<<bits)-1;
   assert(bits>0 && bits<=8);
-  writeHeader(file,bits);
+  writeHeader(file,bits,size);
   hexArray.prune();
   pages=hexArray.listPages();
   for (stripStart=0;stripStart<pages.size();stripStart=stripEnd)

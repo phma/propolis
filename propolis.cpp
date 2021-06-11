@@ -360,7 +360,7 @@ void makesymbol(string text,int asize,double redundancy,int format,string outfil
       rasterdraw(size,0,0,600,DIM_DIAPOTHEM,format,outfilename);
       break;
     case FMT_HEXMAP:
-      writeHexArray(outfilename,hbits,1);
+      writeHexArray(outfilename,hbits,1,size);
       break;
     case FMT_INFO:
       cout<<"Redundancy: "<<redundancy<<endl;
