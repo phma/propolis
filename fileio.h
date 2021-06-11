@@ -20,4 +20,10 @@
  * You should have received a copy of the GNU General Public License
  * along with Propolis. If not, see <http://www.gnu.org/licenses/>.
  */
+#ifndef FILEIO_H
+#define FILEIO_H
+#include <string>
 #include "hvec.h"
+
+void writeHexArray(std::string fileName,harray<char> &hexArray,int bits);
+#endif
