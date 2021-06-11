@@ -191,6 +191,7 @@ template <typename T> void harray<T>::clear()
     free(i->second);
     i->second=NULL;
   }
+  index.clear();
 }
 
 template <typename T> void harray<T>::prune()
