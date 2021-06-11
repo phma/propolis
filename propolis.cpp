@@ -11,6 +11,7 @@
 #include "letters.h"
 #include "contour.h"
 #include "ps.h"
+#include "fileio.h"
 #include "arrange.h"
 #include "lagrange.h"
 #include "encoding.h"
@@ -358,6 +359,9 @@ void makesymbol(string text,int asize,double redundancy,int format,string outfil
     case FMT_PNM:
       rasterdraw(size,0,0,600,DIM_DIAPOTHEM,format,outfilename);
       break;
+    case FMT_HEXMAP:
+      writeHexArray(outfilename,hbits,1);
+      break;
     case FMT_INFO:
       cout<<"Redundancy: "<<redundancy<<endl;
       cout<<"Size: "<<size<<endl;
@@ -365,7 +369,7 @@ void makesymbol(string text,int asize,double redundancy,int format,string outfil
       cout<<"Codetext: "<<encodings[i].codestring<<endl;
       break;
     default:
-      cerr<<"Format should be pgm, ps, or info"<<endl;
+      cerr<<"Format should be pgm, ps, hmap, or info"<<endl;
   }
 }
 
@@ -508,6 +512,8 @@ int formatnum(string optstr)
     return FMT_PNM;
   if (optstr=="ps")
     return FMT_PS;
+  if (optstr=="hmap")
+    return FMT_HEXMAP;
   if (optstr=="info")
     return FMT_INFO;
   cerr<<"Unrecognized output format"<<endl;

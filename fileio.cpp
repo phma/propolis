@@ -73,21 +73,21 @@ void writeHexArray(string fileName,harray<char> &hexArray,int bits)
   writeHeader(file,bits);
   hexArray.prune();
   pages=hexArray.listPages();
-  for (stripStart=0;stripStart<pages.size();stripStart++)
+  for (stripStart=0;stripStart<pages.size();stripStart=stripEnd)
+  {
     for (stripEnd=stripStart;stripEnd<pages.size() && pages[stripEnd]-stripEnd==
-         pages[stripStart]-stripStart;stripEnd++)
+         pages[stripStart]-stripStart;stripEnd++);
+    writeHvec(file,pages[stripStart]);
+    writeleshort(file,stripEnd-stripStart);
+    for (i=stripStart;i<stripEnd;i++)
     {
-      writeHvec(file,pages[stripStart]);
-      writeleshort(file,stripEnd-stripStart);
-      for (i=stripStart;i<stripEnd;i++)
-      {
-	page=hexArray.getPage(pages[i]);
-	packedPage.resize((PAGESIZE+7)*bits/8);
-	for (j=0;j<packedPage.size();j++)
-	  packedPage[j]=0;
-	for (j=0;j<page.size();j++)
-	  packedPage[(j*bits)/8]+=(page[j]&mask)<<((j*bits)%8);
-	file.write(&packedPage[0],packedPage.size());
-      }
+      page=hexArray.getPage(pages[i]);
+      packedPage.resize((PAGESIZE+7)*bits/8);
+      for (j=0;j<packedPage.size();j++)
+	packedPage[j]=0;
+      for (j=0;j<page.size();j++)
+	packedPage[(j*bits)/8]+=(page[j]&mask)<<((j*bits)%8);
+      file.write(&packedPage[0],packedPage.size());
     }
+  }
 }

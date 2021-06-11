@@ -20,6 +20,7 @@
 #define FMT_PNM 1
 #define FMT_PNG 2
 #define FMT_JPEG 3
+#define FMT_HEXMAP 4
 #define FMT_INFO 255
 
 #define PATTERN_8191 1
