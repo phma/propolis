@@ -24,6 +24,16 @@ extern BIT16 ambig3[12],ambig2[60];
 #define SLIVER_CENTROID 0.447545911917060126823164181486
 // See calculation in hvec.cpp
 
+enum DecodeType
+{
+  undecodable=0,
+  exact=0x1000,
+  off1=0x2000,
+  off2=0x4000,
+  off3=0x8000,
+  framingError=0x6000
+};
+
 int bitcount(int n);
 void degauss();
 int rotate(int bitpattern);
@@ -38,6 +48,13 @@ void debugframingerror();
 void writeAmbig();
 void fillLetters(int perm,int negs,int splay,int twist);
 void findLetterAssignment();
+
+struct Decoding
+{
+  DecodeType dtype;
+  std::vector<char> letters;
+  hvec ferror;
+};
 
 struct InvLetterTask
 {
