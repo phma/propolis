@@ -56,6 +56,8 @@ struct Decoding
   hvec ferror;
 };
 
+Decoding decode(int bits);
+
 struct InvLetterTask
 {
   harray<char> hletters;

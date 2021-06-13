@@ -1106,3 +1106,32 @@ void findLetterAssignment()
 	  }
 	}
 }
+
+Decoding decode(int bits)
+{
+  Decoding ret;
+  int ibits=invletters[bits];
+  if (ibits&0x8000)
+    ret.dtype=off3;
+  else
+    ret.dtype=(DecodeType)(ibits&0xf000);
+  ret.ferror=0;
+  switch (ret.dtype)
+  {
+    case off3:
+      ret.letters.push_back((ibits>>10)&31);
+    case off2:
+      ret.letters.push_back((ibits>>5)&31);
+    case off1:
+    case exact:
+      ret.letters.push_back(ibits&31);
+    case undecodable:
+      break;
+    case framingError:
+      ret.ferror=nthhvec(ibits&0xfff,FRAMERAD,FRAMESIZE);
+      break;
+    default:
+      assert(ibits);
+  }
+  return ret;
+}
