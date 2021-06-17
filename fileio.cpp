@@ -93,3 +93,25 @@ void writeHexArray(string fileName,harray<char> &hexArray,int bits,int size)
     }
   }
 }
+
+header readHeader(istream &file)
+/* bits is returned as -1 if the file was written with a different page size
+ * than this program is compiled with. It is returned as -2 if the header is
+ * invalid or the format is in the future.
+ */
+{
+  int magic,version,pagesize,pagerad,extra;
+  header ret;
+  magic=readbeint(file);
+  version=readleshort(file);
+  ret.bits=file.get()&255;
+  pagerad=file.get()&255;
+  pagesize=readleshort(file);
+  ret.size=readleshort(file);
+  extra=readleshort(file);
+  if (pagerad!=PAGERAD || pagesize!=PAGESIZE)
+    ret.bits=-1;
+  if (pagesize!=pagerad*(pagerad+1)*3+1 || version>0 || magic!=0x47290c05)
+    ret.bits=-2;
+  return ret;
+}

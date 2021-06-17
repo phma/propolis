@@ -25,5 +25,11 @@
 #include <string>
 #include "hvec.h"
 
+struct header
+{
+  int bits;
+  int size;
+};
+
 void writeHexArray(std::string fileName,harray<char> &hexArray,int bits,int size);
 #endif
