@@ -532,9 +532,12 @@ int patternnum(string optstr)
 
 int lastSizeRed=0;
 
-pair<string,string> aoeu(const string &s)
+pair<string,string> checkSizeRed(const string &s)
 {
-  cout<<s<<endl;
+  if (s.find("-s")==0 || s.find("--size")==0)
+    lastSizeRed='s';
+  if (s.find("-r")==0 || s.find("--red")==0)
+    lastSizeRed='r';
   return make_pair(string(),string());
 }
 
@@ -574,7 +577,8 @@ int main(int argc,char **argv)
   debugletters=0;
   try
   {
-    po::store(po::command_line_parser(argc,argv).options(cmdline_options).extra_parser(aoeu).positional(p).run(),vm);
+    po::store(po::command_line_parser(argc,argv).options(cmdline_options)
+	      .extra_parser(checkSizeRed).positional(p).run(),vm);
     po::notify(vm);
     if (vm.count("test"))
       testflag=1;
