@@ -20,4 +20,19 @@
  * You should have received a copy of the GNU General Public License
  * along with Propolis. If not, see <http://www.gnu.org/licenses/>.
  */
+
+class StepFinder
+/* Finds the argument at which the value of a function that continuously
+ * decreases from 1 to 0 is 1/2, given only random bits whose probability
+ * is the value of the function.
+ */
+{
+  double upStep,downStep,x;
+  int runStraight,runAlternate,lastBit;
+public:
+  double init();
+  double step(int bit);
+  bool finished();
+};
+
 void ecctest();

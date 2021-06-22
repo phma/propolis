@@ -32,6 +32,41 @@ using namespace std;
  * that makes the symbol undecodable half the time is how much error it
  * can stand.
  */
+
+double StepFinder::init()
+{
+  lastBit=2;
+  x=0.5;
+  upStep=downStep=0.125;
+  runStraight=runAlternate=0;
+  return x;
+}
+
+double StepFinder::step(int bit)
+{
+  if (bit)
+    x+=upStep;
+  else
+    x-=downStep;
+  runStraight++;
+  runAlternate++;
+  if (bit==lastBit)
+    runAlternate=0;
+  if (bit+lastBit==1)
+    runStraight=0;
+  lastBit=bit;
+  if (bit)
+    upStep*=1+(runStraight-runAlternate)/1024.;
+  else
+    downStep*=1+(runStraight-runAlternate)/1024.;
+  return x;
+}
+
+bool StepFinder::finished()
+{
+  return upStep<DBL_EPSILON && downStep<DBL_EPSILON;
+}
+
 void ecctest()
 {
   mpz_class num=1,denom=1;
