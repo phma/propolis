@@ -532,16 +532,6 @@ int patternnum(string optstr)
 
 int lastSizeRed=0;
 
-void onSize(int size)
-{
-  lastSizeRed='s';
-}
-
-void onRed(string red)
-{
-  lastSizeRed='r';
-}
-
 pair<string,string> aoeu(const string &s)
 {
   cout<<s<<endl;
@@ -567,8 +557,8 @@ int main(int argc,char **argv)
   po::positional_options_description p;
   po::variables_map vm;
   generic.add_options()
-    ("size,s",po::value<int>(&size)->notifier(onSize),"Symbol size")
-    ("redundancy,r",po::value<string>(&redundancyStr)->default_value("3/7")->notifier(onRed),"Redundancy (0,2/3]")
+    ("size,s",po::value<int>(&size),"Symbol size")
+    ("redundancy,r",po::value<string>(&redundancyStr)->default_value("3/7"),"Redundancy (0,2/3]")
     ("text,t",po::value<string>(&text),"Text to encode")
     ("input,i",po::value<string>(&infilename),"File containing text to encode")
     ("output,o",po::value<string>(&outfilename),"Output file")
