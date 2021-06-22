@@ -38,7 +38,7 @@ void ecctest()
   mpz_class phibig;
   int i;
   string phistr;
-  while (denom>>8==0)
+  while (denom>>8401==0)
   {
     num+=denom;
     swap(num,denom);
