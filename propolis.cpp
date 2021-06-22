@@ -598,13 +598,18 @@ int main(int argc,char **argv)
   if (redundancyStr.length())
   {
     redundancy=parse_redundancy(redundancyStr);
-    if (redundancy>0 && vm.count("redundancy"))
-      size=0;
-    else
+    if (isnan(redundancy))
     {
       cerr<<"Could not parse redundancy: "<<redundancyStr<<endl;
       validCmd=false;
     }
+  }
+  if (size>1 && redundancy>0)
+  {
+    if (lastSizeRed=='s')
+      redundancy=0;
+    if (lastSizeRed=='r')
+      size=0;
   }
   if (formatStr.length())
   {
