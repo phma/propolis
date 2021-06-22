@@ -13,6 +13,7 @@
 #include "ps.h"
 #include "fileio.h"
 #include "arrange.h"
+#include "ecctest.h"
 #include "lagrange.h"
 #include "encoding.h"
 #include "raster.h"
@@ -544,7 +545,7 @@ pair<string,string> checkSizeRed(const string &s)
 int main(int argc,char **argv)
 {
   int testflag=0,option_index=0,makedata=0;
-  bool geneletters=false;
+  bool geneletters=false,doEcctest=false;
   int c,quality;
   double redundancy=0;
   int size=0;
@@ -570,6 +571,7 @@ int main(int argc,char **argv)
     ("pattern",po::value<string>(&patternStr),"Write a test pattern")
     ("writetables","Write decoding tables")
     ("geneletters","Optimize letters with genetic algorithm")
+    ("ecctest","Test error correction")
     ("test","Run tests")
     ("help","Show options");
   initialize();
@@ -586,6 +588,8 @@ int main(int argc,char **argv)
       makedata=1;
     if (vm.count("geneletters"))
       geneletters=true;
+    if (vm.count("ecctest"))
+      doEcctest=true;
     if (vm.count("help"))
       cout<<"Usage: propolis [options]\n"<<generic;
     cout<<"count(size)="<<vm.count("size")<<" count(redundancy)="<<vm.count("redundancy")<<" lastSizeRed="<<lastSizeRed<<endl;
@@ -638,6 +642,8 @@ int main(int argc,char **argv)
     }
     if (geneletters)
       findLetterMapGenetic();
+    if (doEcctest)
+      ecctest();
     if (testflag)
       testmain();
     else if (pattern)
