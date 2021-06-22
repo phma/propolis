@@ -542,6 +542,12 @@ void onRed(string red)
   lastSizeRed='r';
 }
 
+pair<string,string> aoeu(const string &s)
+{
+  cout<<s<<endl;
+  return make_pair(string(),string());
+}
+
 int main(int argc,char **argv)
 {
   int testflag=0,option_index=0,makedata=0;
@@ -578,7 +584,7 @@ int main(int argc,char **argv)
   debugletters=0;
   try
   {
-    po::store(po::command_line_parser(argc,argv).options(cmdline_options).positional(p).run(),vm);
+    po::store(po::command_line_parser(argc,argv).options(cmdline_options).extra_parser(aoeu).positional(p).run(),vm);
     po::notify(vm);
     if (vm.count("test"))
       testflag=1;
