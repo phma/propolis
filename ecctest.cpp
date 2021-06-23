@@ -82,6 +82,6 @@ void ecctest()
   phibig=num/denom;
   for (i=3359;i>=0;i--)
     phistr+=(char)((mpz_class)((phibig>>(5*i))&31)).get_ui()+'@';
-  for (i=0;i<3360;i+=70)
+  for (i=0;i<0;i+=70)
     cout<<phistr.substr(i,70)<<endl;
 }
