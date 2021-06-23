@@ -64,7 +64,7 @@ double StepFinder::step(int bit)
 
 bool StepFinder::finished()
 {
-  return upStep<DBL_EPSILON && downStep<DBL_EPSILON;
+  return upStep<FLT_EPSILON && downStep<FLT_EPSILON;
 }
 
 void testStep()
@@ -72,7 +72,7 @@ void testStep()
   StepFinder sf;
   int i;
   double x=sf.init();
-  for (i=0;i<1000000 && !sf.finished();i++)
+  for (i=0;!sf.finished();i++)
   {
     if (x>1)
       x=1;
@@ -80,7 +80,7 @@ void testStep()
       x=0;
     x=sf.step(rng.frandom(1-x));
   }
-  cout<<x<<endl;
+  cout<<i<<' '<<x<<endl;
 }
 
 void ecctest()
