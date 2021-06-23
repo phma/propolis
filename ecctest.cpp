@@ -56,9 +56,9 @@ double StepFinder::step(int bit)
     runStraight=0;
   lastBit=bit;
   if (bit)
-    upStep*=1+(runStraight-runAlternate)/256.;
+    upStep*=1+(7*runStraight-8*runAlternate)/8192.;
   else
-    downStep*=1+(runStraight-runAlternate)/256.;
+    downStep*=1+(7*runStraight-8*runAlternate)/8192.;
   return x;
 }
 
