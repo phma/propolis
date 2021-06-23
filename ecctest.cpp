@@ -67,6 +67,22 @@ bool StepFinder::finished()
   return upStep<DBL_EPSILON && downStep<DBL_EPSILON;
 }
 
+void testStep()
+{
+  StepFinder sf;
+  int i;
+  double x=sf.init();
+  for (i=0;i<1000000 && !sf.finished();i++)
+  {
+    if (x>1)
+      x=1;
+    if (x<0)
+      x=0;
+    x=sf.step(rng.frandom(1-x));
+  }
+  cout<<x<<endl;
+}
+
 void ecctest()
 {
   mpz_class num=1,denom=1;
@@ -84,4 +100,5 @@ void ecctest()
     phistr+=(char)((mpz_class)((phibig>>(5*i))&31)).get_ui()+'@';
   for (i=0;i<0;i+=70)
     cout<<phistr.substr(i,70)<<endl;
+  testStep();
 }
