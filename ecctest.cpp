@@ -56,15 +56,15 @@ double StepFinder::step(int bit)
     runStraight=0;
   lastBit=bit;
   if (bit)
-    upStep*=1+(7*runStraight-8*runAlternate)/8192.;
+    upStep*=1+(31*runStraight-32*runAlternate)/16384.;
   else
-    downStep*=1+(7*runStraight-8*runAlternate)/8192.;
+    downStep*=1+(31*runStraight-32*runAlternate)/16384.;
   return x;
 }
 
 bool StepFinder::finished()
 {
-  return upStep<FLT_EPSILON && downStep<FLT_EPSILON;
+  return upStep<DBL_EPSILON && downStep<DBL_EPSILON;
 }
 
 void testStep()
