@@ -93,17 +93,36 @@ void updateGraph(vector<EccPoint> &graph)
   }
 }
 
+vector<double> newx(vector<EccPoint> &graph)
+{
+  vector<double> ret;
+  int i,sz=graph.size();
+  for (i=0;i<sz-1;i++)
+    if ((i==0 && graph[i].y!=1) || (i==sz-2 && graph[i+1].y!=0) ||
+	graph[i].y>graph[i+1].y || (graph[i].y>=0.5 && graph[i+1].y<=0.5))
+      ret.push_back((graph[i].x+graph[i+1].x)/2);
+  return ret;
+}
+
 void testStep()
 {
   vector<EccPoint> graph;
   EccPoint eccPoint;
+  vector<double> newxs;
   int i;
   graph.resize(2);
   graph[0].x=0;
-  graph[0].y=1;
+  graph[0].result=1;
   graph[1].x=1;
-  graph[1].y=0;
+  graph[1].result=0;
   updateGraph(graph);
+  newxs=newx(graph);
+  for (i=0;i<newxs.size();i++)
+  {
+    eccPoint.x=newxs[i];
+    eccPoint.result=rng.frandom(1-eccPoint.x);
+    graph.push_back(eccPoint);
+  }
 }
 
 void ecctest()
