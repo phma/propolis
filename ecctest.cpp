@@ -109,11 +109,29 @@ vector<double> newx(vector<EccPoint> &graph)
   return ret;
 }
 
+array<double,2> crossHalf(vector<EccPoint> &graph)
+{
+  array<double,2> ret;
+  int i=0,j=graph.size()-1,mid;
+  while (j-i>1)
+  {
+    mid=(i+j)/2;
+    if (graph[mid].y>0.5)
+      i=mid;
+    else
+      j=mid;
+  }
+  ret[0]=graph[i].x;
+  ret[1]=graph[j].x;
+  return ret;
+}
+
 void testStep()
 {
   vector<EccPoint> graph;
   EccPoint eccPoint;
   vector<double> newxs;
+  array<double,2> xhalf;
   int i;
   graph.resize(2);
   graph[0].x=0;
@@ -129,6 +147,7 @@ void testStep()
     graph.push_back(eccPoint);
   }
   sort(graph.begin(),graph.end());
+  xhalf=crossHalf(graph);
 }
 
 void ecctest()
