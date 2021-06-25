@@ -139,15 +139,20 @@ void testStep()
   graph[1].x=1;
   graph[1].result=0;
   updateGraph(graph);
-  newxs=newx(graph);
-  for (i=0;i<newxs.size();i++)
+  do
   {
-    eccPoint.x=newxs[i];
-    eccPoint.result=rng.frandom(1-eccPoint.x);
-    graph.push_back(eccPoint);
-  }
-  sort(graph.begin(),graph.end());
-  xhalf=crossHalf(graph);
+    newxs=newx(graph);
+    for (i=0;i<newxs.size();i++)
+    {
+      eccPoint.x=newxs[i];
+      eccPoint.result=rng.frandom(1-eccPoint.x);
+      graph.push_back(eccPoint);
+    }
+    sort(graph.begin(),graph.end());
+    updateGraph(graph);
+    xhalf=crossHalf(graph);
+  } while (xhalf[1]-xhalf[0]>1e-3);
+  cout<<"crosses half at "<<(xhalf[0]+xhalf[1])/2<<endl;
 }
 
 void ecctest()
