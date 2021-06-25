@@ -102,20 +102,23 @@ void updateGraph(vector<EccPoint> &graph)
 set<double> newx(vector<EccPoint> &graph)
 {
   set<double> ret;
-  int i,sz=graph.size();
+  int i,sz=graph.size(),bit;
   double cross;
   for (i=0;i<sz-1;i++)
   {
     if ((i==0 && graph[i].y!=1) || (i==sz-2 && graph[i+1].y!=0) ||
 	graph[i].y>graph[i+1].y || (graph[i].y>=0.5 && graph[i+1].y<=0.5))
-      ret.insert((graph[i].x+graph[i+1].x)/2);
+    {
+      bit=rng.brandom();
+      ret.insert((graph[i].x*(bit+1)+graph[i+1].x*(2-bit))/3);
+    }
     if (graph[i].y>0.5 && graph[i+1].y<0.5)
       cross=i+0.5;
     if (graph[i].y==0.5)
       cross=i;
   }
   for (i=0;i<sz-1;i++)
-    if (fabs(i+0.5-cross)<sqrt(sz))
+    if (fabs(i+0.5-cross)<sqrt(sz)*3)
       ret.insert((graph[i].x+graph[i+1].x)/2);
   return ret;
 }
@@ -163,7 +166,7 @@ void testStep()
     sort(graph.begin(),graph.end());
     updateGraph(graph);
     xhalf=crossHalf(graph);
-  } while (xhalf[1]-xhalf[0]>1e-3);
+  } while (xhalf[1]-xhalf[0]>1e-6);
   cout<<"crosses half at "<<(xhalf[0]+xhalf[1])/2<<endl;
 }
 
