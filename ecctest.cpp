@@ -34,6 +34,11 @@ using namespace std;
  * can stand.
  */
 
+bool operator<(const EccPoint &l,const EccPoint &r)
+{
+  return l.x<r.x;
+}
+
 void updateGraph(vector<EccPoint> &graph)
 // Update the y values by computing a moving average of the result values.
 {
@@ -123,6 +128,7 @@ void testStep()
     eccPoint.result=rng.frandom(1-eccPoint.x);
     graph.push_back(eccPoint);
   }
+  sort(graph.begin(),graph.end());
 }
 
 void ecctest()

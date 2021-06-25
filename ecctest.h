@@ -25,6 +25,7 @@ struct EccPoint
 {
   double x,y;
   int result;
+  friend bool operator<(const EccPoint &l,const EccPoint &r); // for sort
 };
 
 void ecctest();
