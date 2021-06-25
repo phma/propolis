@@ -21,6 +21,7 @@
  * along with Propolis. If not, see <http://www.gnu.org/licenses/>.
  */
 #include <iostream>
+#include <cmath>
 #include "ecctest.h"
 #include "random.h"
 using namespace std;
@@ -33,6 +34,65 @@ using namespace std;
  * can stand.
  */
 
+void updateGraph(vector<EccPoint> &graph)
+// Update the y values by computing a moving average of the result values.
+{
+  int i,begin=0,end=0,nint,n1,sz=graph.size();
+  double radius;
+  bool intervalGood;
+  nint=lrint(sqrt(sz));
+  n1=graph[0].result;
+  for (i=0;i<sz;i++)
+  {
+    intervalGood=false;
+    while (!intervalGood)
+    {
+      int prevEnd=end,prevBegin=begin;
+      if (begin)
+	radius=2*graph[i].x-graph[begin].x-graph[begin-1].x;
+      else
+	radius=2*graph[i].x-2*graph[begin].x;
+      if (end<sz-1)
+	radius+=graph[end].x+graph[end+1].x-2*graph[i].x;
+      else
+	radius+=2*graph[end].x-2*graph[i].x;
+      radius/=4;
+      while (graph[begin].x<graph[i].x-radius)
+	n1-=graph[begin++].result;
+      while (graph[end].x<graph[i].x+radius && end<sz-1)
+	n1+=graph[++end].result;
+      while (end-begin+1>nint+1)
+      {
+	n1-=graph[begin++].result;
+	n1-=graph[end--].result;
+      }
+      while (end-begin+1<nint-1)
+      {
+	if (begin)
+	  n1+=graph[--begin].result;
+	if (end<sz-1)
+	  n1+=graph[++end].result;
+      }
+      if (end-begin+1>nint)
+      {
+	if (graph[end].x+graph[begin].x>2*graph[i].x)
+	  n1-=graph[end--].result;
+	else if (graph[end].x+graph[begin].x>2*graph[i].x)
+	  n1-=graph[begin++].result;
+      }
+      if (end-begin+1<nint)
+      {
+	if (graph[end].x+graph[begin].x>2*graph[i].x && begin)
+	  n1+=graph[--begin].result;
+	else if (graph[end].x+graph[begin].x>2*graph[i].x && end<sz-1)
+	  n1+=graph[++end].result;
+      }
+      intervalGood=end==prevEnd && begin==prevBegin;
+    }
+    graph[i].y=(double)n1/(end-begin+1);
+  }
+}
+
 void testStep()
 {
   vector<EccPoint> graph;
@@ -43,7 +103,7 @@ void testStep()
   graph[0].y=1;
   graph[1].x=1;
   graph[1].y=0;
-  
+  updateGraph(graph);
 }
 
 void ecctest()
