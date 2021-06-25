@@ -22,6 +22,7 @@
  */
 #include <iostream>
 #include <cmath>
+#include <set>
 #include "ecctest.h"
 #include "random.h"
 using namespace std;
@@ -98,14 +99,24 @@ void updateGraph(vector<EccPoint> &graph)
   }
 }
 
-vector<double> newx(vector<EccPoint> &graph)
+set<double> newx(vector<EccPoint> &graph)
 {
-  vector<double> ret;
+  set<double> ret;
   int i,sz=graph.size();
+  double cross;
   for (i=0;i<sz-1;i++)
+  {
     if ((i==0 && graph[i].y!=1) || (i==sz-2 && graph[i+1].y!=0) ||
 	graph[i].y>graph[i+1].y || (graph[i].y>=0.5 && graph[i+1].y<=0.5))
-      ret.push_back((graph[i].x+graph[i+1].x)/2);
+      ret.insert((graph[i].x+graph[i+1].x)/2);
+    if (graph[i].y>0.5 && graph[i+1].y<0.5)
+      cross=i+0.5;
+    if (graph[i].y==0.5)
+      cross=i;
+  }
+  for (i=0;i<sz-1;i++)
+    if (fabs(i+0.5-cross)<sqrt(sz))
+      ret.insert((graph[i].x+graph[i+1].x)/2);
   return ret;
 }
 
@@ -130,9 +141,10 @@ void testStep()
 {
   vector<EccPoint> graph;
   EccPoint eccPoint;
-  vector<double> newxs;
+  set<double> newxs;
   array<double,2> xhalf;
   int i;
+  set<double>::iterator j;
   graph.resize(2);
   graph[0].x=0;
   graph[0].result=1;
@@ -142,9 +154,9 @@ void testStep()
   do
   {
     newxs=newx(graph);
-    for (i=0;i<newxs.size();i++)
+    for (j=newxs.begin();j!=newxs.end();++j)
     {
-      eccPoint.x=newxs[i];
+      eccPoint.x=*j;
       eccPoint.result=rng.frandom(1-eccPoint.x);
       graph.push_back(eccPoint);
     }
