@@ -33,40 +33,6 @@ using namespace std;
  * can stand.
  */
 
-double StepFinder::init()
-{
-  lastBit=2;
-  x=0.5;
-  upStep=downStep=0.125;
-  runStraight=runAlternate=0;
-  return x;
-}
-
-double StepFinder::step(int bit)
-{
-  if (bit)
-    x+=upStep;
-  else
-    x-=downStep;
-  runStraight++;
-  runAlternate++;
-  if (bit==lastBit)
-    runAlternate=0;
-  if (bit+lastBit==1)
-    runStraight=0;
-  lastBit=bit;
-  if (bit)
-    upStep*=1+(31*runStraight-32*runAlternate)/16384.;
-  else
-    downStep*=1+(31*runStraight-32*runAlternate)/16384.;
-  return x;
-}
-
-bool StepFinder::finished()
-{
-  return upStep<DBL_EPSILON && downStep<DBL_EPSILON;
-}
-
 void testStep()
 {
   vector<EccPoint> graph;

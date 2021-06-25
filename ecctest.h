@@ -27,18 +27,4 @@ struct EccPoint
   int result;
 };
 
-class StepFinder
-/* Finds the argument at which the value of a function that continuously
- * decreases from 1 to 0 is 1/2, given only random bits whose probability
- * is the value of the function.
- */
-{
-  double upStep,downStep,x;
-  int runStraight,runAlternate,lastBit;
-public:
-  double init();
-  double step(int bit);
-  bool finished();
-};
-
 void ecctest();
