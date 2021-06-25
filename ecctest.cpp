@@ -69,18 +69,15 @@ bool StepFinder::finished()
 
 void testStep()
 {
-  StepFinder sf;
+  vector<EccPoint> graph;
+  EccPoint eccPoint;
   int i;
-  double x=sf.init();
-  for (i=0;!sf.finished();i++)
-  {
-    if (x>1)
-      x=1;
-    if (x<0)
-      x=0;
-    x=sf.step(rng.frandom(1-x));
-  }
-  cout<<i<<' '<<x<<endl;
+  graph.resize(2);
+  graph[0].x=0;
+  graph[0].y=1;
+  graph[1].x=1;
+  graph[1].y=0;
+  
 }
 
 void ecctest()

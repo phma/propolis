@@ -21,6 +21,12 @@
  * along with Propolis. If not, see <http://www.gnu.org/licenses/>.
  */
 
+struct EccPoint
+{
+  double x,y;
+  int result;
+};
+
 class StepFinder
 /* Finds the argument at which the value of a function that continuously
  * decreases from 1 to 0 is 1/2, given only random bits whose probability
