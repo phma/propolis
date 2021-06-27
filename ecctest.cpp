@@ -25,6 +25,7 @@
 #include <cmath>
 #include <set>
 #include "ecctest.h"
+#include "manysum.h"
 #include "random.h"
 using namespace std;
 /* This test consists of creating a size-33 symbol (3360 data/check letters)
@@ -41,11 +42,21 @@ bool operator<(const EccPoint &l,const EccPoint &r)
   return l.x<r.x;
 }
 
+double window(double x,double center,double radius)
+// Van Hann window
+{
+  if (fabs(x-center)>radius)
+    return 0;
+  else
+    return 0.5*cos((x-center)/radius*M_PI)+0.5;
+}
+
 void updateGraph(vector<EccPoint> &graph)
 // Update the y values by computing a moving average of the result values.
 {
-  int i,begin=0,end=0,nint,n1,sz=graph.size();
-  double radius;
+  int i,j,begin=0,end=0,nint,n1,sz=graph.size();
+  double radius,w;
+  vector<double> weights,weighted;
   bool intervalGood;
   nint=lrint(sqrt(sz));
   n1=graph[0].result;
@@ -96,7 +107,17 @@ void updateGraph(vector<EccPoint> &graph)
       }
       intervalGood=end==prevEnd && begin==prevBegin;
     }
-    graph[i].y=(double)n1/(end-begin+1);
+    weighted.clear();
+    weights.clear();
+    for (j=begin;j<=end;j++)
+    {
+      w=window(graph[j].x,graph[i].x,radius);
+      weights.push_back(w);
+      weighted.push_back(graph[j].result*w);
+    }
+    if (pairwisesum(weights)==0)
+      cout<<"nan\n";
+    graph[i].y=pairwisesum(weighted)/pairwisesum(weights);
   }
 }
 
