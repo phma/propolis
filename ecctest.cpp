@@ -157,6 +157,9 @@ set<double> newx(vector<EccPoint> &graph)
     for (j=0;j<cross.size();j++)
       if (fabs(i+0.5-cross[j])<sqrt(sz)*3)
 	ret.insert((graph[i].x+graph[i+1].x)/2);
+    for (j=1;j<=5 && i-j>=0 && i+1+j<=sz-1;j++)
+      if (graph[i+1+j].x-graph[i-j].x<(graph[i+1].x-graph[i].x)*(j+1))
+	ret.insert((graph[i].x+graph[i+1].x)/2);
   }
   return ret;
 }
