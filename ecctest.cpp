@@ -21,6 +21,7 @@
  * along with Propolis. If not, see <http://www.gnu.org/licenses/>.
  */
 #include <iostream>
+#include <fstream>
 #include <cmath>
 #include <set>
 #include "ecctest.h"
@@ -140,6 +141,14 @@ array<double,2> crossHalf(vector<EccPoint> &graph)
   return ret;
 }
 
+void writeGraphData(vector<EccPoint> &graph)
+{
+  ofstream file("xhalf.dat");
+  int i;
+  for (i=0;i<graph.size();i++)
+    file<<graph[i].x<<' '<<graph[i].y<<' '<<graph[i].result<<endl;
+}
+
 void testStep()
 {
   vector<EccPoint> graph;
@@ -168,6 +177,7 @@ void testStep()
     xhalf=crossHalf(graph);
   } while (xhalf[1]-xhalf[0]>1e-6);
   cout<<"crosses half at "<<(xhalf[0]+xhalf[1])/2<<endl;
+  writeGraphData(graph);
 }
 
 void ecctest()
