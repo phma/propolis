@@ -22,6 +22,7 @@
  */
 #include <iostream>
 #include <fstream>
+#include <cassert>
 #include <cmath>
 #include <set>
 #include "ecctest.h"
@@ -77,13 +78,19 @@ void updateGraph(vector<EccPoint> &graph)
       radius/=4;
       while (graph[begin].x<graph[i].x-radius)
 	n1-=graph[begin++].result;
+      assert(begin<=i);
       while (graph[end].x<graph[i].x+radius && end<sz-1)
 	n1+=graph[++end].result;
+      assert(i<=end);
       while (end-begin+1>nint+1)
       {
-	n1-=graph[begin++].result;
-	n1-=graph[end--].result;
+	if (begin<i)
+	  n1-=graph[begin++].result;
+	if (end>i)
+	  n1-=graph[end--].result;
       }
+      assert(begin<=i);
+      assert(i<=end);
       while (end-begin+1<nint-1)
       {
 	if (begin)
@@ -91,6 +98,8 @@ void updateGraph(vector<EccPoint> &graph)
 	if (end<sz-1)
 	  n1+=graph[++end].result;
       }
+      assert(begin<=i);
+      assert(i<=end);
       if (end-begin+1>nint)
       {
 	if (graph[end].x+graph[begin].x>2*graph[i].x)
@@ -98,6 +107,8 @@ void updateGraph(vector<EccPoint> &graph)
 	else if (graph[end].x+graph[begin].x>2*graph[i].x)
 	  n1-=graph[begin++].result;
       }
+      assert(begin<=i);
+      assert(i<=end);
       if (end-begin+1<nint)
       {
 	if (graph[end].x+graph[begin].x>2*graph[i].x && begin)
@@ -105,6 +116,8 @@ void updateGraph(vector<EccPoint> &graph)
 	else if (graph[end].x+graph[begin].x>2*graph[i].x && end<sz-1)
 	  n1+=graph[++end].result;
       }
+      assert(begin<=i);
+      assert(i<=end);
       intervalGood=end==prevEnd && begin==prevBegin;
     }
     weighted.clear();
