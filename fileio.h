@@ -25,7 +25,7 @@
 #include <string>
 #include "hvec.h"
 
-struct header
+struct Header
 {
   int bits;
   int size;

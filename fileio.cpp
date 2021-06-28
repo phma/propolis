@@ -65,6 +65,14 @@ void writeHvec(ostream &file,hvec h)
   writeleshort(file,h.gety());
 }
 
+hvec readHvec(istream &file)
+{
+  int x,y;
+  x=readleshort(file);
+  y=readleshort(file);
+  return hvec(x,y);
+}
+
 void writeHexArray(string fileName,harray<char> &hexArray,int bits,int size)
 {
   ofstream file(fileName,ios::binary);
@@ -94,14 +102,14 @@ void writeHexArray(string fileName,harray<char> &hexArray,int bits,int size)
   }
 }
 
-header readHeader(istream &file)
+Header readHeader(istream &file)
 /* bits is returned as -1 if the file was written with a different page size
  * than this program is compiled with. It is returned as -2 if the header is
  * invalid or the format is in the future.
  */
 {
   int magic,version,pagesize,pagerad,extra;
-  header ret;
+  Header ret;
   magic=readbeint(file);
   version=readleshort(file);
   ret.bits=file.get()&255;
@@ -113,5 +121,38 @@ header readHeader(istream &file)
     ret.bits=-1;
   if (pagesize!=pagerad*(pagerad+1)*3+1 || version>0 || magic!=0x47290c05)
     ret.bits=-2;
+  return ret;
+}
+
+Header readHexArray(string fileName,harray<char> &hexArray)
+{
+  Header ret;
+  ifstream file(fileName,ios::binary);
+  int i,stripLength;
+  hvec stripStart;
+  vector<char> page,packedPage;
+  ret=readHeader(file);
+  if (ret.bits>8)
+    ret.bits=-3;
+  if (ret.bits>0)
+  {
+    hexArray.clear();
+    while (file.good() && ret.bits>0)
+    {
+      stripStart=readHvec(file);
+      stripLength=readleshort(file);
+      packedPage.resize((PAGESIZE+7)*ret.bits/8);
+      page.resize(PAGESIZE);
+      if (file.eof())
+	stripLength=0;
+      for (i=0;i<stripLength;i++)
+      {
+	file.read(&packedPage[0],packedPage.size());
+	if (file.eof())
+	  ret.bits=-4;
+	// unpack the page and store it in hexArray
+      }
+    }
+  }
   return ret;
 }
