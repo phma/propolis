@@ -128,7 +128,7 @@ Header readHexArray(string fileName,harray<char> &hexArray)
 {
   Header ret;
   ifstream file(fileName,ios::binary);
-  int i,stripLength;
+  int i,j,stripLength,mask;
   hvec stripStart;
   vector<char> page,packedPage;
   ret=readHeader(file);
@@ -137,6 +137,7 @@ Header readHexArray(string fileName,harray<char> &hexArray)
   if (ret.bits>0)
   {
     hexArray.clear();
+    mask=(1<<ret.bits)-1;
     while (file.good() && ret.bits>0)
     {
       stripStart=readHvec(file);
@@ -150,7 +151,12 @@ Header readHexArray(string fileName,harray<char> &hexArray)
 	file.read(&packedPage[0],packedPage.size());
 	if (file.eof())
 	  ret.bits=-4;
-	// unpack the page and store it in hexArray
+	for (j=0;j<PAGESIZE;j++)
+	  page[j]=0;
+	for (j=0;j<PAGESIZE;j++)
+	  page[j]+=(packedPage[(j*ret.bits)/8]>>((j*ret.bits)%8))&mask;
+	  packedPage[(j*ret.bits)/8]+=(page[j]&mask)<<((j*ret.bits)%8);
+	hexArray.putPage(stripStart+i,page);
       }
     }
   }
