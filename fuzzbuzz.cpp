@@ -55,7 +55,8 @@ int main(int argc,char **argv)
     ("test","Run tests")
     ("help","Show options");
   hidden.add_options()
-    ("input,i",po::value<string>(&infilename),"File to read");
+    ("input",po::value<string>(&infilename),"File to read");
+  p.add("input",-1);
   initialize();
   cmdline_options.add(generic).add(hidden);
   debugletters=0;
