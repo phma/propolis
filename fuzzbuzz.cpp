@@ -95,6 +95,7 @@ int main(int argc,char **argv)
     if (infilename.size())
     {
       readHexArray(infilename,hbits);
+      cout<<"Read "<<hbits.listPages().size()<<" pages\n";
     }
     else
     {
