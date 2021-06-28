@@ -32,4 +32,5 @@ struct Header
 };
 
 void writeHexArray(std::string fileName,harray<char> &hexArray,int bits,int size);
+Header readHexArray(std::string fileName,harray<char> &hexArray);
 #endif
