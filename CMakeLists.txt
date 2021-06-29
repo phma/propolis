@@ -20,11 +20,11 @@ find_package(Threads REQUIRED)
 
 add_executable(propolis propolis.cpp hvec.cpp letters.cpp contour.cpp genetic.cpp
                lagrange.cpp ps.cpp arrange.cpp encoding.cpp raster.cpp hamming.cpp
-               dotbaton.cpp binio.cpp fileio.cpp ecctest.cpp
+               dotbaton.cpp binio.cpp fileio.cpp ecctest.cpp pn8191.cpp
                manysum.cpp random.cpp threads.cpp)
 
 add_executable(fuzzbuzz fuzzbuzz.cpp fileio.cpp hvec.cpp letters.cpp binio.cpp ps.cpp
-	       threads.cpp raster.cpp)
+	       threads.cpp raster.cpp pn8191.cpp)
 
 target_link_libraries(propolis ${CMAKE_THREAD_LIBS_INIT} ${GMP_LIBRARY} ${GMPXX_LIBRARIES} ${Boost_LIBRARIES})
 target_link_libraries(fuzzbuzz ${CMAKE_THREAD_LIBS_INIT} ${GMP_LIBRARY} ${GMPXX_LIBRARIES} ${Boost_LIBRARIES})

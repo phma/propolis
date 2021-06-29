@@ -8,6 +8,7 @@
 #include <sstream>
 #include <stdexcept>
 #include "hvec.h"
+#include "pn8191.h"
 #include "letters.h"
 #include "contour.h"
 #include "ps.h"
@@ -48,22 +49,6 @@ void border(int n)
   drawletter(0x1d,hvec(-n,0));
   drawletter(0x05,hvec(-n,-n));
   drawletter(0x07,hvec(0,-n));
-}
-
-const int poly13=0x2b85; //13 11 9 8 7 2 0
-short pncode[8191];
-
-void fillpn()
-{
-  int i;
-  pncode[0]=1;
-  for (i=1;i<8191;i++)
-  {
-    pncode[i]=pncode[i-1]<<1;
-    if (pncode[i]&0x2000)
-      pncode[i]^=poly13;
-    //printf("%4x ",pncode[i]);
-  }
 }
 
 void pattern19()
