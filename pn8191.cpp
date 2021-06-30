@@ -44,7 +44,7 @@ void fillpn()
   for (i=0;i<8191;i++)
     for (j=3;j<256;j++)
     {
-      a=j&~j;
+      a=j&-j;
       b=j-a;
       if (b)
 	pncode[i][j]=pncode[i][a]^pncode[i][b];
