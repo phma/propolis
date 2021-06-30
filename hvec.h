@@ -5,6 +5,8 @@
 #ifndef HVEC_H
 #define HVEC_H
 
+class hvec;
+
 #include <cmath>
 #include <cstdlib>
 #include <cstring>
@@ -12,6 +14,8 @@
 #include <vector>
 #include <map>
 #include <complex>
+#include "pn8191.h"
+
 #define M_SQRT_3_4 0.86602540378443864676372317
 // The continued fraction expansion is 0;1,6,2,6,2,6,2,...
 #define M_SQRT_3 1.73205080756887729352744634
@@ -103,6 +107,8 @@ public:
   std::vector<hvec> listPages();
   std::vector<T> getPage(hvec q);
   void putPage(hvec q,std::vector<T> pagevec);
+  int pageCrc(hvec q);
+  int crc();
   void clear();
   void prune();
 };
@@ -181,6 +187,25 @@ template <typename T> void harray<T>::putPage(hvec q,std::vector<T> pagevec)
   page=index[q];
   for (i=0;i<PAGESIZE;i++)
     page[i]=pagevec[i];
+}
+
+template <typename T> int harray<T>::pageCrc(hvec q)
+{
+  hvec center=q*PAGEMOD;
+  int i,ret=0;
+  T *page=index[q];
+  for (i=0;page && i<PAGESIZE;i++)
+    ret^=crc(page[i],center+nthhvec(i,PAGERAD,PAGESIZE));
+  return ret;
+}
+
+template <typename T> int harray<T>::crc()
+{
+  std::vector<hvec> pglist=listPages();
+  int i,ret=0;
+  for (i=0;i<pglist.size();i++)
+    ret^=pageCrc(pglist[i]);
+  return ret;
 }
 
 template <typename T> void harray<T>::clear()
