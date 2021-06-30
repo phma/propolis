@@ -463,6 +463,19 @@ void testraster()
   rasterdraw(size,0,0,500,DIM_DIAPOTHEM,FMT_PNM,"8191.pgm");
 }
 
+void testcrc()
+{
+  int i,j;
+  int check;
+  for (i=0;i<32;i++)
+  {
+    check=crc(1<<i,256*i);
+    for (j=12;j>=0;j--)
+      cout<<((check>>j)&1);
+    cout<<endl;
+  }
+}
+
 void testmain()
 {
   //testoutline();
@@ -484,6 +497,7 @@ void testmain()
   checkregbits();
   writeAmbig();
   //findLetterAssignment();
+  testcrc();
 }
 
 double stringtod(string str)
