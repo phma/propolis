@@ -20,6 +20,6 @@
  * You should have received a copy of the GNU General Public License
  * along with Propolis. If not, see <http://www.gnu.org/licenses/>.
  */
-extern short pncode[8191];
+extern short pncode[8191][256];
 
 void fillpn();

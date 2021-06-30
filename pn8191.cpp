@@ -23,17 +23,30 @@
 #include "pn8191.h"
 
 const int poly13=0x2b85; //13 11 9 8 7 2 0
-short pncode[8191];
+short pncode[8191][256];
 
 void fillpn()
 {
-  int i;
-  pncode[0]=1;
+  int i,j,a,b;
+  pncode[0][1]=1;
+  pncode[0][0]=0;
   for (i=1;i<8191;i++)
   {
-    pncode[i]=pncode[i-1]<<1;
-    if (pncode[i]&0x2000)
-      pncode[i]^=poly13;
+    pncode[i][1]=pncode[i-1][1]<<1;
+    pncode[i][0]=0;
+    if (pncode[i][1]&0x2000)
+      pncode[i][1]^=poly13;
     //printf("%4x ",pncode[i]);
   }
+  for (j=2;j<256;j*=2)
+    for (i=0;i<8191;i++)
+      pncode[i][j]=pncode[(i+8191-256)%8191][j/2];
+  for (i=0;i<8191;i++)
+    for (j=3;j<256;j++)
+    {
+      a=j&~j;
+      b=j-a;
+      if (b)
+	pncode[i][j]=pncode[i][a]^pncode[i][b];
+    }
 }

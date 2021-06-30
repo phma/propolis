@@ -84,7 +84,7 @@ void pnpattern(int size)
     j=i.getx()*5+i.gety()*450;
     j%=8191;
     while (j<0) j+=8191;
-    hletters[i]=31&pncode[j];
+    hletters[i]=31&pncode[j][1];
   }
 }
 
@@ -100,7 +100,7 @@ void pnbitpattern(int size)
       j=i1.getx()*5+i1.gety()*450;
       j%=8191;
       while (j<0) j+=8191;
-      hbits[i1]=1&pncode[j];
+      hbits[i1]=1&pncode[j][1];
     }
 }
 
