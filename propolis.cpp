@@ -21,11 +21,14 @@
 #include "threads.h"
 #include "genetic.h"
 
+#define tassert(x) testfail|=(!(x))
+
 using namespace std;
 namespace po=boost::program_options;
 
 hvec a,b,q,r;
 harray<char> hletters,hbits;
+bool testfail=false;
 
 void border(int n)
 // Draws a border for a symbol of size n. The border is one bigger.
@@ -470,6 +473,7 @@ void testcrc()
   for (i=0;i<32;i++)
   {
     check=crc(1<<i,256*i);
+    tassert(check==1);
     for (j=12;j>=0;j--)
       cout<<((check>>j)&1);
     cout<<endl;
@@ -716,5 +720,7 @@ int main(int argc,char **argv)
   }
   waitForThreads(TH_STOP);
   joinThreads();
-  return 0;
+  if (testfail)
+    cout<<"Test failed\n";
+  return testfail;
 }
