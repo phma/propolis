@@ -60,6 +60,6 @@ int crc(unsigned n,hvec pos)
   if (ipos<0)
     ipos+=8191;
   for (i=0;i<4;i++)
-    ret^=pncode[(ipos+2048*i)%8191][bytes[i]];
+    ret^=pncode[(ipos+(8191-2048)*i)%8191][bytes[i]];
   return ret;
 }
