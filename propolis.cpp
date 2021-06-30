@@ -104,6 +104,22 @@ void pnbitpattern(int size)
     }
 }
 
+void bit256pattern(int size)
+//size is at least 15 to see whole pattern
+{
+  hvec i,i1;
+  int j,k;
+  for (i=start(size);i.cont(size);i.inc(size))
+    for (k=0;k<12;k++)
+    {
+      i1=i*LETTERMOD+twelve[k];
+      j=i1.getx()*5+i1.gety()*450;
+      j%=8191;
+      while (j<0) j+=8191;
+      hbits[i1]=(j&255)==0;
+    }
+}
+
 void testletter()
 {
   int i,j,c;
@@ -404,6 +420,10 @@ void makepattern(int pattern,int asize,int format,string outfilename)
       pnbitpattern(size);
       letterpattern=0;
       break;
+    case PATTERN_MUL256:
+      bit256pattern(size);
+      letterpattern=0;
+      break;
     default:
       cerr<<"Pattern should be 8191 or 8191b"<<endl;
   }
@@ -540,6 +560,8 @@ int patternnum(string optstr)
     return PATTERN_8191;
   if (optstr=="8191b")
     return PATTERN_8191B;
+  if (optstr=="mul256")
+    return PATTERN_MUL256;
   cerr<<"Unrecognized pattern"<<endl;
   return -1;
 }

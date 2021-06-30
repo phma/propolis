@@ -25,5 +25,6 @@
 
 #define PATTERN_8191 1
 #define PATTERN_8191B 2
+#define PATTERN_MUL256 3
 
 #endif
