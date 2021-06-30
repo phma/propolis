@@ -50,3 +50,16 @@ void fillpn()
 	pncode[i][j]=pncode[i][a]^pncode[i][b];
     }
 }
+
+int crc(unsigned n,hvec pos)
+{
+  int i,ipos,bytes[4],ret=0;
+  for (i=0;i<4;i++)
+    bytes[i]=(n>>(8*i))&255;
+  ipos=(pos.getx()+90*pos.gety())%8191;
+  if (ipos<0)
+    ipos+=8191;
+  for (i=0;i<4;i++)
+    ret^=pncode[(ipos+2048*i)%8191][bytes[i]];
+  return ret;
+}
