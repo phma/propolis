@@ -39,6 +39,7 @@ int main(int argc,char **argv)
   stringbuf filebuf;
   string redundancyStr,formatStr,patternStr;
   fstream infile;
+  Header header;
   bool validCmd=true,helpFlag=false;
   po::options_description generic("Options");
   po::options_description hidden("Hidden options");
@@ -94,8 +95,9 @@ int main(int argc,char **argv)
     }
     if (infilename.size())
     {
-      readHexArray(infilename,hbits);
+      header=readHexArray(infilename,hbits);
       cout<<"Read "<<hbits.listPages().size()<<" pages\n";
+      cout<<"Size "<<header.size<<" Bits "<<header.bits<<endl;
     }
     else
     {

@@ -29,6 +29,7 @@ struct Header
 {
   int bits;
   int size;
+  int check;
 };
 
 void writeHexArray(std::string fileName,harray<char> &hexArray,int bits,int size);

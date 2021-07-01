@@ -32,12 +32,13 @@ using namespace std;
  * Bytes 8 and 9: PAGESIZE, little-endian
  * Bytes 10 and 11: symbol size
  * Bytes 12 and 13: additional information about an element format, currently 0000
+ * Bytes 14 and 15: CRC of the hexagonal array
  * This is followed by strips:
  * Bytes 0 and 1: x-coordinate of start of strip divided by PAGEMOD
  * Bytes 2 and 3: y-coordinate of start of strip divided by PAGEMOD
  * Bytes 4 and 5: number of pages in strip
  * Example (little-endian):
- * 47 29 0c 05 00 00 01 06 7f 00 02 00 00 00 fa ff fa ff 07 00 <7×16 bytes of data>
+ * 47 29 0c 05 00 00 01 06 7f 00 02 00 00 00 xx xx fa ff fa ff 07 00 <7×16 bytes of data>
  * Numbers of bits are expected to be 1, 2 (for art masks), 8, and 16. If 16, the data
  * will be stored in two-byte words, little-endian.
  * At first the program will read only files with its native PAGERAD;
@@ -48,7 +49,7 @@ using namespace std;
  * 5: number of bits in a letter.
  */
 
-void writeHeader(ostream &file,int bits,int size)
+void writeHeader(ostream &file,int bits,int size,int check)
 {
   writebeint(file,0x47290c05);
   writeleshort(file,0);
@@ -57,6 +58,7 @@ void writeHeader(ostream &file,int bits,int size)
   writeleshort(file,PAGESIZE);
   writeleshort(file,size);
   writeleshort(file,0);
+  writeleshort(file,check);
 }
 
 void writeHvec(ostream &file,hvec h)
@@ -80,8 +82,8 @@ void writeHexArray(string fileName,harray<char> &hexArray,int bits,int size)
   vector<char> page,packedPage;
   int i,j,stripStart,stripEnd,mask=(1<<bits)-1;
   assert(bits>0 && bits<=8);
-  writeHeader(file,bits,size);
   hexArray.prune();
+  writeHeader(file,bits,size,hexArray.crc());
   pages=hexArray.listPages();
   for (stripStart=0;stripStart<pages.size();stripStart=stripEnd)
   {
@@ -117,6 +119,7 @@ Header readHeader(istream &file)
   pagesize=readleshort(file);
   ret.size=readleshort(file);
   extra=readleshort(file);
+  ret.check=readleshort(file);
   if (pagerad!=PAGERAD || pagesize!=PAGESIZE)
     ret.bits=-1;
   if (pagesize!=pagerad*(pagerad+1)*3+1 || version>0 || magic!=0x47290c05)
@@ -160,5 +163,7 @@ Header readHexArray(string fileName,harray<char> &hexArray)
       }
     }
   }
+  if (ret.bits>0 && hexArray.crc()!=ret.check)
+    ret.bits=-5;
   return ret;
 }
