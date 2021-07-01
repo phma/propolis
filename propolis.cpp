@@ -11,6 +11,7 @@
 #include "pn8191.h"
 #include "letters.h"
 #include "contour.h"
+#include "random.h"
 #include "ps.h"
 #include "fileio.h"
 #include "arrange.h"
@@ -470,22 +471,39 @@ void testcrc()
 {
   int i,j;
   int check;
+  hvec center;
   for (i=0;i<32;i++)
   {
     check=crc(1<<i,256*i);
     tassert(check==1);
-    for (j=12;j>=0;j--)
-      cout<<((check>>j)&1);
-    cout<<endl;
+    //for (j=12;j>=0;j--)
+      //cout<<((check>>j)&1);
+    //cout<<endl;
   }
   hbits.clear();
-  for (i=0;i<524288;i++)
+  for (i=0;i>524288;i++)
   {
     for (j=0;j<19;j++)
       hbits[nthhvec(j,2,19)]=(i>>j)&1;
     if (hbits.crc()==0)
       printf("%05x %2d\n",i,bitcount(i));
   }
+  /* Bit pattern 0x14005 has CRC 0 and only four bits set.
+   *   * o o
+   *  o o * o
+   * o o o o o
+   *  o o o o
+   *   * o *
+   * Place this pattern at a random position and make sure the CRC is still 0.
+   */
+  center=nthhvec(rng.rangerandom(1801),24,1801);
+  hbits.clear();
+  hbits[center+hvec(0,2)]=1;
+  hbits[center+hvec(0,-2)]=1;
+  hbits[center+hvec(-2,-2)]=1;
+  hbits[center+hvec(1,1)]=1;
+  printf("Center (%d,%d) CRC %x\n",center.getx(),center.gety(),hbits.crc());
+  tassert(hbits.crc()==0);
 }
 
 void testmain()
