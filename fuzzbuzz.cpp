@@ -19,6 +19,7 @@ harray<char> hletters,hbits;
 
 void initialize()
 {
+  fillpn();
   fillLetters(0,0,0,0);
   readinvletters();
 }
