@@ -491,9 +491,9 @@ void testmain()
   //testsetdata();
   testenc();
   testencodings();
-  testcomplex();
-  testraster();
-  testsixvec();
+  //testcomplex(); // these three are slow
+  //testraster();
+  //testsixvec();
   testpageinx();
   testroundframe();
   testrotate();

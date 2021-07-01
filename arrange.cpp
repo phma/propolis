@@ -614,7 +614,7 @@ void testfindsize()
     size67=cm.findSize(i,0.67);
     printf("%5d %3d %3d %3d %3d %3d\n",i,size00,size20,size40,size60,size67);
   }
-  for (i=1;i<2048;i++)
+  for (i=1;i>2048;i++)
   {
     size67=cm.findSize(i,0.67);
     red=cm.getRedundancy();
