@@ -478,6 +478,14 @@ void testcrc()
       cout<<((check>>j)&1);
     cout<<endl;
   }
+  hbits.clear();
+  for (i=0;i<524288;i++)
+  {
+    for (j=0;j<19;j++)
+      hbits[nthhvec(j,2,19)]=(i>>j)&1;
+    if (hbits.crc()==0)
+      printf("%05x %2d\n",i,bitcount(i));
+  }
 }
 
 void testmain()

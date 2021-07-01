@@ -195,7 +195,7 @@ template <typename T> int harray<T>::pageCrc(hvec q)
   int i,ret=0;
   T *page=index[q];
   for (i=0;page && i<PAGESIZE;i++)
-    ret^=crc(page[i],center+nthhvec(i,PAGERAD,PAGESIZE));
+    ret^=::crc(page[i],center+nthhvec(i,PAGERAD,PAGESIZE));
   return ret;
 }
 
