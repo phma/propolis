@@ -39,7 +39,7 @@
 
 using namespace std;
 
-BIT16 letters[38]={
+uint16_t letters[38]={
 0x000, // 00000  00 000 0000 000
 0x007, // 00001  00 000 0000 111
 0xf80, // 00010  11 111 0000 000
@@ -88,7 +88,7 @@ BIT16 letters[38]={
 0x0ff, //        00 001 1111 111
 0xd9b, //        11 011 0011 011
 0xf99};//        11 111 0011 001
-BIT16 invletters[4096];
+uint16_t invletters[4096];
 /* Inverse letter table format:
  * 1xxxxxyyyyyzzzzz a bit pattern that could be any of three letters
  * 010000xxxxxyyyyy a bit pattern that could be any of two letters
@@ -99,7 +99,7 @@ BIT16 invletters[4096];
  *                  dddddddd is in the size-8 hexagon, 0 through 216
  * 0000000000000000 an undecodable bit pattern that counts as erasure in RS
  */
-BIT16 rotlow[]=
+uint16_t rotlow[]=
 {
   0x000,0x400,0x080,0x480,0x008,0x408,0x088,0x488,
   0x800,0xc00,0x880,0xc80,0x808,0xc08,0x888,0xc88,
@@ -127,12 +127,12 @@ char rotateletter[]=
   0x00,0x0c,0x18,0x14,0x11,0x02,0x09,0x1a,0x03,0x10,0x04,0x17,0x12,0x1e,0x15,0x19,
   0x06,0x0a,0x01,0x0d,0x08,0x1b,0x0f,0x1c,0x05,0x16,0x1d,0x0e,0x0b,0x07,0x13,0x1f
 };
-BIT16 ambig3[12]=
+uint16_t ambig3[12]=
 {
   0x03f,0x077,0x267,0xa66,0xb64,0xf60,
   0xfc0,0xf88,0xd98,0x599,0x49b,0x09f
 };
-BIT16 ambig2[60]=
+uint16_t ambig2[60]=
 {
   0x400,0x040,0x001, //   o *
   0x800,0x004,0x008, //  o o o
@@ -212,7 +212,7 @@ void degauss()
  * 802  * o o    o * o    o o *    o * o    o * o
  */
 {int i,j,tmp,cont;
- BIT16 basis[32];
+ uint16_t basis[32];
  for (i=0;i<32;i++)
      basis[i]=letters[i];
  do
@@ -1038,7 +1038,7 @@ int twist5(int letter,int n)
   return (letter>>(25-n*cnt))&31;
 }
 
-BIT16 abdhp[]={0x007,0xf80,0xc00,0xa64,0x499};
+uint16_t abdhp[]={0x007,0xf80,0xc00,0xa64,0x499};
 
 void fillLetters(int perm,int negs,int splay,int twist)
 /* Fills letters with one of 7680 assignments:

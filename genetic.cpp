@@ -35,7 +35,7 @@
 using namespace std;
 namespace cr=std::chrono;
 
-BIT16 letters57[]={0xf80,0xf64,0x266,0x07f,0x09b,0xd99};
+uint16_t letters57[]={0xf80,0xf64,0x266,0x07f,0x09b,0xd99};
 
 LetterMap::LetterMap()
 {
@@ -45,14 +45,14 @@ LetterMap::LetterMap()
     bitPatterns[i]=letters[i];
 }
 
-LetterMap::LetterMap(array<BIT16,5> init)
+LetterMap::LetterMap(array<uint16_t,5> init)
 /* Initializes a LetterMap with 80 bits, which should be chosen at random.
  * 31!=8.2e33; 2**80=1.2e24. This doesn't completely shuffle the letters,
  * but it should be good enough to start breeding.
  */
 {
   int i,j,k,l;
-  array<BIT16,32> temp;
+  array<uint16_t,32> temp;
   fit=NAN;
   for (i=0;i<32;i++)
     bitPatterns[i]=letters[i];
@@ -131,7 +131,7 @@ string LetterMap::summary()
 void LetterMap::computeFitness()
 {
   int i,j,all,any,diff;
-  array<BIT32,5> amb2h,amb2l,amb3;
+  array<uint32_t,5> amb2h,amb2l,amb3;
   for (i=0;i<5;i++)
     amb2h[i]=amb2l[i]=amb3[i]=0;
   fit=0;
@@ -284,7 +284,7 @@ void findLetterMapGenetic()
   vector<int> delenda;
   DotBaton dotbaton;
   mpq_class mutationRate(1,256);
-  array<BIT16,5> initBits;
+  array<uint16_t,5> initBits;
   array<char,32> rotateletter;
   double lastFitness=0;
   int i,j,k,sz,dim,nParents,popLimit,niter=0,nsteady=0;

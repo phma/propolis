@@ -27,7 +27,7 @@ class LetterMap
 {
 public:
   LetterMap();
-  LetterMap(std::array<BIT16,5> init);
+  LetterMap(std::array<uint16_t,5> init);
   LetterMap(LetterMap &mother,LetterMap &father);
   std::string summary();
   void computeFitness();
@@ -43,7 +43,7 @@ public:
   friend bool operator==(const LetterMap &l,const LetterMap &r);
   friend bool operator<(const LetterMap &l,const LetterMap &r); // for sort
 private:
-  std::array<BIT16,32> bitPatterns;
+  std::array<uint16_t,32> bitPatterns;
   double fit;
 };
 

@@ -4,7 +4,7 @@
 #include <map>
 #include "propolis.h"
 #include "hvec.h"
-extern BIT16 letters[38];
+extern uint16_t letters[38];
 /* The extra six letters are for borders.
  *     11212112
  *    22      20
@@ -15,9 +15,9 @@ extern BIT16 letters[38];
  *     0a24240c
  */
 extern int debugletters;
-extern BIT16 invletters[4096];
+extern uint16_t invletters[4096];
 extern const hvec twelve[];
-extern BIT16 ambig3[12],ambig2[60];
+extern uint16_t ambig3[12],ambig2[60];
 #define FRAMERAD 25
 #define FRAMESIZE (FRAMERAD*(FRAMERAD+1)*3+1)
 // Possibly FRAMERAD should be 18 (almost 1 frame in each tiniest region) or 25 (1951, a little less than 2048).
