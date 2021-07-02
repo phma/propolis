@@ -167,17 +167,23 @@ set<double> newx(vector<EccPoint> &graph)
 array<double,2> crossHalf(vector<EccPoint> &graph)
 {
   array<double,2> ret;
-  int i=0,j=graph.size()-1,mid;
-  while (j-i>1)
+  int i;
+  ret[0]=ret[1]=-1;
+  for (i=0;i<graph.size()-1;i++)
   {
-    mid=(i+j)/2;
-    if (graph[mid].y>0.5)
-      i=mid;
-    else
-      j=mid;
+    if (ret[0]<0 && graph[i].y>=0.5 && graph[i+1].y<=0.5)
+      if (graph[i].y==graph[i+1].y)
+	ret[0]=(graph[i].x+graph[i+1].x)/2;
+      else
+	ret[0]=(graph[i+1].x*(0.5-graph[i].y)+graph[i].x*(graph[i+1].y-0.5))/
+	       (graph[i+1].y-graph[i].y);
+    if (graph[i].y>=0.5 && graph[i+1].y<=0.5)
+      if (graph[i].y==graph[i+1].y)
+	ret[1]=(graph[i].x+graph[i+1].x)/2;
+      else
+	ret[1]=(graph[i+1].x*(0.5-graph[i].y)+graph[i].x*(graph[i+1].y-0.5))/
+	       (graph[i+1].y-graph[i].y);
   }
-  ret[0]=graph[i].x;
-  ret[1]=graph[j].x;
   return ret;
 }
 
@@ -215,7 +221,7 @@ void testStep()
     sort(graph.begin(),graph.end());
     updateGraph(graph);
     xhalf=crossHalf(graph);
-  } while (xhalf[1]-xhalf[0]>1e-6);
+  } while (graph.size()<100000);
   cout<<"crosses half at "<<(xhalf[0]+xhalf[1])/2<<endl;
   writeGraphData(graph);
 }
