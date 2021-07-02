@@ -39,7 +39,7 @@ void startThreads(int n)
   {
     sleepFraction[i]=0.5;
     threads.push_back(thread(PropThread(),i));
-    this_thread::sleep_for(chrono::milliseconds(10));
+    this_thread::sleep_for(chrono::milliseconds(1));
   }
 }
 
@@ -105,23 +105,12 @@ void sleepCommon(cr::steady_clock::time_point wakeTime,int thread)
 {
   while (clk.now()<wakeTime)
   {
-    if (true /*errorQueueEmpty()*/)
-    {
-      threadStatus[thread]|=256;
-      this_thread::sleep_for((wakeTime-clk.now())*sleepFraction[thread]);
-      sleepFraction[thread]*=1.25;
-      if (sleepFraction[thread]>0.5)
-	sleepFraction[thread]*=0.75;
-      threadStatus[thread]&=255;
-    }
-    else
-    {
-      //ErrorBlockTask etask=dequeueError();
-      //computeErrorBlock(etask);
+    threadStatus[thread]|=256;
+    this_thread::sleep_for((wakeTime-clk.now())*sleepFraction[thread]);
+    sleepFraction[thread]*=1.25;
+    if (sleepFraction[thread]>0.5)
       sleepFraction[thread]*=0.75;
-      if (sleepFraction[thread]*sleepTime[thread]<0.001)
-	sleepFraction[thread]*=1.5;
-    }
+    threadStatus[thread]&=255;
   }
 }
 
@@ -197,7 +186,7 @@ void PropThread::operator()(int thread)
   startMutex.lock();
   if (threadStatus.size()!=thread)
   {
-    cout<<"Starting thread "<<threadStatus.size()<<", was passed "<<thread<<endl;
+    //cout<<"Starting thread "<<threadStatus.size()<<", was passed "<<thread<<endl;
     thread=threadStatus.size();
   }
   threadStatus.push_back(0);
