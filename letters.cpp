@@ -303,6 +303,25 @@ void drawletter(int letter,hvec place,harray<char> &canvas)
   canvas[place+hvec( 0, 1)]=(letter>>11)&1;
 }
 
+int readglyph(hvec place,harray<char> &canvas)
+{
+  int glyph=0;
+  place*=LETTERMOD;
+  glyph+=(canvas[place+hvec( 0,-2)]&1)<< 0;
+  glyph+=(canvas[place+hvec(-1,-2)]&1)<< 1;
+  glyph+=(canvas[place+hvec(-2,-2)]&1)<< 2;
+  glyph+=(canvas[place+hvec( 1,-1)]&1)<< 3;
+  glyph+=(canvas[place+hvec( 0,-1)]&1)<< 4;
+  glyph+=(canvas[place+hvec(-1,-1)]&1)<< 5;
+  glyph+=(canvas[place+hvec(-2,-1)]&1)<< 6;
+  glyph+=(canvas[place+hvec( 1, 0)]&1)<< 7;
+  glyph+=(canvas[place+hvec( 0, 0)]&1)<< 8;
+  glyph+=(canvas[place+hvec(-1, 0)]&1)<< 9;
+  glyph+=(canvas[place+hvec( 1, 1)]&1)<<10;
+  glyph+=(canvas[place+hvec( 0, 1)]&1)<<11;
+  return glyph;
+}
+
 hvec roundframe(sixvec s)
 {
   hvec h,closest;
