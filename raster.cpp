@@ -30,7 +30,6 @@
 #include <stdexcept>
 #include <vector>
 #include "raster.h"
-#include "letters.h"
 
 using namespace std;
 fstream rfile;

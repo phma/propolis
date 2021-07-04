@@ -50,7 +50,6 @@ using namespace std;
 namespace po=boost::program_options;
 
 hvec a,b,q,r;
-harray<char> hletters,hbits;
 bool testfail=false;
 
 void border(int n)

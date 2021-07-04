@@ -261,5 +261,4 @@ void testcomplex();
 void testsixvec();
 void testpageinx();
 
-extern harray<char> hletters,hbits;
 #endif

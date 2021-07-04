@@ -23,6 +23,7 @@
 #include <string>
 #include "hvec.h"
 #include "outformat.h"
+#include "letters.h"
 
 struct locreg
 {

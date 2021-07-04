@@ -3,7 +3,7 @@
 /* contour.cpp - trace contours for PS output         */
 /*                                                    */
 /******************************************************/
-/* Copyright 2012-2017 Pierre Abbat.
+/* Copyright 2012-2021 Pierre Abbat.
  * This file is part of Propolis.
  * 
  * The Propolis program is free software: you can redistribute it and/or
@@ -22,6 +22,7 @@
  */
 #include <cstdio>
 #include "hvec.h"
+#include "letters.h"
 #include "contour.h"
 
 using namespace std;

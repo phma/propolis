@@ -3,7 +3,7 @@
 /* ps.cpp - PostScript output                         */
 /*                                                    */
 /******************************************************/
-/* Copyright 2012-2017 Pierre Abbat.
+/* Copyright 2012-2021 Pierre Abbat.
  * This file is part of Propolis.
  * 
  * The Propolis program is free software: you can redistribute it and/or
@@ -37,6 +37,7 @@
 #include <stdexcept>
 #include "hvec.h"
 #include "ps.h"
+#include "letters.h"
 
 using namespace std;
 
