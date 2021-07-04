@@ -37,6 +37,8 @@ private:
   std::vector<int> hammingSizes;
   std::vector<char> metadata; // 6 or 7 letters, depending on size
   std::vector<char> data; // rearranged by criss-crossing
+  std::vector<uint16_t> metaglyphs;
+  std::vector<uint16_t> glyphs;
   int size,nLetters,nData,nDataCheck;
   /* Consider a size-3 symbol holding "1.618033988749894848204" in decimal
    * encoding. This is encoded as "_I_ZSJAA^\WM[^ZPFL". There must be a
@@ -58,6 +60,7 @@ public:
   void setData(std::string str,int encoding);
   void dump();
   void arrange(harray<char> &hletters);
+  void unarrange(harray<uint16_t> &hglyphs);
 };
 
 extern CodeMatrix theMatrix;

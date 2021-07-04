@@ -581,7 +581,7 @@ void CodeMatrix::arrange(harray<char> &hletters)
   hletters[hvec(-size,0)]=metadata[0];
   if (metadata.size()==7)
   {
-    hletters[hvec(0,0)]        =metadata[1];;
+    hletters[hvec(0,0)]        =metadata[1];
     hletters[hvec(0,size)]     =metadata[2];
     hletters[hvec(size,size)]  =metadata[3];
     hletters[hvec(size,0)]     =metadata[4];
@@ -601,6 +601,28 @@ void CodeMatrix::arrange(harray<char> &hletters)
     if (k.norm()==sqr(size) || (metadata.size()==7 && k==0))
       k.inc(size); // skip the 6 or 7 metadata letters
     hletters[k]=data[i];
+  }
+}
+
+void CodeMatrix::unarrange(harray<uint16_t> &hglyphs)
+{
+  int i;
+  hvec k;
+  metaglyphs.clear();
+  metaglyphs.push_back(hglyphs[hvec(-size,0)]);
+  if (size>30)
+    metaglyphs.push_back(hglyphs[hvec(0,0)]);
+  metaglyphs.push_back(hglyphs[hvec(0,size)]);
+  metaglyphs.push_back(hglyphs[hvec(size,size)]);
+  metaglyphs.push_back(hglyphs[hvec(size,0)]);
+  metaglyphs.push_back(hglyphs[hvec(0,-size)]);
+  metaglyphs.push_back(hglyphs[hvec(-size,-size)]);
+  glyphs.clear();
+  for (i=0,k=start(size);k.cont(size);i++,k.inc(size))
+  {
+    if (k.norm()==sqr(size) || (metaglyphs.size()==7 && k==0))
+      k.inc(size); // skip the 6 or 7 metadata letters
+    glyphs[i]=hglyphs[k];
   }
 }
 
