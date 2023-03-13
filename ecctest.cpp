@@ -229,9 +229,9 @@ void testStep()
 void ecctest()
 {
   mpz_class num=1,denom=1;
-  mpz_class phibig;
+  mpz_class phibig; // φ-1 (0.618034) shifted left 16800
   int i;
-  string phistr;
+  string phistr; // 3360 letters of pseudorandom data
   while (denom>>8401==0)
   {
     num+=denom;
