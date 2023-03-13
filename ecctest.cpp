@@ -3,7 +3,7 @@
 /* ecctest.cpp - test error-correcting code           */
 /*                                                    */
 /******************************************************/
-/* Copyright 2021 Pierre Abbat.
+/* Copyright 2021,2023 Pierre Abbat.
  * This file is part of Propolis.
  * 
  * The Propolis program is free software: you can redistribute it and/or
@@ -215,7 +215,7 @@ void testStep()
     for (j=newxs.begin();j!=newxs.end();++j)
     {
       eccPoint.x=*j;
-      eccPoint.result=rng.frandom(1-eccPoint.x);
+      eccPoint.result=rng.frandom(1-eccPoint.x); // test goes here
       graph.push_back(eccPoint);
     }
     sort(graph.begin(),graph.end());
