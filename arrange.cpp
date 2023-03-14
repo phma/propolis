@@ -129,6 +129,11 @@ void fillbitpermtab()
 }
 
 int whiten(int letter,int index)
+/* Apply an index-dependent substitution cipher so that a symbol encoding
+ * all the same letter looks random. If the written letters are too many
+ * all white or too many all black, reading the symbol can result in a
+ * framing error.
+ */
 {
   int highbits;
   highbits=letter&-32;
