@@ -3,9 +3,9 @@
 /* arrange.cpp - arrange letters in symbol            */
 /*                                                    */
 /******************************************************/
-/* Copyright 2013-2021 Pierre Abbat.
+/* Copyright 2013-2023 Pierre Abbat.
  * This file is part of Propolis.
- * 
+ *
  * The Propolis program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
@@ -39,7 +39,7 @@ using namespace std;
  * a letter. Decoding is by belief propagation, similar to LDPC codes or turbo
  * codes. All the Hamming codes are updated, then all the letters are updated,
  * and so alternately, until they are all sure enough or they give up.
- * 
+ *
  * The metadata will have check letters in F31 Lagrange polynomials.
  */
 
@@ -305,37 +305,6 @@ vector<int> arrangeHamming(int nletters,int nblocks)
     if ((ret[i]&(ret[i]-1))==0)
       ret.clear(); // Powers of 2 are not allowed.
   return ret;
-}
-
-int findsize(int n,double redundancy)
-/* Finds the size of a symbol holding n letters with the specified redundancy.
- * If redundancy is out of the range (0.03,0.97), it is forced into that range.
- * More precisely, each row must have at least one data letter and at least one check letter.
- * Returns 0 if invalid.
- */
-{
-  int i,nrows,nletters,best;
-  double target,diff,closest;
-  bool cont;
-  if (redundancy<0.03)
-    redundancy=0.03;
-  if (redundancy>0.97)
-    redundancy=0.97;
-  target=n/(1-redundancy);
-  if (target<=0)
-    return 0;
-  for (i=2,best=nrows=0,closest=1e30+target;nrows<=n+2;i++)
-  {
-    nletters=ndataletters(i);
-    nrows=(nletters+30)/31;
-    //printf("n=%d %d>=%d %d>=%d %d>=%d\n",i,nletters,target,n,nrows,nletters-n,nrows);
-    if (n>=nrows && nletters-n>=nrows && fabs(nletters-target)<closest)
-    {
-      closest=fabs(nletters-target);
-      best=i;
-    }
-  }
-  return best;
 }
 
 int CodeMatrix::getSize()

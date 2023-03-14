@@ -5,7 +5,7 @@
 /******************************************************/
 /* Copyright 2013-2021 Pierre Abbat.
  * This file is part of Propolis.
- * 
+ *
  * The Propolis program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
@@ -602,7 +602,7 @@ double parse_redundancy(string red)
 
 void copyleft()
 {
-  cout<<"Propolis version "<<VERSION<<" © Pierre Abbat 2011-2021\nGPL v3 licensed\n";
+  cout<<"Propolis version "<<VERSION<<" © Pierre Abbat 2011-2023\nGPL v3 licensed\n";
 }
 
 int formatnum(string optstr)

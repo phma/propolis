@@ -3,9 +3,9 @@
 /* arrange.h - arrange letters in symbol              */
 /*                                                    */
 /******************************************************/
-/* Copyright 2013-2021 Pierre Abbat.
+/* Copyright 2013-2023 Pierre Abbat.
  * This file is part of Propolis.
- * 
+ *
  * The Propolis program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
@@ -27,7 +27,6 @@
 
 int ndataletters(int n);
 void listsizes();
-int findsize(int n,double redundancy);
 void testfindsize();
 
 class CodeMatrix
