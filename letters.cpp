@@ -1156,6 +1156,11 @@ void findLetterAssignment()
 Decoding decode(int bits)
 {
   Decoding ret;
+  if (invletters.size()<4096)
+  {
+    readinvletters();
+    checkinvletters();
+  }
   int ibits=invletters[bits];
   if (ibits&0x8000)
     ret.dtype=off3;
