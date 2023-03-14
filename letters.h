@@ -3,9 +3,9 @@
 /* letters.h - bit patterns for letters               */
 /*                                                    */
 /******************************************************/
-/* Copyright 2012-2021 Pierre Abbat.
+/* Copyright 2012-2023 Pierre Abbat.
  * This file is part of Propolis.
- * 
+ *
  * The Propolis program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
@@ -37,7 +37,7 @@ extern uint16_t letters[38];
  *     0a24240c
  */
 extern int debugletters;
-extern uint16_t invletters[4096];
+extern std::vector<uint16_t> invletters;
 extern const hvec twelve[];
 extern uint16_t ambig3[12],ambig2[60];
 extern harray<char> hletters,hbits;

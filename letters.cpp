@@ -3,9 +3,9 @@
 /* letters.cpp - bit patterns for letters             */
 /*                                                    */
 /******************************************************/
-/* Copyright 2012-2021 Pierre Abbat.
+/* Copyright 2012-2023 Pierre Abbat.
  * This file is part of Propolis.
- * 
+ *
  * The Propolis program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
@@ -113,7 +113,7 @@ uint16_t letters[38]={
 0x0ff, //        00 001 1111 111
 0xd9b, //        11 011 0011 011
 0xf99};//        11 111 0011 001
-uint16_t invletters[4096];
+vector<uint16_t> invletters; // [4096]
 /* Inverse letter table format:
  * 1xxxxxyyyyyzzzzz a bit pattern that could be any of three letters
  * 010000xxxxxyyyyy a bit pattern that could be any of two letters
@@ -398,6 +398,7 @@ void fillinvletters()
       inv[il]|=in;
     }
   }
+  invletters.resize(4096);
   for (i=0;i<4096;i++)
   {
     if (inv[i]&0x400000)
@@ -653,7 +654,8 @@ void readinvletters()
   infile.open("invletters.dat",ios_base::in|ios_base::binary);
   if (infile.is_open())
   {
-    infile.read((char *)invletters,sizeof(invletters));
+    invletters.resize(4096);
+    infile.read((char *)&invletters[0],4096*sizeof(invletters[0]));
     infile.close();
   }
 }
@@ -794,7 +796,7 @@ void writeinvletters()
   outfile.open("invletters.dat",ios_base::out|ios_base::binary);
   if (outfile.is_open())
   {
-    outfile.write((char *)invletters,sizeof(invletters));
+    outfile.write((char *)&invletters[0],4096*sizeof(invletters[0]));
     outfile.close();
   }
 }
