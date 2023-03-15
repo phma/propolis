@@ -104,3 +104,12 @@ string Hamming::dumpLetters()
   }
   return ret;
 }
+
+vector<int> Hamming::belief()
+{
+  int i;
+  vector<int> ret;
+  for (i=0;i<code.size();i++)
+    ret.push_back(code[i]);
+  return ret;
+}

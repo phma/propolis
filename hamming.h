@@ -41,4 +41,5 @@ public:
   void setCode(std::vector<signed char> Code);
   void push_back(char byte);
   std::string dumpLetters();
+  std::vector<int> belief();
 };
