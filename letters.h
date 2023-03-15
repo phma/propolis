@@ -106,7 +106,7 @@ private:
   std::array<signed char,5> softbits;
 public:
   void setprob(std::array<signed char,12> seen,int index);
-  void setprob(short seen,int index);
+  void setprob(short seen,int index); // index is for whitening, see arrange
   void propagate(std::array<signed char,5> belief);
   signed char operator[](int n);
 };

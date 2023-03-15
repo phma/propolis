@@ -24,6 +24,7 @@
 #include <vector>
 #include "hvec.h"
 #include "hamming.h"
+#include "letters.h"
 
 int ndataletters(int n);
 void listsizes();
@@ -36,6 +37,7 @@ private:
   std::vector<int> hammingSizes;
   std::vector<char> metadata; // 6 or 7 letters, depending on size
   std::vector<char> data; // rearranged by criss-crossing
+  std::vector<litteron> litterons;
   std::vector<uint16_t> metaglyphs;
   std::vector<uint16_t> glyphs;
   int size,nLetters,nData,nDataCheck;

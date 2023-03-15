@@ -27,7 +27,6 @@
 #include <cstring>
 #include <cassert>
 #include "arrange.h"
-#include "letters.h"
 #include "lagrange.h"
 using namespace std;
 
