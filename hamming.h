@@ -42,4 +42,5 @@ public:
   void push_back(char byte);
   std::string dumpLetters();
   std::vector<int> belief();
+  void propagate();
 };

@@ -20,6 +20,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Propolis. If not, see <http://www.gnu.org/licenses/>.
  */
+#include <cmath>
 #include "hamming.h"
 using namespace std;
 
@@ -112,4 +113,36 @@ vector<int> Hamming::belief()
   for (i=0;i<code.size();i++)
     ret.push_back(code[i]);
   return ret;
+}
+
+void Hamming::propagate()
+{
+  vector<double> syndrome,adjusted;
+  double max;
+  int i,j,bit,sz=code.size();
+  while (sz&(sz+1))
+    sz|=sz>>1;
+  for (i=1;i<=sz;i*=2)
+  {
+    syndrome.push_back(1);
+    for (j=0;j<=sz;j++)
+      if (j&i)
+	syndrome.back()*=(j<=code.size())?code[j-1]:127;
+  }
+  max=0;
+  for (i=0;i<syndrome.size();i++)
+    if (fabs(syndrome[i])>max)
+      max=fabs(syndrome[i]);
+  for (i=0;i<syndrome.size();i++)
+    syndrome[i]/=max;
+  for (i=1;i<=code.size();i++)
+  {
+    adjusted.push_back(1);
+    for (j=0;j<syndrome.size();j++)
+    {
+      bit=1-2*((i>>j)&1);
+      adjusted.back()*=(1-(bit*syndrome[j]))/2;
+    }
+    adjusted.back()=(1-2*adjusted.back())*code[i-1];
+  }
 }
