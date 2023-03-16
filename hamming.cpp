@@ -143,7 +143,7 @@ void Hamming::propagate()
     for (j=0;j<syndrome.size();j++)
     {
       bit=1-2*((i>>j)&1);
-      adjusted.back()*=(1-(bit*syndrome[j]))/2;
+      adjusted.back()*=(1+(bit*syndrome[j]))/2;
     }
     adjusted.back()=(1-2*adjusted.back())*code[i-1];
   }
