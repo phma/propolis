@@ -543,6 +543,7 @@ void testHammingPropagate1(vector<signed char> code0)
 void testHammingPropagate()
 {
   vector<signed char> code0;
+  int i;
   code0.push_back(100);
   code0.push_back(-90);
   code0.push_back(80);
@@ -552,6 +553,9 @@ void testHammingPropagate()
   code0.push_back(40);
   testHammingPropagate1(code0);
   code0[6]=-100;
+  testHammingPropagate1(code0);
+  for (i=0;i<7;i++)
+    code0[i]=abs(code0[i]);
   testHammingPropagate1(code0);
 }
 
