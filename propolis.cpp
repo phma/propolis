@@ -527,6 +527,26 @@ void testcrc()
   tassert(hbits.crc()==0);
 }
 
+void testHammingPropagate()
+{
+  vector<signed char> code0,code1;
+  Hamming hamming;
+  int i;
+  code0.push_back(100);
+  code0.push_back(-90);
+  code0.push_back(80);
+  code0.push_back(-70);
+  code0.push_back(60);
+  code0.push_back(-50);
+  code0.push_back(40);
+  hamming.setCode(code0);
+  hamming.propagate();
+  code1=hamming.getCode();
+  for (i=0;i<7;i++)
+    cout<<(int)code1[i]<<' ';
+  cout<<endl;
+}
+
 void testmain()
 {
   //testoutline();
@@ -549,6 +569,7 @@ void testmain()
   writeAmbig();
   //findLetterAssignment();
   testcrc();
+  testHammingPropagate();
 }
 
 double stringtod(string str)
