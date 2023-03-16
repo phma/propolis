@@ -133,6 +133,8 @@ void Hamming::propagate()
   for (i=0;i<syndrome.size();i++)
     if (fabs(syndrome[i])>max)
       max=fabs(syndrome[i]);
+  if (max==0)
+    max=1;
   for (i=0;i<syndrome.size();i++)
     syndrome[i]/=max;
   for (i=1;i<=code.size();i++)
@@ -145,4 +147,12 @@ void Hamming::propagate()
     }
     adjusted.back()=(1-2*adjusted.back())*code[i-1];
   }
+  max=0;
+  for (i=0;i<adjusted.size();i++)
+    if (fabs(adjusted[i])>max)
+      max=fabs(adjusted[i]);
+  if (max==0)
+    max=1;
+  for (i=0;i<adjusted.size();i++)
+    code[i]=lrint(adjusted[i]*127/max);
 }
