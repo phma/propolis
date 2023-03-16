@@ -527,11 +527,22 @@ void testcrc()
   tassert(hbits.crc()==0);
 }
 
-void testHammingPropagate()
+void testHammingPropagate1(vector<signed char> code0)
 {
-  vector<signed char> code0,code1;
+  vector<signed char> code1;
   Hamming hamming;
   int i;
+  hamming.setCode(code0);
+  hamming.propagate();
+  code1=hamming.getCode();
+  for (i=0;i<7;i++)
+    cout<<(int)code1[i]<<' ';
+  cout<<endl;
+}
+
+void testHammingPropagate()
+{
+  vector<signed char> code0;
   code0.push_back(100);
   code0.push_back(-90);
   code0.push_back(80);
@@ -539,12 +550,9 @@ void testHammingPropagate()
   code0.push_back(60);
   code0.push_back(-50);
   code0.push_back(40);
-  hamming.setCode(code0);
-  hamming.propagate();
-  code1=hamming.getCode();
-  for (i=0;i<7;i++)
-    cout<<(int)code1[i]<<' ';
-  cout<<endl;
+  testHammingPropagate1(code0);
+  code0[6]=-100;
+  testHammingPropagate1(code0);
 }
 
 void testmain()
