@@ -538,6 +538,11 @@ void testHammingPropagate1(vector<signed char> code0)
   for (i=0;i<7;i++)
     cout<<(int)code1[i]<<' ';
   cout<<endl;
+  hamming.propagate();
+  code1=hamming.getCode();
+  for (i=0;i<7;i++)
+    cout<<(int)code1[i]<<' ';
+  cout<<endl;
 }
 
 void testHammingPropagate()
