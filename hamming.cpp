@@ -154,5 +154,5 @@ void Hamming::propagate()
   if (max==0)
     max=1;
   for (i=0;i<adjusted.size();i++)
-    code[i]=lrint(adjusted[i]*127/max);
+    code[i]=lrint(cbrt(adjusted[i]/max)*127);
 }
