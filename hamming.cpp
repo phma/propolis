@@ -116,6 +116,11 @@ vector<int> Hamming::belief()
 }
 
 void Hamming::propagate()
+/* Corrects the error in code fuzzily. Each number in code represents one bit,
+ * with 127 meaning 0 and -127 meaning 1. If a number is 0, it remains 0,
+ * even if setting it to ±127 would result in a correct code. Hopefully the 0
+ * will be changed by the litteron in the next step.
+ */
 {
   vector<double> syndrome,adjusted;
   double max;
