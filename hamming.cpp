@@ -121,6 +121,10 @@ void Hamming::propagate()
  * with 127 meaning 0 and -127 meaning 1. If a number is 0, it remains nearly 0,
  * even if setting it to ±127 would result in a correct code. Hopefully the 0
  * will be changed by the litteron in the next step.
+ *
+ * The syndrome could overflow or underflow if the Hamming code is thousands
+ * of bits long, but that means a very low redundancy. Hamming codes shouldn't
+ * be longer than 31 bits, and the longest tested by ecctest is 15 bits.
  */
 {
   vector<double> codef,syndrome,adjusted;
@@ -139,7 +143,7 @@ void Hamming::propagate()
     syndrome.push_back(1);
     for (j=0;j<=sz;j++)
       if (j&i)
-	syndrome.back()*=codef[j-1];
+	syndrome.back()*=codef[j-1]/64;
   }
   max=0;
   for (i=0;i<syndrome.size();i++)
