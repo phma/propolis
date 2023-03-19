@@ -535,12 +535,12 @@ void testHammingPropagate1(vector<signed char> code0)
   hamming.setCode(code0);
   hamming.propagate();
   code1=hamming.getCode();
-  for (i=0;i<7;i++)
+  for (i=0;i<code1.size();i++)
     cout<<(int)code1[i]<<' ';
   cout<<endl;
   hamming.propagate();
   code1=hamming.getCode();
-  for (i=0;i<7;i++)
+  for (i=0;i<code1.size();i++)
     cout<<(int)code1[i]<<' ';
   cout<<endl;
 }
@@ -573,6 +573,8 @@ void testHammingPropagate()
   code0[0]=code0[1]=code0[3]=code0[4]=127;
   code0[2]=code0[5]=code0[6]=-127;
   code0[6]=0;
+  testHammingPropagate1(code0);
+  code0.resize(6);
   testHammingPropagate1(code0);
 }
 
