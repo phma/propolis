@@ -562,6 +562,18 @@ void testHammingPropagate()
   for (i=0;i<7;i++)
     code0[i]=abs(code0[i]);
   testHammingPropagate1(code0);
+  code0[0]=code0[1]=code0[3]=code0[4]=127;
+  code0[2]=code0[5]=code0[6]=-127;
+  code0[3]=0;
+  testHammingPropagate1(code0);
+  code0[0]=code0[1]=code0[3]=code0[4]=127;
+  code0[2]=code0[5]=code0[6]=-127;
+  code0[4]=0;
+  testHammingPropagate1(code0);
+  code0[0]=code0[1]=code0[3]=code0[4]=127;
+  code0[2]=code0[5]=code0[6]=-127;
+  code0[6]=0;
+  testHammingPropagate1(code0);
 }
 
 void testmain()

@@ -3,7 +3,7 @@
 /* hamming.h - Hamming codes                          */
 /*                                                    */
 /******************************************************/
-/* Copyright 2017-2021 Pierre Abbat.
+/* Copyright 2017-2023 Pierre Abbat.
  * This file is part of Propolis.
  * 
  * The Propolis program is free software: you can redistribute it and/or

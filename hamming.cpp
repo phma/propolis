@@ -3,7 +3,7 @@
 /* hamming.cpp - Hamming codes                        */
 /*                                                    */
 /******************************************************/
-/* Copyright 2017-2021 Pierre Abbat.
+/* Copyright 2017-2023 Pierre Abbat.
  * This file is part of Propolis.
  * 
  * The Propolis program is free software: you can redistribute it and/or
@@ -22,6 +22,7 @@
  */
 #include <cmath>
 #include "hamming.h"
+#include "random.h"
 using namespace std;
 
 /* Hamming codes, as used in Propolis, are of length at least 3. Each of
@@ -117,22 +118,28 @@ vector<int> Hamming::belief()
 
 void Hamming::propagate()
 /* Corrects the error in code fuzzily. Each number in code represents one bit,
- * with 127 meaning 0 and -127 meaning 1. If a number is 0, it remains 0,
+ * with 127 meaning 0 and -127 meaning 1. If a number is 0, it remains nearly 0,
  * even if setting it to ±127 would result in a correct code. Hopefully the 0
  * will be changed by the litteron in the next step.
  */
 {
-  vector<double> syndrome,adjusted;
+  vector<double> codef,syndrome,adjusted;
   double max;
   int i,j,bit,sz=code.size();
   while (sz&(sz+1))
     sz|=sz>>1;
+  codef.reserve(sz);
+  adjusted.reserve(sz);
+  for (i=0;i<code.size();i++)
+    codef.push_back(code[i]+(rng.brandom()-0.5)/4096);
+  for (;i<sz;i++)
+    codef.push_back(127+(rng.brandom()-0.5)/4096);
   for (i=1;i<=sz;i*=2)
   {
     syndrome.push_back(1);
     for (j=0;j<=sz;j++)
       if (j&i)
-	syndrome.back()*=(j<=code.size())?code[j-1]:127;
+	syndrome.back()*=codef[j-1];
   }
   max=0;
   for (i=0;i<syndrome.size();i++)
@@ -150,7 +157,7 @@ void Hamming::propagate()
       bit=1-2*((i>>j)&1);
       adjusted.back()*=(1+(bit*syndrome[j]))/2;
     }
-    adjusted.back()=(1-2*adjusted.back())*code[i-1];
+    adjusted.back()=(1-2*adjusted.back())*codef[i-1];
   }
   max=0;
   for (i=0;i<adjusted.size();i++)
