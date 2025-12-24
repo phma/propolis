@@ -28,6 +28,7 @@
 #include "ecctest.h"
 #include "manysum.h"
 #include "random.h"
+#include <array>
 using namespace std;
 /* This test consists of creating a size-33 symbol (3360 data/check letters)
  * containing the number φ-1 in base 32, with the specified redundancy,
