@@ -3,7 +3,7 @@
 /* letters.cpp - bit patterns for letters             */
 /*                                                    */
 /******************************************************/
-/* Copyright 2012-2023 Pierre Abbat.
+/* Copyright 2012-2023,2026 Pierre Abbat.
  * This file is part of Propolis.
  *
  * The Propolis program is free software: you can redistribute it and/or
@@ -807,29 +807,39 @@ void checkinvletters()
   hvec g,h;
   bool valid=true;
   for (i=0;i<32;i++)
-    if (invletters[letters[i]]!=(i|0x1000))
+    if (invletters.size()<=letters[i] || invletters[letters[i]]!=(i|0x1000))
       valid=false;
   for (i=sumLetters=0;i<12;i++)
   {
     j=ambig3[i];
-    if ((invletters[j]&0x8000)!=0x8000)
+    if (invletters.size()==4096)
+    {
+      if ((invletters[j]&0x8000)!=0x8000)
+        valid=false;
+      sumLetters+=((invletters[j]>>0)&31)+((invletters[j]>>5)&31)+((invletters[j]>>10)&31);
+      xorBits^=((invletters[j]>>0)&31)^((invletters[j]>>5)&31)^((invletters[j]>>10)&31);
+    }
+    else
       valid=false;
-    sumLetters+=((invletters[j]>>0)&31)+((invletters[j]>>5)&31)+((invletters[j]>>10)&31);
-    xorBits^=((invletters[j]>>0)&31)^((invletters[j]>>5)&31)^((invletters[j]>>10)&31);
   }
   if (sumLetters!=18*31 || xorBits!=0)
     valid=false;
   for (i=sumLetters=0;i<60;i++)
   {
     j=ambig2[i];
-    if ((invletters[j]&0xf000)!=0x4000)
+    if (invletters.size()==4096)
+    {
+      if ((invletters[j]&0xf000)!=0x4000)
+        valid=false;
+      sumLetters+=((invletters[j]>>0)&31)+((invletters[j]>>5)&31);
+      xorBits^=((invletters[j]>>0)&31)^((invletters[j]>>5)&31);
+    }
+    else
       valid=false;
-    sumLetters+=((invletters[j]>>0)&31)+((invletters[j]>>5)&31);
-    xorBits^=((invletters[j]>>0)&31)^((invletters[j]>>5)&31);
   }
   if (sumLetters!=60*31 || xorBits!=0)
     valid=false;
-  for (i=countframingerrors=0;i<4096;i++)
+  for (i=countframingerrors=0;i<invletters.size();i++)
   {
     if ((invletters[i]&0xf000)==0x6000 && (invletters[i]-0x6000)<FRAMESIZE)
     {
