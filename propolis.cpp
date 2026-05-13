@@ -654,7 +654,7 @@ double parse_redundancy(string red)
 
 void copyleft()
 {
-  cout<<"Propolis version "<<VERSION<<" © Pierre Abbat 2011-2023\nGPL v3 licensed\n";
+  cout<<"Propolis version "<<VERSION<<" © Pierre Abbat 2011-2026\nGPL v3 licensed\n";
 }
 
 int formatnum(string optstr)
