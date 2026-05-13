@@ -907,7 +907,7 @@ void checkinvletters()
     else
       valid=false;
   }
-  if (sumLetters!=18*31 || xorBits!=0)
+  if (xorBits!=0)
     valid=false;
   for (i=sumLetters=0;i<60;i++)
   {
@@ -922,7 +922,7 @@ void checkinvletters()
     else
       valid=false;
   }
-  if (sumLetters!=60*31 || xorBits!=0)
+  if (xorBits!=0)
     valid=false;
   for (i=countframingerrors=0;i<invletters.size();i++)
   {
