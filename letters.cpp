@@ -471,6 +471,8 @@ void fillinvletters()
    */
   for (i=0;i<32;i++)
   {
+    if (inv[letters[i]]!=0)
+      printf("letters[%d] already occupied by %x\n",i,inv[letters[i]]);
     inv[letters[i]]=i+32;
     for (j=0;j<12;j++)
     {

@@ -336,7 +336,7 @@ void fac8191()
 void initialize()
 {
   fillpn();
-  fillLetters(0,0,0,0);
+  //fillLetters(0,0,0,0);
   readinvletters();
   startThreads(thread::hardware_concurrency());
 }
