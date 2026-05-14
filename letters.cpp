@@ -67,7 +67,7 @@ using namespace std;
 harray<char> hletters,hbits;
 harray<uint16_t> hglyphs;
 
-uint16_t letters[38]={
+uint16_t letters[44]={
 #if ALPHABET==0
 0x000, // 00000  00 000 0000 000
 0x007, // 00001  00 000 0000 111
@@ -179,13 +179,20 @@ uint16_t letters[38]={
 0x489, //        01 001 0001 001
 0xc88};//        11 001 0001 000
 */
-// Side borders. The corner borders are 02, 1a, 18, 1d, 05, 07.
+// Side borders.
 0xfe4, //        11 111 1100 100
 0xf66, //        11 110 1100 110
 0x27f, //        00 100 1111 111
 0x0ff, //        00 001 1111 111
 0xd9b, //        11 011 0011 011
-0xf99};//        11 111 0011 001
+0xf99, //        11 111 0011 001
+// Corner borders.
+0xf80, //        11 111 0000 000
+0xf64, //        11 110 1100 100
+0x266, //        00 100 1100 110
+0x07f, //        00 000 1111 111
+0x09b, //        00 001 0011 011
+0xd99};//        11 011 0011 001
 vector<uint16_t> invletters; // [4096]
 /* Inverse letter table format:
  * 1xxxxxyyyyyzzzzz a bit pattern that could be any of three letters

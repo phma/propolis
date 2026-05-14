@@ -68,12 +68,12 @@ void border(int n)
     drawletter(0x24,hvec(-i,-n));
     drawletter(0x25,hvec(i,i-n));
   }
-  drawletter(0x02,hvec(n,0));
-  drawletter(0x1a,hvec(n,n));
-  drawletter(0x18,hvec(0,n));
-  drawletter(0x1d,hvec(-n,0));
-  drawletter(0x05,hvec(-n,-n));
-  drawletter(0x07,hvec(0,-n));
+  drawletter(0x26,hvec(n,0));
+  drawletter(0x27,hvec(n,n));
+  drawletter(0x28,hvec(0,n));
+  drawletter(0x29,hvec(-n,0));
+  drawletter(0x2a,hvec(-n,-n));
+  drawletter(0x2b,hvec(0,-n));
 }
 
 void pattern19()

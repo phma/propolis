@@ -26,7 +26,7 @@
 #include <map>
 #include "propolis.h"
 #include "hvec.h"
-extern uint16_t letters[38];
+extern uint16_t letters[44];
 /* The extra six letters are for borders.
  *     11212112
  *    22      20
