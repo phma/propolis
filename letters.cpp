@@ -56,6 +56,7 @@
 #include <cassert>
 #include <iostream>
 #include "letters.h"
+#include "random.h"
 #include "raster.h"
 #include "threads.h"
 
@@ -1280,6 +1281,35 @@ Decoding decode(int bits)
       break;
     default:
       assert(ibits);
+  }
+  return ret;
+}
+
+int stochasticDecode(int bits,int letter,int iter)
+{
+  int ret;
+  Decoding decoding;
+  if (iter<2)
+  {
+    decoding=decode(bits);
+    switch (decoding.dtype)
+    {
+      undecodable:
+      framingError:
+        ret=rng.rangerandom(32);
+        break;
+      exact:
+      off1:
+        ret=decoding.letters[0];
+        break;
+      off2:
+        ret=decoding.letters[rng.rangerandom(2)];
+        break;
+      off3:
+        ret=decoding.letters[rng.rangerandom(3)];
+        break;
+    }
+    // TODO handle iter>=2
   }
   return ret;
 }

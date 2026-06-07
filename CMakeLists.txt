@@ -24,7 +24,7 @@ add_executable(propolis propolis.cpp hvec.cpp letters.cpp contour.cpp genetic.cp
                manysum.cpp random.cpp threads.cpp)
 
 add_executable(fuzzbuzz fuzzbuzz.cpp fileio.cpp hvec.cpp letters.cpp binio.cpp ps.cpp
-	       threads.cpp raster.cpp pn8191.cpp)
+	       threads.cpp raster.cpp pn8191.cpp random.cpp)
 
 target_link_libraries(propolis ${CMAKE_THREAD_LIBS_INIT} ${GMP_LIBRARY} ${GMPXX_LIBRARIES} ${Boost_LIBRARIES})
 target_link_libraries(fuzzbuzz ${CMAKE_THREAD_LIBS_INIT} ${GMP_LIBRARY} ${GMPXX_LIBRARIES} ${Boost_LIBRARIES})

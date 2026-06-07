@@ -3,7 +3,7 @@
 /* letters.h - bit patterns for letters               */
 /*                                                    */
 /******************************************************/
-/* Copyright 2012-2023 Pierre Abbat.
+/* Copyright 2012-2023,2026 Pierre Abbat.
  * This file is part of Propolis.
  *
  * The Propolis program is free software: you can redistribute it and/or
@@ -82,6 +82,8 @@ struct Decoding
 };
 
 Decoding decode(int bits);
+
+int stochasticDecode(int bits,int letter,int iter);
 
 struct InvLetterTask
 {
