@@ -1294,22 +1294,48 @@ int stochasticDecode(int bits,int letter,int iter)
     decoding=decode(bits);
     switch (decoding.dtype)
     {
-      undecodable:
-      framingError:
+      case undecodable:
+      case framingError:
         ret=rng.rangerandom(32);
         break;
-      exact:
-      off1:
+      case exact:
+      case off1:
         ret=decoding.letters[0];
         break;
-      off2:
+      case off2:
         ret=decoding.letters[rng.rangerandom(2)];
         break;
-      off3:
+      case off3:
         ret=decoding.letters[rng.rangerandom(3)];
         break;
     }
-    // TODO handle iter>=2
+  }
+  else
+  {
+    mpq_class prob(1,iter);
+    if (rng.frandom(prob))
+    {
+      decoding=decode(bits);
+      switch (decoding.dtype)
+      {
+        case undecodable:
+        case framingError:
+          ret=rng.rangerandom(32);
+          break;
+        case exact:
+        case off1:
+          ret=decoding.letters[0];
+          break;
+        case off2: // TODO check how close they are to letter
+          ret=decoding.letters[rng.rangerandom(2)];
+          break;
+        case off3:
+          ret=decoding.letters[rng.rangerandom(3)];
+          break;
+      }
+    }
+    else
+      ret=letter;
   }
   return ret;
 }
