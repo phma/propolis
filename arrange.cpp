@@ -3,7 +3,7 @@
 /* arrange.cpp - arrange letters in symbol            */
 /*                                                    */
 /******************************************************/
-/* Copyright 2013-2023 Pierre Abbat.
+/* Copyright 2013-2023,2026 Pierre Abbat.
  * This file is part of Propolis.
  *
  * The Propolis program is free software: you can redistribute it and/or
@@ -48,7 +48,7 @@ using namespace std;
  *  /         \   /         \
  * X b       \ X X c   b   \ X
  *  \         /   \         /
- *   \ \   ^ /     \ |   ^ /
+ *   \ |   ^ /     \ |   ^ /
  *    + - - +       + - - +
  * Size<=30:
  * b:	zero (@) used as index marker
@@ -83,7 +83,10 @@ using namespace std;
  */
 
 CodeMatrix theMatrix;
-//               @ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_
+// bitctrot rotates the letter as 5 bits left by the number of 1-bits in it.
+// bitctunrot undoes bitctrot.
+// invoddmul is the multiplicative inverse of odd multiplication, used in odddiv.
+//		 @ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_
 char bitctrot[]="@BDLHTXYPEIZQKSWAFJ\\RMU[CNV]G^O_",
 bitctunrot[]=   "@PAXBIQ\\DJRMCUY^HLTNEVZOFGKWS[]_",
 invoddmul[]=    "@UF[\\QBWXM^STIZOPEVKLARGH]NCDYJ_";
