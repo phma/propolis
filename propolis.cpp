@@ -578,6 +578,23 @@ void testHammingPropagate()
   testHammingPropagate1(code0);
 }
 
+void testHammingCorrect()
+{
+  Hamming hamming;
+  int i;
+  vector<signed char> code;
+  string plaintext("BLACKSMITHY");
+  for (i=0;i<plaintext.length();i++)
+    hamming.push_back(plaintext[i]);
+  cout<<hamming.dumpLetters()<<endl;
+  code=hamming.getCode();
+  code[13]^=8;
+  hamming.setCode(code);
+  cout<<hamming.dumpLetters()<<endl;
+  hamming.correct();
+  cout<<hamming.dumpLetters()<<endl;
+}
+
 void testmain()
 {
   //testoutline();
@@ -601,6 +618,7 @@ void testmain()
   //findLetterAssignment();
   testcrc();
   testHammingPropagate();
+  testHammingCorrect();
 }
 
 double stringtod(string str)
