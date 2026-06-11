@@ -3,7 +3,7 @@
 /* hamming.cpp - Hamming codes                        */
 /*                                                    */
 /******************************************************/
-/* Copyright 2017-2023 Pierre Abbat.
+/* Copyright 2017-2023,2026 Pierre Abbat.
  * This file is part of Propolis.
  * 
  * The Propolis program is free software: you can redistribute it and/or
@@ -103,6 +103,36 @@ string Hamming::dumpLetters()
     if (ch==127)
       ch='?';
     ret.push_back(ch);
+  }
+  return ret;
+}
+
+int Hamming::correct()
+// Returns 1 in a bit if that bit is not correctable, e.g. there are 13 codewords
+// but the 15th codeword needs that bit flipped.
+{
+  int i,j;
+  int ret=0;
+  int whichByte;
+  vector<signed char> syndrome;
+  for (i=1;i<=code.size();i*=2)
+  {
+    syndrome.push_back(0);
+    for (j=1;j<=code.size();j++)
+      if (j&i)
+        syndrome.back()^=code[j-1];
+  }
+  for (i=0;i<8;i++)
+  {
+    whichByte=0;
+    for (j=0;j<syndrome.size();j++)
+      whichByte+=((syndrome[j]>>i)&1)<<j;
+    if (whichByte==0)
+      ;
+    else if (whichByte>code.size())
+      ret+=1<<i;
+    else
+      code[whichByte-1]^=1<<i;
   }
   return ret;
 }

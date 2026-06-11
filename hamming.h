@@ -3,7 +3,7 @@
 /* hamming.h - Hamming codes                          */
 /*                                                    */
 /******************************************************/
-/* Copyright 2017-2023 Pierre Abbat.
+/* Copyright 2017-2023,2026 Pierre Abbat.
  * This file is part of Propolis.
  * 
  * The Propolis program is free software: you can redistribute it and/or
@@ -41,6 +41,7 @@ public:
   void setCode(std::vector<signed char> Code);
   void push_back(char byte);
   std::string dumpLetters();
+  int correct();
   std::vector<int> belief();
   void propagate();
 };
