@@ -593,6 +593,7 @@ void testHammingCorrect()
   hamming.correct();
   cout<<hamming.dumpLetters()<<endl;
   cout<<hamming.getData()<<endl;
+  tassert(hamming.getData()==plaintext);
 }
 
 void testmain()
