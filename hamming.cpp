@@ -98,6 +98,14 @@ void Hamming::push_back(char byte)
       code[i-1]^=byte;
 }
 
+void Hamming::setData(std::string Data)
+{
+  int i;
+  code.clear();
+  for (i=0;i<Data.length();i++)
+    push_back(Data[i]);
+}
+
 string Hamming::dumpLetters()
 // Use this when the Hamming contains five-bit letters.
 {

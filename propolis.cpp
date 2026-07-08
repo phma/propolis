@@ -3,7 +3,7 @@
 /* propolis.cpp - main program                        */
 /*                                                    */
 /******************************************************/
-/* Copyright 2013-2021 Pierre Abbat.
+/* Copyright 2013-2021,2026 Pierre Abbat.
  * This file is part of Propolis.
  *
  * The Propolis program is free software: you can redistribute it and/or
@@ -584,8 +584,7 @@ void testHammingCorrect()
   int i;
   vector<signed char> code;
   string plaintext("BLACKSMITHY");
-  for (i=0;i<plaintext.length();i++)
-    hamming.push_back(plaintext[i]);
+  hamming.setData(plaintext);
   cout<<hamming.dumpLetters()<<endl;
   code=hamming.getCode();
   code[13]^=8;

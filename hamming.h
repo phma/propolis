@@ -41,6 +41,7 @@ public:
   std::string getData();
   void setCode(std::vector<signed char> Code);
   void push_back(char byte);
+  void setData(std::string Data);
   std::string dumpLetters();
   int correct();
   std::vector<int> belief();
