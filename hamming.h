@@ -38,6 +38,7 @@ protected:
    */
 public:
   std::vector<signed char> getCode();
+  std::string getData();
   void setCode(std::vector<signed char> Code);
   void push_back(char byte);
   std::string dumpLetters();

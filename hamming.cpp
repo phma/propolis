@@ -76,6 +76,16 @@ void Hamming::setCode(vector<signed char> Code)
   code=Code;
 }
 
+string Hamming::getData()
+{
+  string ret;
+  int i;
+  for (i=0;i<code.size();i++)
+    if (i&(i+1))
+      ret+=(char)code[i];
+  return ret;
+}
+
 void Hamming::push_back(char byte)
 // Appends a data byte. Check bytes are added as needed.
 {
