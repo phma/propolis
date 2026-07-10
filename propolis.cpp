@@ -594,6 +594,17 @@ void testHammingCorrect()
   cout<<hamming.dumpLetters()<<endl;
   cout<<hamming.getData()<<endl;
   tassert(hamming.getData()==plaintext);
+  hamming.setData(plaintext);
+  cout<<hamming.dumpLetters()<<endl;
+  code=hamming.getCode();
+  code[13]^=21;
+  code[4]^=14;
+  hamming.setCode(code);
+  cout<<hamming.dumpLetters()<<endl;
+  hamming.correct();
+  cout<<hamming.dumpLetters()<<endl;
+  cout<<hamming.getData()<<endl;
+  tassert(hamming.getData()=="BHACKSIITLY");
 }
 
 void testmain()
