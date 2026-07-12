@@ -57,6 +57,7 @@ public:
   int getNDataCheck();
   double getRedundancy();
   int findSize(int n,double redundancy);
+  void crissCross(std::vector<signed char> unCrissCrossed);
   void setDataCheck(std::string str,int encoding); // str should consist of letters @ through _; encoding should be 1-31
   void setData(std::string str,int encoding);
   void dump();

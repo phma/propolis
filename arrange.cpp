@@ -3,7 +3,7 @@
 /* arrange.cpp - arrange letters in symbol            */
 /*                                                    */
 /******************************************************/
-/* Copyright 2013-2023,2026 Pierre Abbat.
+/* Copyright 2013-2026 Pierre Abbat.
  * This file is part of Propolis.
  *
  * The Propolis program is free software: you can redistribute it and/or
@@ -415,14 +415,30 @@ int CodeMatrix::findSize(int n,double redundancy)
   return size;
 }
 
+void CodeMatrix::crissCross(vector<signed char> unCrissCrossed)
+{
+  int64_t i,j,k;
+  array<int,2> ccf;
+  array<int,5> ccf5;
+  ccf=crissCrossFactor(nLetters);
+  ccf5[0]=ccf[1];
+  for (i=1;i<5;i++)
+    ccf5[i]=(ccf5[i-1]*ccf[0])%nLetters;
+  data.clear();
+  data.resize(nLetters,0x40);
+  for (i=0;i<nLetters;i++)
+    for (j=0;j<5;j++)
+      data[(i*ccf5[j]+prime[j])%nLetters]|=unCrissCrossed[i]&(1<<j);
+  for (i=0;i<nLetters;i++)
+    data[i]=whiten(data[i],i);
+}
+
 void CodeMatrix::setDataCheck(string str,int encoding)
 /* str should have the check letters already appended, and findSize should
  * have been called already.
  */
 {
   int64_t i,j,k;
-  array<int,2> ccf;
-  array<int,5> ccf5;
   vector<int31> lagrange;
   vector<signed char> unCrissCrossed,ham1;
   for (i=k=0;i<hammingSizes.size();i++)
@@ -439,17 +455,7 @@ void CodeMatrix::setDataCheck(string str,int encoding)
     for (j=0;j<ham1.size();j++)
       unCrissCrossed.push_back(ham1[j]);
   }
-  ccf=crissCrossFactor(nLetters);
-  ccf5[0]=ccf[1];
-  for (i=1;i<5;i++)
-    ccf5[i]=(ccf5[i-1]*ccf[0])%nLetters;
-  data.clear();
-  data.resize(nLetters,0x40);
-  for (i=0;i<nLetters;i++)
-    for (j=0;j<5;j++)
-      data[(i*ccf5[j]+prime[j])%nLetters]|=unCrissCrossed[i]&(1<<j);
-  for (i=0;i<nLetters;i++)
-    data[i]=whiten(data[i],i);
+  crissCross(unCrissCrossed);
   metadata.clear();
   metadata.push_back('@');
   k=hammingBlocks.size()-1;
