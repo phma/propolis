@@ -3,7 +3,7 @@
 /* arrange.h - arrange letters in symbol              */
 /*                                                    */
 /******************************************************/
-/* Copyright 2013-2023 Pierre Abbat.
+/* Copyright 2013-2026 Pierre Abbat.
  * This file is part of Propolis.
  *
  * The Propolis program is free software: you can redistribute it and/or
@@ -60,8 +60,8 @@ public:
   void setDataCheck(std::string str,int encoding); // str should consist of letters @ through _; encoding should be 1-31
   void setData(std::string str,int encoding);
   void dump();
-  void arrange(harray<char> &hletters);
-  void unarrange(harray<uint16_t> &hglyphs);
+  void arrange(harray<char> &hletters); // places data and metadata in hletters
+  void unarrange(harray<uint16_t> &hglyphs); // places hglyphs in metaglyphs and glyphs
 };
 
 extern CodeMatrix theMatrix;
