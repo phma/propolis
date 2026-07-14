@@ -433,6 +433,26 @@ void CodeMatrix::crissCross(vector<signed char> unCrissCrossed)
     data[i]=whiten(data[i],i);
 }
 
+vector<signed char> CodeMatrix::unCrissCross()
+// Returns a vector of letters. Split it into Hamming blocks.
+{
+  int64_t i,j,k;
+  array<int,2> ccf;
+  array<int,5> ccf5;
+  vector<signed char> ret(nLetters,0x40);
+  ccf=crissCrossFactor(nLetters);
+  ccf5[0]=ccf[1];
+  for (i=1;i<5;i++)
+    ccf5[i]=(ccf5[i-1]*ccf[0])%nLetters;
+  for (i=0;i<nLetters;i++)
+    data[i]=unwhiten(data[i],i);
+  for (i=0;i<nLetters;i++)
+    for (j=0;j<5;j++)
+      ret[i]|=data[(i*ccf5[j]+prime[j])%nLetters]&(1<<j);
+  for (i=0;i<nLetters;i++)
+    data[i]=whiten(data[i],i);
+}
+
 void CodeMatrix::setDataCheck(string str,int encoding)
 /* str should have the check letters already appended, and findSize should
  * have been called already.
