@@ -61,6 +61,7 @@ public:
   std::vector<signed char> unCrissCross();
   void setDataCheck(std::string str,int encoding); // str should consist of letters @ through _; encoding should be 1-31
   void setData(std::string str,int encoding);
+  int stochasticDecodeIter(int iter);
   void dump();
   void arrange(harray<char> &hletters); // places data and metadata in hletters
   void unarrange(harray<uint16_t> &hglyphs); // places hglyphs in metaglyphs and glyphs

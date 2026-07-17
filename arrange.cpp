@@ -536,6 +536,33 @@ void CodeMatrix::setData(string str,int encoding)
   setDataCheck(appendCheckLetters(str,nDataCheck),encoding);
 }
 
+int CodeMatrix::stochasticDecodeIter(int iter)
+{
+  int i,j,hammingStart,ret=0;
+  vector<signed char> allHamming,ham1;
+  string oneHamming;
+  for (i=0;i<data.size();i++)
+    data[i]=stochasticDecode(glyphs[i],data[i],iter);
+  allHamming=unCrissCross();
+  for (i=hammingStart=0;i<hammingSizes.size();i++)
+  {
+    oneHamming.clear();
+    for (j=0;j<hammingSizes[i];j++)
+      oneHamming+=(char)allHamming[j+hammingStart];
+    hammingStart+=j;
+    hammingBlocks[i].setData(oneHamming);
+    ret+=bitcount(hammingBlocks[i].correct()); // count uncorrectable Hammings
+  }
+  for (i=0;i<hammingSizes.size();i++)
+  {
+    ham1=hammingBlocks[i].getCode();
+    for (j=0;j<ham1.size();j++)
+      allHamming.push_back(ham1[j]);
+  }
+  crissCross(allHamming);
+  return ret;
+}
+
 void CodeMatrix::dump()
 {
   int i,column=0;
