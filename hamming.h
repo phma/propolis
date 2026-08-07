@@ -43,7 +43,7 @@ public:
   void push_back(char byte);
   void setData(std::string Data);
   std::string dumpLetters();
-  int correct();
+  int correct(); // returns 1 in each bit that couldn't correct
   std::vector<int> belief();
   void propagate();
 };
