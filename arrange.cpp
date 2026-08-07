@@ -631,6 +631,12 @@ void CodeMatrix::unarrange(harray<uint16_t> &hglyphs)
   }
 }
 
+int CodeMatrix::roundDecode(int iter)
+{
+  int ret=0;
+  return ret;
+}
+
 int decinc(int i)
 {
   int inc;

@@ -64,6 +64,7 @@ public:
   void dump();
   void arrange(harray<char> &hletters); // places data and metadata in hletters
   void unarrange(harray<uint16_t> &hglyphs); // places hglyphs in metaglyphs and glyphs
+  int roundDecode(int iter);
 };
 
 extern CodeMatrix theMatrix;
