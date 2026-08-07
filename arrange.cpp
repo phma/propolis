@@ -542,8 +542,12 @@ int CodeMatrix::stochasticDecodeIter(int iter)
   int i,j,hammingStart,ret=0;
   vector<signed char> allHamming,ham1;
   string oneHamming;
+  vector<char> savedData;
   for (i=0;i<data.size();i++)
+  {
+    savedData.push_back(data[i]);
     data[i]=stochasticDecode(glyphs[i],data[i],iter);
+  }
   allHamming=unCrissCross();
   for (i=hammingStart=0;i<hammingSizes.size();i++)
   {
@@ -561,6 +565,9 @@ int CodeMatrix::stochasticDecodeIter(int iter)
       allHamming.push_back(ham1[j]);
   }
   crissCross(allHamming);
+  for (i=0;i<data.size();i++)
+    if ((savedData[i]&31)!=(data[i]&31))
+      ret+=65536;
   return ret;
 }
 
