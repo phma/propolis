@@ -451,6 +451,7 @@ vector<signed char> CodeMatrix::unCrissCross()
       ret[i]|=data[(i*ccf5[j]+prime[j])%nLetters]&(1<<j);
   for (i=0;i<nLetters;i++)
     data[i]=whiten(data[i],i);
+  return ret;
 }
 
 void CodeMatrix::setDataCheck(string str,int encoding)
@@ -546,6 +547,7 @@ void CodeMatrix::dump()
   {
     ham=hammingBlocks[i].dumpLetters();
     if (column)
+    {
       if (column+ham.length()>78)
       {
 	cout<<endl;
@@ -556,6 +558,7 @@ void CodeMatrix::dump()
 	cout<<' ';
 	column++;
       }
+    }
     cout<<ham;
     column+=ham.length();
   }
