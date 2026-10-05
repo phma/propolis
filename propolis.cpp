@@ -607,6 +607,12 @@ void testHammingCorrect()
   tassert(hamming.getData()=="BHACKSIITLY");
 }
 
+/* void testStochasticDecode()
+ * size 2, text "PROPOLIS", one 13-byte Hamming
+ * size 2, one 7-byte and two 3-byte Hammings
+ * size 3, one 31-byte Hamming
+ */
+
 void testmain()
 {
   //testoutline();
